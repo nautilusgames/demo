@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .input-style {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .button-style {
+            width: calc(50% - 10px);
+            padding: 10px;
+            margin: 10px 5px 0 0;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .button-style:last-child {
+            margin-right: 0;
+        }
+
+        .button-style:hover {
+            background-color: #0056b3;
+        }
+
+        #list-game {
+            display: none;
+            margin-top: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        #game-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #game-table th,
+        #game-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #game-table th {
+            background-color: #f2f2f2;
+        }
+
+        .play-button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .play-button:hover {
+            background-color: #0056b3;
+        }
+
+        #iframe-game {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 1280px;
+            height: 720px;
+            border: none;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            left: 10%;
+            position: sticky;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Demo</h2>
+
+    <div class="form-container">
+        <form id="auth-form">
+            <label for="currency">Currency:</label><br>
+            <select id="currency" name="currency" class="input-style" size="1">
+                <option value="vnd">VND</option>
+                <option value="usd">USD</option>
+            </select><br>
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" class="input-style" value=""><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" class="input-style" value=""><br><br>
+            <input type="button" class="button-style" value="Sign In" id="sign-in-button">
+            <input type="button" class="button-style" value="Sign Up" id="sign-up-button">
+        </form>
+    </div>
+
+    <div id="list-game">
+        <table id="game-table">
+            <thead>
+                <tr>
+                    <th>Game Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="simple-game-body"></tbody>
+        </table>
+    </div>
+    <br>
+
+    <iframe id="iframe-game" height="720px" width="1280px" title="Iframe Example" style="display: none;"></iframe>
+
+    <script type="text/javascript">
+        var signInUrl = ""
+        var signUpUrl = ""
+        var listGameDomain = ""
+        var tenantID = ""
+        var tenantToken = ""
+        var currency = ""
+
+        function playGame(url) {
+            console.log(url)
+            var newUrl = `${url}?tenant_id=${tenantID}&tenant_player_token=${tenantToken}&currency=${currency}`
+            var iframe = document.getElementById('iframe-game')
+            iframe.style.display = 'block'
+            iframe.src = newUrl
+        }
+
+        $(document).ready(function () {
+            $('#sign-in-button').click(function () {
+                const username = $('#username').val();
+                const password = $('#password').val();
+
+                // Simulate login success
+                if (username === 'user' && password === 'pass') {
+                    $('#auth-form').hide();
+                    $('#list-game').show();
+                } else {
+                    alert('Invalid username or password');
+                }
+            });
+
+            $('.play-button').click(function () {
+                const gameUrl = $(this).data('url');
+                $('#iframe-game').attr('src', gameUrl).show();
+            });
+        });
+
+        jQuery(function ($) {
+            async function signIn(username, password) {
+                try {
+                    let url = `${signInUrl}`;
+                    if ((username == "") || (password == "")) {
+                        alert("username or password is invalid");
+                        return false;
+                    }
+
+                    var request = {
+                        username: username,
+                        password: password,
+                    }
+
+                    const response = await fetch(url, {
+                        method: "POST",
+                        body: request,
+                        credentials: "include",
+                    });
+                    const data = await response.json();
+                    if (response.status === 200) {
+                        // get token
+                        tenantID = data.tenant_id
+                        tenant_player_token = data.tenant_player_token
+                        currency = data.currency
+                        // hidden form
+                        document.getElementById('auth-form').style.display = 'none';
+                        // show list game
+                        document.getElementById('list-game').style.display = 'block';
+                        listGame()
+                    } else {
+                        alert("fail to signin");
+                        return false;
+                    }
+                } catch (error) {
+                    alert("fail to signin");
+                    return false;
+                }
+            }
+
+            async function signUp(username, password, currency) {
+                try {
+                    let url = `${signUpUrl}`;
+                    if ((username == "") || (password == "") || (currency == "")) {
+                        alert("username or password or currency is invalid");
+                        return false;
+                    }
+
+                    var request = {
+                        currency: currency,
+                        username: username,
+                        password: password,
+                    }
+
+                    const response = await fetch(url, {
+                        method: "POST",
+                        body: request,
+                        credentials: "include",
+                    });
+                    const data = await response.json();
+                    if (response.status === 200) {
+                        // get token
+                        tenantID = data.tenant_id
+                        tenant_player_token = data.tenant_player_token
+                        currency = data.currency
+                        // hidden form
+                        document.getElementById('auth-form').style.display = 'none';
+                        // show list game
+                        document.getElementById('list-game').style.display = 'block';
+                        listGame()
+                    } else {
+                        alert("fail to signup");
+                        return false;
+                    }
+                } catch (error) {
+                    console.error("Error sign up:", error);
+                    alert("fail to signup");
+                    return false;
+                }
+            }
+
+            async function listGame(tenantToken) {
+                try {
+                    let url = `${listGameDomain}`;
+                    if ((tenantToken == "")) {
+                        alert("tenant token is invalid");
+                        return false;
+                    }
+                    let token = "Bearer " + tenantToken
+
+                    const response = await fetch(url, {
+                        method: "GET",
+                        credentials: "include",
+                        headers: {
+                            "authorization": token,
+                        }
+                    });
+                    const data = await response.json();
+                    if (response.status === 200) {
+                        $("#simple-game-body").empty();
+                        const rows = generateRecordRows(data.games);
+                        for (let i = 0; i < rows.length; i++) {
+                            $("#simple-game-body").append(rows[i]);
+                        }
+                    } else {
+                        alert("fail to get list game");
+                        return false;
+                    }
+                } catch (error) {
+                    alert("fail to get list game");
+                    return false;
+                }
+            }
+            function generateRecordRow(record) {
+                let metadata = JSON.stringify(record.metadata, null, 2);
+
+                return `<tr>
+                        <td>${record.game_id}</td>
+                        <td>${record.status}</td>
+                        <td><Button class="play-button" onclick="playGame('${record.url}')">Play</Button></td>
+                        </tr>`;
+            }
+
+            function generateRecordRows(records) {
+                let rows = [];
+                for (let i = 0; i < records.length; i++) {
+                    const record = records[i];
+                    rows.push(generateRecordRow(record));
+                }
+                return rows;
+            }
+        })
+    </script>
+
+</body>
+
+</html>
