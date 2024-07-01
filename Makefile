@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-CI_DOCKER_IMAGE=registry.nautilusgames.tech/<your docker repo>
+CI_DOCKER_IMAGE=<your docker repo>
 
 # build images from all services
 .PHONY: build-image-local
