@@ -1,0 +1,11 @@
+# git
+.git/
+**/.gitattributes
+**/.gitignore
+
+# backend
+build/
+backend/cmd/assets/generated_assets.go
+
+# docs
+docs/

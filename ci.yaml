@@ -1,0 +1,8 @@
+destinations: []
+# - auto_trigger_pipeline: true
+#   name: <sysops_name>
+#   ref: main
+#   service_name: demo
+#   service_type:
+#   - backend
+#   url: <sysops_path>
