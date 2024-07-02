@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"github.com/nautilusgames/demo/auth/internal/ent/sample"
+	"github.com/nautilusgames/demo/auth/internal/ent/player"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -16,17 +16,19 @@ var schemaGraph = func() *sqlgraph.Schema {
 	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 1)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   sample.Table,
-			Columns: sample.Columns,
+			Table:   player.Table,
+			Columns: player.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt64,
-				Column: sample.FieldID,
+				Column: player.FieldID,
 			},
 		},
-		Type: "Sample",
+		Type: "Player",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			sample.FieldCreatedAt: {Type: field.TypeTime, Column: sample.FieldCreatedAt},
-			sample.FieldUpdatedAt: {Type: field.TypeTime, Column: sample.FieldUpdatedAt},
+			player.FieldUsername:       {Type: field.TypeString, Column: player.FieldUsername},
+			player.FieldHashedPassword: {Type: field.TypeString, Column: player.FieldHashedPassword},
+			player.FieldDisplayName:    {Type: field.TypeString, Column: player.FieldDisplayName},
+			player.FieldCreatedAt:      {Type: field.TypeTime, Column: player.FieldCreatedAt},
 		},
 	}
 	return graph
@@ -39,33 +41,33 @@ type predicateAdder interface {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (sq *SampleQuery) addPredicate(pred func(s *sql.Selector)) {
-	sq.predicates = append(sq.predicates, pred)
+func (pq *PlayerQuery) addPredicate(pred func(s *sql.Selector)) {
+	pq.predicates = append(pq.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the SampleQuery builder.
-func (sq *SampleQuery) Filter() *SampleFilter {
-	return &SampleFilter{config: sq.config, predicateAdder: sq}
+// Filter returns a Filter implementation to apply filters on the PlayerQuery builder.
+func (pq *PlayerQuery) Filter() *PlayerFilter {
+	return &PlayerFilter{config: pq.config, predicateAdder: pq}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *SampleMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *PlayerMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the SampleMutation builder.
-func (m *SampleMutation) Filter() *SampleFilter {
-	return &SampleFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the PlayerMutation builder.
+func (m *PlayerMutation) Filter() *PlayerFilter {
+	return &PlayerFilter{config: m.config, predicateAdder: m}
 }
 
-// SampleFilter provides a generic filtering capability at runtime for SampleQuery.
-type SampleFilter struct {
+// PlayerFilter provides a generic filtering capability at runtime for PlayerQuery.
+type PlayerFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *SampleFilter) Where(p entql.P) {
+func (f *PlayerFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
 			s.AddError(err)
@@ -74,16 +76,26 @@ func (f *SampleFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql int64 predicate on the id field.
-func (f *SampleFilter) WhereID(p entql.Int64P) {
-	f.Where(p.Field(sample.FieldID))
+func (f *PlayerFilter) WhereID(p entql.Int64P) {
+	f.Where(p.Field(player.FieldID))
+}
+
+// WhereUsername applies the entql string predicate on the username field.
+func (f *PlayerFilter) WhereUsername(p entql.StringP) {
+	f.Where(p.Field(player.FieldUsername))
+}
+
+// WhereHashedPassword applies the entql string predicate on the hashed_password field.
+func (f *PlayerFilter) WhereHashedPassword(p entql.StringP) {
+	f.Where(p.Field(player.FieldHashedPassword))
+}
+
+// WhereDisplayName applies the entql string predicate on the display_name field.
+func (f *PlayerFilter) WhereDisplayName(p entql.StringP) {
+	f.Where(p.Field(player.FieldDisplayName))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *SampleFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(sample.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *SampleFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(sample.FieldUpdatedAt))
+func (f *PlayerFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(player.FieldCreatedAt))
 }

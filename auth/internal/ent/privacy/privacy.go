@@ -111,28 +111,28 @@ func DenyMutationOperationRule(op ent.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
-// The SampleQueryRuleFunc type is an adapter to allow the use of ordinary
+// The PlayerQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type SampleQueryRuleFunc func(context.Context, *ent.SampleQuery) error
+type PlayerQueryRuleFunc func(context.Context, *ent.PlayerQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f SampleQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.SampleQuery); ok {
+func (f PlayerQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PlayerQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SampleQuery", q)
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PlayerQuery", q)
 }
 
-// The SampleMutationRuleFunc type is an adapter to allow the use of ordinary
+// The PlayerMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type SampleMutationRuleFunc func(context.Context, *ent.SampleMutation) error
+type PlayerMutationRuleFunc func(context.Context, *ent.PlayerMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f SampleMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.SampleMutation); ok {
+func (f PlayerMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PlayerMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SampleMutation", m)
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PlayerMutation", m)
 }
 
 type (
@@ -170,7 +170,7 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
-	case *ent.SampleQuery:
+	case *ent.PlayerQuery:
 		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
@@ -179,7 +179,7 @@ func queryFilter(q ent.Query) (Filter, error) {
 
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
-	case *ent.SampleMutation:
+	case *ent.PlayerMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

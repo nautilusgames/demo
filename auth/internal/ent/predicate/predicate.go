@@ -6,5 +6,5 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Sample is the predicate function for sample builders.
-type Sample func(*sql.Selector)
+// Player is the predicate function for player builders.
+type Player func(*sql.Selector)

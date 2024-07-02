@@ -5,6 +5,8 @@ services:
     container_name: demo-db
     env_file:
       - ./.env
+    ports:
+      - 3306:3306
     volumes:
       - db-volume:/var/lib/mysql
     networks:

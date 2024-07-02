@@ -8,9 +8,12 @@ import (
 	"os/signal"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
 
+	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/mux"
+	"github.com/nautilusgames/demo/auth/internal/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
 )
@@ -37,8 +40,31 @@ func RunWithConfig(cfg *pb.Config) {
 		}
 	}()
 
+	// connect to mysql
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=True",
+		cfg.GetDatabase().GetUsername(),
+		cfg.GetDatabase().GetPassword(),
+		cfg.GetDatabase().GetHost(),
+		cfg.GetDatabase().GetPort(),
+		cfg.GetDatabase().GetName(),
+	)
+	logger.Info("---", zap.Any("db", cfg.GetDatabase()), zap.Any("dsn", dsn))
+	entClient, err := ent.Open("mysql", dsn)
+	if err != nil {
+		logger.Fatal("failed opening connection to mysql", zap.Error(err))
+	}
+	defer entClient.Close()
+	if err := entClient.Schema.Create(context.Background()); err != nil {
+		logger.Fatal("failed creating schema resources", zap.Error(err))
+	}
+
+	tokenMaker, err := token.New()
+	if err != nil {
+		logger.Fatal("failed to create token maker", zap.Error(err))
+	}
+
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
-	mux := mux.New(logger)
+	mux := mux.New(logger, entClient, tokenMaker)
 	server := &http.Server{
 		Addr:    address,
 		Handler: mux,

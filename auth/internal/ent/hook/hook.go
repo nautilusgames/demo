@@ -9,16 +9,16 @@ import (
 	"github.com/nautilusgames/demo/auth/internal/ent"
 )
 
-// The SampleFunc type is an adapter to allow the use of ordinary
-// function as Sample mutator.
-type SampleFunc func(context.Context, *ent.SampleMutation) (ent.Value, error)
+// The PlayerFunc type is an adapter to allow the use of ordinary
+// function as Player mutator.
+type PlayerFunc func(context.Context, *ent.PlayerMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f SampleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.SampleMutation); ok {
+func (f PlayerFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PlayerMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SampleMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PlayerMutation", m)
 }
 
 // Condition is a hook condition function.

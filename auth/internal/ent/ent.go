@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/nautilusgames/demo/auth/internal/ent/sample"
+	"github.com/nautilusgames/demo/auth/internal/ent/player"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -73,7 +73,7 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			sample.Table: sample.ValidColumn,
+			player.Table: player.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

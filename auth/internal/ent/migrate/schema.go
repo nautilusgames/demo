@@ -8,21 +8,30 @@ import (
 )
 
 var (
-	// SamplesColumns holds the columns for the "samples" table.
-	SamplesColumns = []*schema.Column{
+	// PlayersColumns holds the columns for the "players" table.
+	PlayersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "username", Type: field.TypeString, Unique: true},
+		{Name: "hashed_password", Type: field.TypeString},
+		{Name: "display_name", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 	}
-	// SamplesTable holds the schema information for the "samples" table.
-	SamplesTable = &schema.Table{
-		Name:       "samples",
-		Columns:    SamplesColumns,
-		PrimaryKey: []*schema.Column{SamplesColumns[0]},
+	// PlayersTable holds the schema information for the "players" table.
+	PlayersTable = &schema.Table{
+		Name:       "players",
+		Columns:    PlayersColumns,
+		PrimaryKey: []*schema.Column{PlayersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "player_username",
+				Unique:  false,
+				Columns: []*schema.Column{PlayersColumns[1]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		SamplesTable,
+		PlayersTable,
 	}
 )
 
