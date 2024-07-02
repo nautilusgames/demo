@@ -8,28 +8,19 @@
 # Test binary, built with `go test -c`
 *.test
 *.cov
-coverage.html
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-*.dat
 
-# Local cache for infrastructure apply
-.terragrunt-cache
+# Dependency directories (remove the comment below to include it)
+vendor
+.idea
+go.sum
 
-# Dependency directories (ignore for library, keep for service)
-# vendor/
-
-# IDE metadata
-.idea/
-.vscode/
-
-# MacOS metadata
 .DS_Store
 
 # Support ignore temporary build image at local
 /Dockerfile
+__debug_bin
 tmp
 tmp/
-out
-vendor

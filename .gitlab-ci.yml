@@ -1,8 +1,0 @@
-variables:
-  SERVICE: demo
-
-  
-include:
-  - project: "marketplace/cicd"
-    ref: "main"
-    file: "/templates/backend.gitlab-ci.yml"
