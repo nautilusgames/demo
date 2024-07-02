@@ -14,8 +14,6 @@ type Tx struct {
 	config
 	// Player is the client for interacting with the Player builders.
 	Player *PlayerClient
-	// Sample is the client for interacting with the Sample builders.
-	Sample *SampleClient
 
 	// lazily loaded.
 	client     *Client
@@ -148,7 +146,6 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Player = NewPlayerClient(tx.config)
-	tx.Sample = NewSampleClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

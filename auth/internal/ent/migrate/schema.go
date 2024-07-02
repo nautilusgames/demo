@@ -29,22 +29,9 @@ var (
 			},
 		},
 	}
-	// SamplesColumns holds the columns for the "samples" table.
-	SamplesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-	}
-	// SamplesTable holds the schema information for the "samples" table.
-	SamplesTable = &schema.Table{
-		Name:       "samples",
-		Columns:    SamplesColumns,
-		PrimaryKey: []*schema.Column{SamplesColumns[0]},
-	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		PlayersTable,
-		SamplesTable,
 	}
 )
 

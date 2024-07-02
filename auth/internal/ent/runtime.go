@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/nautilusgames/demo/auth/internal/ent/player"
-	"github.com/nautilusgames/demo/auth/internal/ent/sample"
 	"github.com/nautilusgames/demo/auth/schema"
 )
 
@@ -24,16 +23,4 @@ func init() {
 	playerDescCreatedAt := playerFields[4].Descriptor()
 	// player.DefaultCreatedAt holds the default value on creation for the created_at field.
 	player.DefaultCreatedAt = playerDescCreatedAt.Default.(func() time.Time)
-	sampleFields := schema.Sample{}.Fields()
-	_ = sampleFields
-	// sampleDescCreatedAt is the schema descriptor for created_at field.
-	sampleDescCreatedAt := sampleFields[1].Descriptor()
-	// sample.DefaultCreatedAt holds the default value on creation for the created_at field.
-	sample.DefaultCreatedAt = sampleDescCreatedAt.Default.(func() time.Time)
-	// sampleDescUpdatedAt is the schema descriptor for updated_at field.
-	sampleDescUpdatedAt := sampleFields[2].Descriptor()
-	// sample.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	sample.DefaultUpdatedAt = sampleDescUpdatedAt.Default.(func() time.Time)
-	// sample.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	sample.UpdateDefaultUpdatedAt = sampleDescUpdatedAt.UpdateDefault.(func() time.Time)
 }

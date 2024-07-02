@@ -4,7 +4,6 @@ package ent
 
 import (
 	"github.com/nautilusgames/demo/auth/internal/ent/player"
-	"github.com/nautilusgames/demo/auth/internal/ent/sample"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -14,7 +13,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 2)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 1)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   player.Table,
@@ -30,21 +29,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			player.FieldHashedPassword: {Type: field.TypeString, Column: player.FieldHashedPassword},
 			player.FieldDisplayName:    {Type: field.TypeString, Column: player.FieldDisplayName},
 			player.FieldCreatedAt:      {Type: field.TypeTime, Column: player.FieldCreatedAt},
-		},
-	}
-	graph.Nodes[1] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
-			Table:   sample.Table,
-			Columns: sample.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt64,
-				Column: sample.FieldID,
-			},
-		},
-		Type: "Sample",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			sample.FieldCreatedAt: {Type: field.TypeTime, Column: sample.FieldCreatedAt},
-			sample.FieldUpdatedAt: {Type: field.TypeTime, Column: sample.FieldUpdatedAt},
 		},
 	}
 	return graph
@@ -114,54 +98,4 @@ func (f *PlayerFilter) WhereDisplayName(p entql.StringP) {
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
 func (f *PlayerFilter) WhereCreatedAt(p entql.TimeP) {
 	f.Where(p.Field(player.FieldCreatedAt))
-}
-
-// addPredicate implements the predicateAdder interface.
-func (sq *SampleQuery) addPredicate(pred func(s *sql.Selector)) {
-	sq.predicates = append(sq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the SampleQuery builder.
-func (sq *SampleQuery) Filter() *SampleFilter {
-	return &SampleFilter{config: sq.config, predicateAdder: sq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *SampleMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the SampleMutation builder.
-func (m *SampleMutation) Filter() *SampleFilter {
-	return &SampleFilter{config: m.config, predicateAdder: m}
-}
-
-// SampleFilter provides a generic filtering capability at runtime for SampleQuery.
-type SampleFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *SampleFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql int64 predicate on the id field.
-func (f *SampleFilter) WhereID(p entql.Int64P) {
-	f.Where(p.Field(sample.FieldID))
-}
-
-// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *SampleFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(sample.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *SampleFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(sample.FieldUpdatedAt))
 }
