@@ -37,7 +37,7 @@ type PlayerMutation struct {
 	id              *int64
 	username        *string
 	hashed_password *string
-	name            *string
+	display_name    *string
 	created_at      *time.Time
 	clearedFields   map[string]struct{}
 	done            bool
@@ -221,40 +221,40 @@ func (m *PlayerMutation) ResetHashedPassword() {
 	m.hashed_password = nil
 }
 
-// SetName sets the "name" field.
-func (m *PlayerMutation) SetName(s string) {
-	m.name = &s
+// SetDisplayName sets the "display_name" field.
+func (m *PlayerMutation) SetDisplayName(s string) {
+	m.display_name = &s
 }
 
-// Name returns the value of the "name" field in the mutation.
-func (m *PlayerMutation) Name() (r string, exists bool) {
-	v := m.name
+// DisplayName returns the value of the "display_name" field in the mutation.
+func (m *PlayerMutation) DisplayName() (r string, exists bool) {
+	v := m.display_name
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldName returns the old "name" field's value of the Player entity.
+// OldDisplayName returns the old "display_name" field's value of the Player entity.
 // If the Player object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PlayerMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *PlayerMutation) OldDisplayName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldName is only allowed on UpdateOne operations")
+		return v, errors.New("OldDisplayName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldName requires an ID field in the mutation")
+		return v, errors.New("OldDisplayName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
+		return v, fmt.Errorf("querying old value for OldDisplayName: %w", err)
 	}
-	return oldValue.Name, nil
+	return oldValue.DisplayName, nil
 }
 
-// ResetName resets all changes to the "name" field.
-func (m *PlayerMutation) ResetName() {
-	m.name = nil
+// ResetDisplayName resets all changes to the "display_name" field.
+func (m *PlayerMutation) ResetDisplayName() {
+	m.display_name = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -334,8 +334,8 @@ func (m *PlayerMutation) Fields() []string {
 	if m.hashed_password != nil {
 		fields = append(fields, player.FieldHashedPassword)
 	}
-	if m.name != nil {
-		fields = append(fields, player.FieldName)
+	if m.display_name != nil {
+		fields = append(fields, player.FieldDisplayName)
 	}
 	if m.created_at != nil {
 		fields = append(fields, player.FieldCreatedAt)
@@ -352,8 +352,8 @@ func (m *PlayerMutation) Field(name string) (ent.Value, bool) {
 		return m.Username()
 	case player.FieldHashedPassword:
 		return m.HashedPassword()
-	case player.FieldName:
-		return m.Name()
+	case player.FieldDisplayName:
+		return m.DisplayName()
 	case player.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -369,8 +369,8 @@ func (m *PlayerMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldUsername(ctx)
 	case player.FieldHashedPassword:
 		return m.OldHashedPassword(ctx)
-	case player.FieldName:
-		return m.OldName(ctx)
+	case player.FieldDisplayName:
+		return m.OldDisplayName(ctx)
 	case player.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -396,12 +396,12 @@ func (m *PlayerMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetHashedPassword(v)
 		return nil
-	case player.FieldName:
+	case player.FieldDisplayName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetName(v)
+		m.SetDisplayName(v)
 		return nil
 	case player.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -465,8 +465,8 @@ func (m *PlayerMutation) ResetField(name string) error {
 	case player.FieldHashedPassword:
 		m.ResetHashedPassword()
 		return nil
-	case player.FieldName:
-		m.ResetName()
+	case player.FieldDisplayName:
+		m.ResetDisplayName()
 		return nil
 	case player.FieldCreatedAt:
 		m.ResetCreatedAt()

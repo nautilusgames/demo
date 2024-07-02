@@ -21,8 +21,8 @@ type Player struct {
 	Username string `json:"username,omitempty"`
 	// HashedPassword holds the value of the "hashed_password" field.
 	HashedPassword string `json:"hashed_password,omitempty"`
-	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
+	// DisplayName holds the value of the "display_name" field.
+	DisplayName string `json:"display_name,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	selectValues sql.SelectValues
@@ -35,7 +35,7 @@ func (*Player) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case player.FieldID:
 			values[i] = new(sql.NullInt64)
-		case player.FieldUsername, player.FieldHashedPassword, player.FieldName:
+		case player.FieldUsername, player.FieldHashedPassword, player.FieldDisplayName:
 			values[i] = new(sql.NullString)
 		case player.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -72,11 +72,11 @@ func (pl *Player) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pl.HashedPassword = value.String
 			}
-		case player.FieldName:
+		case player.FieldDisplayName:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field name", values[i])
+				return fmt.Errorf("unexpected type %T for field display_name", values[i])
 			} else if value.Valid {
-				pl.Name = value.String
+				pl.DisplayName = value.String
 			}
 		case player.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -126,8 +126,8 @@ func (pl *Player) String() string {
 	builder.WriteString("hashed_password=")
 	builder.WriteString(pl.HashedPassword)
 	builder.WriteString(", ")
-	builder.WriteString("name=")
-	builder.WriteString(pl.Name)
+	builder.WriteString("display_name=")
+	builder.WriteString(pl.DisplayName)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(pl.CreatedAt.Format(time.ANSIC))

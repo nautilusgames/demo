@@ -64,9 +64,9 @@ func HashedPassword(v string) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldHashedPassword, v))
 }
 
-// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.Player {
-	return predicate.Player(sql.FieldEQ(FieldName, v))
+// DisplayName applies equality check predicate on the "display_name" field. It's identical to DisplayNameEQ.
+func DisplayName(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldDisplayName, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
@@ -204,69 +204,69 @@ func HashedPasswordContainsFold(v string) predicate.Player {
 	return predicate.Player(sql.FieldContainsFold(FieldHashedPassword, v))
 }
 
-// NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.Player {
-	return predicate.Player(sql.FieldEQ(FieldName, v))
+// DisplayNameEQ applies the EQ predicate on the "display_name" field.
+func DisplayNameEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldDisplayName, v))
 }
 
-// NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.Player {
-	return predicate.Player(sql.FieldNEQ(FieldName, v))
+// DisplayNameNEQ applies the NEQ predicate on the "display_name" field.
+func DisplayNameNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldDisplayName, v))
 }
 
-// NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.Player {
-	return predicate.Player(sql.FieldIn(FieldName, vs...))
+// DisplayNameIn applies the In predicate on the "display_name" field.
+func DisplayNameIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldDisplayName, vs...))
 }
 
-// NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.Player {
-	return predicate.Player(sql.FieldNotIn(FieldName, vs...))
+// DisplayNameNotIn applies the NotIn predicate on the "display_name" field.
+func DisplayNameNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldDisplayName, vs...))
 }
 
-// NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.Player {
-	return predicate.Player(sql.FieldGT(FieldName, v))
+// DisplayNameGT applies the GT predicate on the "display_name" field.
+func DisplayNameGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldDisplayName, v))
 }
 
-// NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.Player {
-	return predicate.Player(sql.FieldGTE(FieldName, v))
+// DisplayNameGTE applies the GTE predicate on the "display_name" field.
+func DisplayNameGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldDisplayName, v))
 }
 
-// NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.Player {
-	return predicate.Player(sql.FieldLT(FieldName, v))
+// DisplayNameLT applies the LT predicate on the "display_name" field.
+func DisplayNameLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldDisplayName, v))
 }
 
-// NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.Player {
-	return predicate.Player(sql.FieldLTE(FieldName, v))
+// DisplayNameLTE applies the LTE predicate on the "display_name" field.
+func DisplayNameLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldDisplayName, v))
 }
 
-// NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.Player {
-	return predicate.Player(sql.FieldContains(FieldName, v))
+// DisplayNameContains applies the Contains predicate on the "display_name" field.
+func DisplayNameContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldDisplayName, v))
 }
 
-// NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.Player {
-	return predicate.Player(sql.FieldHasPrefix(FieldName, v))
+// DisplayNameHasPrefix applies the HasPrefix predicate on the "display_name" field.
+func DisplayNameHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldDisplayName, v))
 }
 
-// NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.Player {
-	return predicate.Player(sql.FieldHasSuffix(FieldName, v))
+// DisplayNameHasSuffix applies the HasSuffix predicate on the "display_name" field.
+func DisplayNameHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldDisplayName, v))
 }
 
-// NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.Player {
-	return predicate.Player(sql.FieldEqualFold(FieldName, v))
+// DisplayNameEqualFold applies the EqualFold predicate on the "display_name" field.
+func DisplayNameEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldDisplayName, v))
 }
 
-// NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.Player {
-	return predicate.Player(sql.FieldContainsFold(FieldName, v))
+// DisplayNameContainsFold applies the ContainsFold predicate on the "display_name" field.
+func DisplayNameContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldDisplayName, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

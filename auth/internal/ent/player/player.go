@@ -17,8 +17,8 @@ const (
 	FieldUsername = "username"
 	// FieldHashedPassword holds the string denoting the hashed_password field in the database.
 	FieldHashedPassword = "hashed_password"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
+	// FieldDisplayName holds the string denoting the display_name field in the database.
+	FieldDisplayName = "display_name"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// Table holds the table name of the player in the database.
@@ -30,7 +30,7 @@ var Columns = []string{
 	FieldID,
 	FieldUsername,
 	FieldHashedPassword,
-	FieldName,
+	FieldDisplayName,
 	FieldCreatedAt,
 }
 
@@ -69,9 +69,9 @@ func ByHashedPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldHashedPassword, opts...).ToFunc()
 }
 
-// ByName orders the results by the name field.
-func ByName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldName, opts...).ToFunc()
+// ByDisplayName orders the results by the display_name field.
+func ByDisplayName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDisplayName, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

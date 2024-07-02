@@ -57,16 +57,16 @@ func (pu *PlayerUpdate) SetNillableHashedPassword(s *string) *PlayerUpdate {
 	return pu
 }
 
-// SetName sets the "name" field.
-func (pu *PlayerUpdate) SetName(s string) *PlayerUpdate {
-	pu.mutation.SetName(s)
+// SetDisplayName sets the "display_name" field.
+func (pu *PlayerUpdate) SetDisplayName(s string) *PlayerUpdate {
+	pu.mutation.SetDisplayName(s)
 	return pu
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (pu *PlayerUpdate) SetNillableName(s *string) *PlayerUpdate {
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (pu *PlayerUpdate) SetNillableDisplayName(s *string) *PlayerUpdate {
 	if s != nil {
-		pu.SetName(*s)
+		pu.SetDisplayName(*s)
 	}
 	return pu
 }
@@ -151,8 +151,8 @@ func (pu *PlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.HashedPassword(); ok {
 		_spec.SetField(player.FieldHashedPassword, field.TypeString, value)
 	}
-	if value, ok := pu.mutation.Name(); ok {
-		_spec.SetField(player.FieldName, field.TypeString, value)
+	if value, ok := pu.mutation.DisplayName(); ok {
+		_spec.SetField(player.FieldDisplayName, field.TypeString, value)
 	}
 	if value, ok := pu.mutation.CreatedAt(); ok {
 		_spec.SetField(player.FieldCreatedAt, field.TypeTime, value)
@@ -207,16 +207,16 @@ func (puo *PlayerUpdateOne) SetNillableHashedPassword(s *string) *PlayerUpdateOn
 	return puo
 }
 
-// SetName sets the "name" field.
-func (puo *PlayerUpdateOne) SetName(s string) *PlayerUpdateOne {
-	puo.mutation.SetName(s)
+// SetDisplayName sets the "display_name" field.
+func (puo *PlayerUpdateOne) SetDisplayName(s string) *PlayerUpdateOne {
+	puo.mutation.SetDisplayName(s)
 	return puo
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (puo *PlayerUpdateOne) SetNillableName(s *string) *PlayerUpdateOne {
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (puo *PlayerUpdateOne) SetNillableDisplayName(s *string) *PlayerUpdateOne {
 	if s != nil {
-		puo.SetName(*s)
+		puo.SetDisplayName(*s)
 	}
 	return puo
 }
@@ -331,8 +331,8 @@ func (puo *PlayerUpdateOne) sqlSave(ctx context.Context) (_node *Player, err err
 	if value, ok := puo.mutation.HashedPassword(); ok {
 		_spec.SetField(player.FieldHashedPassword, field.TypeString, value)
 	}
-	if value, ok := puo.mutation.Name(); ok {
-		_spec.SetField(player.FieldName, field.TypeString, value)
+	if value, ok := puo.mutation.DisplayName(); ok {
+		_spec.SetField(player.FieldDisplayName, field.TypeString, value)
 	}
 	if value, ok := puo.mutation.CreatedAt(); ok {
 		_spec.SetField(player.FieldCreatedAt, field.TypeTime, value)

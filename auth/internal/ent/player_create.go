@@ -34,9 +34,9 @@ func (pc *PlayerCreate) SetHashedPassword(s string) *PlayerCreate {
 	return pc
 }
 
-// SetName sets the "name" field.
-func (pc *PlayerCreate) SetName(s string) *PlayerCreate {
-	pc.mutation.SetName(s)
+// SetDisplayName sets the "display_name" field.
+func (pc *PlayerCreate) SetDisplayName(s string) *PlayerCreate {
+	pc.mutation.SetDisplayName(s)
 	return pc
 }
 
@@ -114,8 +114,8 @@ func (pc *PlayerCreate) check() error {
 			return &ValidationError{Name: "hashed_password", err: fmt.Errorf(`ent: validator failed for field "Player.hashed_password": %w`, err)}
 		}
 	}
-	if _, ok := pc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Player.name"`)}
+	if _, ok := pc.mutation.DisplayName(); !ok {
+		return &ValidationError{Name: "display_name", err: errors.New(`ent: missing required field "Player.display_name"`)}
 	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Player.created_at"`)}
@@ -161,9 +161,9 @@ func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 		_spec.SetField(player.FieldHashedPassword, field.TypeString, value)
 		_node.HashedPassword = value
 	}
-	if value, ok := pc.mutation.Name(); ok {
-		_spec.SetField(player.FieldName, field.TypeString, value)
-		_node.Name = value
+	if value, ok := pc.mutation.DisplayName(); ok {
+		_spec.SetField(player.FieldDisplayName, field.TypeString, value)
+		_node.DisplayName = value
 	}
 	if value, ok := pc.mutation.CreatedAt(); ok {
 		_spec.SetField(player.FieldCreatedAt, field.TypeTime, value)
@@ -245,15 +245,15 @@ func (u *PlayerUpsert) UpdateHashedPassword() *PlayerUpsert {
 	return u
 }
 
-// SetName sets the "name" field.
-func (u *PlayerUpsert) SetName(v string) *PlayerUpsert {
-	u.Set(player.FieldName, v)
+// SetDisplayName sets the "display_name" field.
+func (u *PlayerUpsert) SetDisplayName(v string) *PlayerUpsert {
+	u.Set(player.FieldDisplayName, v)
 	return u
 }
 
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *PlayerUpsert) UpdateName() *PlayerUpsert {
-	u.SetExcluded(player.FieldName)
+// UpdateDisplayName sets the "display_name" field to the value that was provided on create.
+func (u *PlayerUpsert) UpdateDisplayName() *PlayerUpsert {
+	u.SetExcluded(player.FieldDisplayName)
 	return u
 }
 
@@ -345,17 +345,17 @@ func (u *PlayerUpsertOne) UpdateHashedPassword() *PlayerUpsertOne {
 	})
 }
 
-// SetName sets the "name" field.
-func (u *PlayerUpsertOne) SetName(v string) *PlayerUpsertOne {
+// SetDisplayName sets the "display_name" field.
+func (u *PlayerUpsertOne) SetDisplayName(v string) *PlayerUpsertOne {
 	return u.Update(func(s *PlayerUpsert) {
-		s.SetName(v)
+		s.SetDisplayName(v)
 	})
 }
 
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *PlayerUpsertOne) UpdateName() *PlayerUpsertOne {
+// UpdateDisplayName sets the "display_name" field to the value that was provided on create.
+func (u *PlayerUpsertOne) UpdateDisplayName() *PlayerUpsertOne {
 	return u.Update(func(s *PlayerUpsert) {
-		s.UpdateName()
+		s.UpdateDisplayName()
 	})
 }
 
@@ -615,17 +615,17 @@ func (u *PlayerUpsertBulk) UpdateHashedPassword() *PlayerUpsertBulk {
 	})
 }
 
-// SetName sets the "name" field.
-func (u *PlayerUpsertBulk) SetName(v string) *PlayerUpsertBulk {
+// SetDisplayName sets the "display_name" field.
+func (u *PlayerUpsertBulk) SetDisplayName(v string) *PlayerUpsertBulk {
 	return u.Update(func(s *PlayerUpsert) {
-		s.SetName(v)
+		s.SetDisplayName(v)
 	})
 }
 
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *PlayerUpsertBulk) UpdateName() *PlayerUpsertBulk {
+// UpdateDisplayName sets the "display_name" field to the value that was provided on create.
+func (u *PlayerUpsertBulk) UpdateDisplayName() *PlayerUpsertBulk {
 	return u.Update(func(s *PlayerUpsert) {
-		s.UpdateName()
+		s.UpdateDisplayName()
 	})
 }
 

@@ -19,8 +19,8 @@ func New(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Maker) *htt
 
 	mux.HandleFunc("/status", httpHealth())
 	mux.HandleFunc("/api/v1/player/verify", httpAuth(logger))
-	mux.HandleFunc("/api/v1/sign-in", handleSignIn(logger, entClient, tokenMaker))
-	mux.HandleFunc("/api/v1/sign-up", handleSignUp(logger, entClient, tokenMaker))
+	mux.HandleFunc("/api/v1/signin", handleSignIn(logger, entClient, tokenMaker))
+	mux.HandleFunc("/api/v1/signup", handleSignUp(logger, entClient, tokenMaker))
 
 	return mux
 }
@@ -107,7 +107,7 @@ func handleSignUp(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Ma
 			Create().
 			SetUsername(username).
 			SetHashedPassword(hashedPassword).
-			SetName(username).
+			SetDisplayName(username).
 			Save(r.Context())
 		if err != nil {
 			http.Error(w, "failed to create player", http.StatusInternalServerError)
