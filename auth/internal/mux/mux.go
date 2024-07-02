@@ -3,16 +3,24 @@ package mux
 import (
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/nautilusgames/demo/auth/internal/checker"
+	"github.com/nautilusgames/demo/auth/internal/ent"
+	"github.com/nautilusgames/demo/auth/internal/ent/player"
+	"github.com/nautilusgames/demo/auth/internal/token"
 	"go.uber.org/zap"
 )
 
-func New(logger *zap.Logger) *http.ServeMux {
-	// Flag gets printed as a page
+var _expireTokenDuration = 24 * time.Hour
+
+func New(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Maker) *http.ServeMux {
 	mux := http.NewServeMux()
-	// Health endpoint
+
 	mux.HandleFunc("/status", httpHealth())
 	mux.HandleFunc("/api/v1/player/verify", httpAuth(logger))
+	mux.HandleFunc("/api/v1/sign-in", handleSignIn(logger, entClient, tokenMaker))
+	mux.HandleFunc("/api/v1/sign-up", handleSignUp(logger, entClient, tokenMaker))
 
 	return mux
 }
@@ -26,5 +34,94 @@ func httpAuth(logger *zap.Logger) http.HandlerFunc {
 func httpHealth() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func handleSignIn(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Maker) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		username := r.PostFormValue("username")
+		password := r.PostFormValue("password")
+
+		if username == "" || password == "" {
+			http.Error(w, "username and password are required", http.StatusBadRequest)
+			return
+		}
+
+		player, err := entClient.Player.
+			Query().
+			Where(player.Username(username)).
+			Only(r.Context())
+		if err != nil {
+			if ent.IsNotFound(err) {
+				http.Error(w, "invalid username or password", http.StatusUnauthorized)
+				return
+			}
+			http.Error(w, "failed to query player", http.StatusInternalServerError)
+			return
+		}
+
+		if err := checker.CheckPassword(password, player.HashedPassword); err != nil {
+			http.Error(w, "invalid username or password", http.StatusUnauthorized)
+			return
+		}
+
+		token, _, err := tokenMaker.CreateToken(player.ID, player.Username, _expireTokenDuration)
+		if err != nil {
+			http.Error(w, "failed to create token", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "{\"token\": \"%s\"}", token)
+	}
+}
+
+func handleSignUp(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Maker) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		username := r.PostFormValue("username")
+		password := r.PostFormValue("password")
+
+		if username == "" || password == "" {
+			http.Error(w, "username and password are required", http.StatusBadRequest)
+			return
+		}
+
+		hashedPassword, err := checker.HashPassword(password)
+		if err != nil {
+			http.Error(w, "failed to hash password", http.StatusInternalServerError)
+			return
+		}
+
+		player, err := entClient.Player.
+			Create().
+			SetUsername(username).
+			SetHashedPassword(hashedPassword).
+			SetName(username).
+			Save(r.Context())
+		if err != nil {
+			http.Error(w, "failed to create player", http.StatusInternalServerError)
+			return
+		}
+
+		token, _, err := tokenMaker.CreateToken(player.ID, player.Username, _expireTokenDuration)
+		if err != nil {
+			http.Error(w, "failed to create token", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "{\"token\": \"%s\"}", token)
 	}
 }
