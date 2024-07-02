@@ -1,0 +1,56 @@
+version: '3.1'
+services:
+  demo-db:
+    image: mysql:latest
+    container_name: demo-db
+    env_file:
+      - ./.env
+    volumes:
+      - db-volume:/var/lib/mysql
+    networks:
+      - demo-network
+
+  demo-auth:
+    build:
+      context: ./
+      dockerfile: auth/build/Dockerfile
+    env_file:
+      - ./.env
+    depends_on:
+      - demo-db
+    ports:
+      - 8081:8080
+    command: bash -c "./wait-for-it.sh $${DB_HOST}:$${DB_PORT} && ./app/server -c /app/config.yaml"
+    restart: on-failure
+    networks:
+      - demo-network
+
+  # demo-wallet:
+  #   build:
+  #     context: ./
+  #     dockerfile: wallet/build/Dockerfile
+  #   depends_on:
+  #     - demo-db
+  #   ports:
+  #     - 8081:8080
+  #   command: bash -c "./wait-for-it.sh $${DB_HOST}:$${DB_PORT} && ./app/server -c /app/config.yaml"
+  #   restart: on-failure
+  #   networks:
+  #     - demo-network
+
+  # demo-web:
+  #   build:
+  #     context: ./web
+  #     dockerfile: ./web/build/Dockerfile
+  #   ports:
+  #     - 8083:3000
+  #   restart: on-failure
+  #   networks:
+  #     - demo-network
+
+volumes:
+  db-volume:
+
+networks:
+  demo-network:
+    driver: bridge
