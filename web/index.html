@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            color: #f00b0b;
+            text-align: center;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .input-style {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .button-style {
+            width: calc(50% - 10px);
+            padding: 10px;
+            margin: 10px 5px 0 0;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .button-style:last-child {
+            margin-right: 0;
+        }
+
+        .button-style:hover {
+            background-color: #0056b3;
+        }
+
+        #list-game {
+            display: none;
+            margin-top: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        #game-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #game-table th,
+        #game-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #game-table th {
+            background-color: #f2f2f2;
+        }
+
+        .play-button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .play-button:hover {
+            background-color: #0056b3;
+        }
+
+        #iframe-game {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 1280px;
+            height: 720px;
+            border: none;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            left: 10%;
+            position: sticky;
+        }
+
+        #language-select {
+            width: 150px;
+            padding: 10px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1280px;
+            height: 720px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Tenant Demo</h2>
+        <div id="form-container" class="form-container">
+            <form id="auth-form">
+                <label for="currency">Currency:</label><br>
+                <select id="currency" name="currency" class="input-style" size="1">
+                    <option value="vnd">VND</option>
+                    <option value="usd">USD</option>
+                </select><br>
+                <label for="username">Username:</label><br>
+                <input type="text" id="username" name="username" class="input-style" value=""><br>
+                <label for="password">Password:</label><br>
+                <input type="password" id="password" name="password" class="input-style" value=""><br><br>
+                <input type="button" class="button-style" value="Sign In" id="sign-in-button">
+                <input type="button" class="button-style" value="Sign Up" id="sign-up-button">
+            </form>
+        </div>
+
+        <div id="language-select-container" style="text-align: right;display: none;">
+            <label>Game Language </label>
+            <select id="language-select" class="input-style">
+                <option value="en">English</option>
+                <option value="vi">Vietnamese</option>
+            </select>
+        </div>
+
+        <div id="list-game">
+            <table id="game-table">
+                <thead>
+                    <tr>
+                        <th>Icon</th>
+                        <th>GameID</th>
+                        <th>Game Name</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="simple-game-body"></tbody>
+            </table>
+        </div>
+        <br>
+        <iframe id="iframe-game" height="720px" width="1280px" title="Iframe Example" style="display: none;"></iframe>
+    </div>
+
+    <script type="text/javascript">
+        var signInUrl = ""
+        var signUpUrl = ""
+        var listGameDomain = "https://p.n11s.io/api/gnome/v1/games?pageSize=9999"
+        var resourceDomain = "https://s.n11s.io/"
+        var tenantID = ""
+        var tenantPlayerToken = ""
+        var tenantToken = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIzIiwiZXhwIjoxNzUxNDk0ODUwLCJqdGkiOiI3NWVmMmZiZS03YmM3LTQzNGEtODczNi1jMDhiMTdiNzgwODIiLCJpYXQiOjE3MTk5Mzc4OTgsImlzcyI6Im5hdXRpbHVzIiwibmJmIjoxNzE5OTM3ODk4LCJzdWIiOiIzIiwiYXBpX2tleV9pZCI6Mn0.uFcC5YiFqu9ZHSIaDRmg2MuioM9CvwF6aAjmidXsFXu5DsR4YE9l-w9qru1DucFHdUUDcB8m7S6t9F3Ll2YgBw" // hard code
+        var currency = ""
+        var language = ""
+
+        function playGame(url) {
+            console.log(url)
+            var newUrl = `${url}?tenant_id=${tenantID}&tenant_player_token=${tenantToken}&tenant_token=${tenantToken}&l=${language}&currency=${currency}`
+            var iframe = document.getElementById('iframe-game')
+            iframe.style.display = 'block'
+            iframe.src = url
+            iframe.scrollIntoView()
+        }
+
+        $(document).ready(function () {
+            $('#sign-in-button').click(function () {
+                const username = $('#username').val();
+                const password = $('#password').val();
+
+                // Simulate login success
+                if (signIn(username, password)) {
+                    $('#form-container').hide();
+                    $('#list-game').show();
+                    $('#language-select-container').show();
+                    listGame()
+                } else {
+                    alert('Invalid username or password');
+                }
+            });
+
+            $('#sign-up-button').click(function () {
+                const username = $('#username').val();
+                const password = $('#password').val();
+                const currency = $('#currency').val();
+
+                // Simulate login success
+                if (signUp(username, password, currency)) {
+                    $('#form-container').hide();
+                    $('#list-game').show();
+                    $('#language-select-container').show();
+                    listGame()
+                } else {
+                    alert('Invalid username or password or currency');
+                }
+            });
+
+            $('#language-select').change(function () {
+                const selectedLanguage = $(this).val();
+                // Here you can add the logic to change the language
+            });
+        });
+
+        async function signIn(username, password) {
+            try {
+                let url = `${signInUrl}`;
+                if ((username == "") || (password == "")) {
+                    alert("username or password is invalid");
+                    return false;
+                }
+
+                var request = {
+                    username: username,
+                    password: password,
+                }
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    body: request,
+                    credentials: "include",
+                });
+                const data = await response.json();
+                if (response.status === 200) {
+                    // get token
+                    tenantID = data.tenant_id // can hard code
+                    tenant_player_token = data.tenant_player_token // access token
+                    currency = data.currency
+                    return true
+                } else {
+                    alert("fail to signin");
+                    return false;
+                }
+            } catch (error) {
+                alert("fail to signin");
+                return false;
+            }
+        }
+
+        async function signUp(username, password, currency) {
+            try {
+                let url = `${signUpUrl}`;
+                if ((username == "") || (password == "") || (currency == "")) {
+                    alert("username or password or currency is invalid");
+                    return false;
+                }
+
+                var request = {
+                    currency: currency,
+                    username: username,
+                    password: password,
+                }
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    body: request,
+                    credentials: "include",
+                });
+                const data = await response.json();
+                if (response.status === 200) {
+                    // get token
+                    tenantID = data.tenant_id
+                    tenant_player_token = data.tenant_player_token
+                    currency = data.currency
+                } else {
+                    alert("fail to signup");
+                    return false;
+                }
+            } catch (error) {
+                console.error("Error sign up:", error);
+                alert("fail to signup");
+                return false;
+            }
+        }
+
+        async function listGame() {
+            try {
+                let url = `${listGameDomain}`;
+                if ((tenantToken == "")) {
+                    alert("tenant token is invalid");
+                    return false;
+                }
+                let token = "Bearer " + tenantToken
+
+                const response = await fetch(url, {
+                    method: "GET",
+                    // credentials: "include",
+                    headers: {
+                        "authorization": token,
+                    }
+                });
+                const data = await response.json();
+                if (response.status === 200) {
+                    $("#simple-game-body").empty();
+                    const rows = generateRecordRows(data.games);
+                    for (let i = 0; i < rows.length; i++) {
+                        $("#simple-game-body").append(rows[i]);
+                    }
+                } else {
+                    alert("fail to get list game");
+                    return false;
+                }
+            } catch (error) {
+                alert("fail to get list game");
+                return false;
+            }
+        }
+        function generateRecordRow(record) {
+            var assets = record.assets;
+            console.log(assets)
+            var icon = resourceDomain + assets.values[0].thumbnail.files[0].path
+            return `<tr>
+                        <td><img src="${icon}" width="auto" height="200"></td>
+                        <td>${record.gameId}</td>
+                        <td>${assets.values[0].name}</td>
+                        <td>${record.status}</td>
+                        <td><Button class="play-button" onclick="playGame('${record.url}')">Play</Button></td>
+                        </tr>`;
+        }
+
+        function generateRecordRows(records) {
+            let rows = [];
+            for (let i = 0; i < records.length; i++) {
+                const record = records[i];
+                rows.push(generateRecordRow(record));
+            }
+            return rows;
+        }
+
+    </script>
+
+</body>
+
+</html>
