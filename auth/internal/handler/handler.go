@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -45,12 +44,6 @@ func New(
 	mux.HandleFunc("/api/v1/create-tenant-token", s.handleCreateTenantToken())
 
 	return handler
-}
-
-func httpAuth(logger *zap.Logger) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "{\"status\": \"ok\"}")
-	}
 }
 
 func httpHealth() http.HandlerFunc {
