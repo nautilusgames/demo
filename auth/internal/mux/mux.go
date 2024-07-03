@@ -15,7 +15,7 @@ import (
 	"github.com/nautilusgames/demo/auth/internal/ent/player"
 	"github.com/nautilusgames/demo/auth/internal/token"
 	"github.com/nautilusgames/demo/auth/internal/tx"
-	walletModel "github.com/nautilusgames/demo/wallet/model"
+	wm "github.com/nautilusgames/demo/wallet/model"
 )
 
 var _expireTokenDuration = 24 * time.Hour
@@ -130,7 +130,7 @@ func handleSignUp(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Ma
 			}
 
 			var body bytes.Buffer
-			err = json.NewEncoder(&body).Encode(walletModel.CreateWalletRequest{
+			err = json.NewEncoder(&body).Encode(wm.CreateWalletRequest{
 				PlayerID: player.ID,
 				Currency: currency,
 			})
@@ -139,7 +139,7 @@ func handleSignUp(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Ma
 				return err
 			}
 
-			url := fmt.Sprintf("%s%s", walletModel.InternalAddress, walletModel.CreateWalletPath)
+			url := fmt.Sprintf("%s%s", wm.InternalAddress, wm.CreateWalletPath)
 			resp, err := http.Post(url, "application/json", &body)
 			if err != nil {
 				logger.Error("failed to post", zap.Error(err))

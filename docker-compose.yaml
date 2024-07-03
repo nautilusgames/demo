@@ -42,15 +42,15 @@ services:
     networks:
       - demo-network
 
-  # demo-web:
-  #   build:
-  #     context: ./web
-  #     dockerfile: ./web/build/Dockerfile
-  #   ports:
-  #     - 8083:3000
-  #   restart: on-failure
-  #   networks:
-  #     - demo-network
+  demo-web:
+    build:
+      context: ./web
+      dockerfile: ./build/Dockerfile
+    ports:
+      - 8083:80
+    restart: on-failure
+    networks:
+      - demo-network
 
 volumes:
   db-volume:

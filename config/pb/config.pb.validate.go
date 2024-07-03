@@ -143,6 +143,12 @@ func (m *Config) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for TenantId
+
+	// no validation rules for TenantApiKey
+
+	// no validation rules for TenantTokenUrl
+
 	if len(errors) > 0 {
 		return ConfigMultiError(errors)
 	}
