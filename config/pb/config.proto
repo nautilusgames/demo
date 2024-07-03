@@ -12,7 +12,7 @@ message Config {
   Database database = 3;
 
   // tenant
-  string tenant_id        = 4;
+  int64 tenant_id         = 4;
   string tenant_api_key   = 5;
   string tenant_token_url = 6;
 }
