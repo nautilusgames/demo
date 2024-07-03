@@ -14,4 +14,3 @@ database:
   name: ${DB_NAME}
   username: ${DB_USERNAME}
   password: ${DB_PASSWORD}
-

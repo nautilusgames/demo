@@ -9,11 +9,11 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/nautilusgames/demo/wallet/internal/ent/player"
+	"github.com/nautilusgames/demo/wallet/internal/ent/wallet"
 )
 
-// Player is the model entity for the Player schema.
-type Player struct {
+// Wallet is the model entity for the Wallet schema.
+type Wallet struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int64 `json:"id,omitempty"`
@@ -29,15 +29,15 @@ type Player struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Player) scanValues(columns []string) ([]any, error) {
+func (*Wallet) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case player.FieldID, player.FieldBalance:
+		case wallet.FieldID, wallet.FieldBalance:
 			values[i] = new(sql.NullInt64)
-		case player.FieldCurrency:
+		case wallet.FieldCurrency:
 			values[i] = new(sql.NullString)
-		case player.FieldCreatedAt, player.FieldUpdatedAt:
+		case wallet.FieldCreatedAt, wallet.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -47,93 +47,93 @@ func (*Player) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Player fields.
-func (pl *Player) assignValues(columns []string, values []any) error {
+// to the Wallet fields.
+func (w *Wallet) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case player.FieldID:
+		case wallet.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			pl.ID = int64(value.Int64)
-		case player.FieldCreatedAt:
+			w.ID = int64(value.Int64)
+		case wallet.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				pl.CreatedAt = value.Time
+				w.CreatedAt = value.Time
 			}
-		case player.FieldUpdatedAt:
+		case wallet.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				pl.UpdatedAt = value.Time
+				w.UpdatedAt = value.Time
 			}
-		case player.FieldCurrency:
+		case wallet.FieldCurrency:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field currency", values[i])
 			} else if value.Valid {
-				pl.Currency = value.String
+				w.Currency = value.String
 			}
-		case player.FieldBalance:
+		case wallet.FieldBalance:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
 			} else if value.Valid {
-				pl.Balance = value.Int64
+				w.Balance = value.Int64
 			}
 		default:
-			pl.selectValues.Set(columns[i], values[i])
+			w.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Player.
+// Value returns the ent.Value that was dynamically selected and assigned to the Wallet.
 // This includes values selected through modifiers, order, etc.
-func (pl *Player) Value(name string) (ent.Value, error) {
-	return pl.selectValues.Get(name)
+func (w *Wallet) Value(name string) (ent.Value, error) {
+	return w.selectValues.Get(name)
 }
 
-// Update returns a builder for updating this Player.
-// Note that you need to call Player.Unwrap() before calling this method if this Player
+// Update returns a builder for updating this Wallet.
+// Note that you need to call Wallet.Unwrap() before calling this method if this Wallet
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (pl *Player) Update() *PlayerUpdateOne {
-	return NewPlayerClient(pl.config).UpdateOne(pl)
+func (w *Wallet) Update() *WalletUpdateOne {
+	return NewWalletClient(w.config).UpdateOne(w)
 }
 
-// Unwrap unwraps the Player entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Wallet entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (pl *Player) Unwrap() *Player {
-	_tx, ok := pl.config.driver.(*txDriver)
+func (w *Wallet) Unwrap() *Wallet {
+	_tx, ok := w.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Player is not a transactional entity")
+		panic("ent: Wallet is not a transactional entity")
 	}
-	pl.config.driver = _tx.drv
-	return pl
+	w.config.driver = _tx.drv
+	return w
 }
 
 // String implements the fmt.Stringer.
-func (pl *Player) String() string {
+func (w *Wallet) String() string {
 	var builder strings.Builder
-	builder.WriteString("Player(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", pl.ID))
+	builder.WriteString("Wallet(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", w.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(pl.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(w.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(pl.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(w.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("currency=")
-	builder.WriteString(pl.Currency)
+	builder.WriteString(w.Currency)
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
-	builder.WriteString(fmt.Sprintf("%v", pl.Balance))
+	builder.WriteString(fmt.Sprintf("%v", w.Balance))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// Players is a parsable slice of Player.
-type Players []*Player
+// Wallets is a parsable slice of Wallet.
+type Wallets []*Wallet

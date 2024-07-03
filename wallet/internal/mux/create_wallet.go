@@ -25,7 +25,7 @@ func httpCreateWallet(logger *zap.Logger, entClient *ent.Client) http.HandlerFun
 			return
 		}
 
-		err := entClient.Player.Create().
+		err := entClient.Wallet.Create().
 			SetID(request.PlayerID).
 			SetCurrency(request.Currency).
 			Exec(r.Context())

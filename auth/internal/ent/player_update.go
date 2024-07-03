@@ -57,6 +57,20 @@ func (pu *PlayerUpdate) SetNillableHashedPassword(s *string) *PlayerUpdate {
 	return pu
 }
 
+// SetCurrency sets the "currency" field.
+func (pu *PlayerUpdate) SetCurrency(s string) *PlayerUpdate {
+	pu.mutation.SetCurrency(s)
+	return pu
+}
+
+// SetNillableCurrency sets the "currency" field if the given value is not nil.
+func (pu *PlayerUpdate) SetNillableCurrency(s *string) *PlayerUpdate {
+	if s != nil {
+		pu.SetCurrency(*s)
+	}
+	return pu
+}
+
 // SetDisplayName sets the "display_name" field.
 func (pu *PlayerUpdate) SetDisplayName(s string) *PlayerUpdate {
 	pu.mutation.SetDisplayName(s)
@@ -151,6 +165,9 @@ func (pu *PlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.HashedPassword(); ok {
 		_spec.SetField(player.FieldHashedPassword, field.TypeString, value)
 	}
+	if value, ok := pu.mutation.Currency(); ok {
+		_spec.SetField(player.FieldCurrency, field.TypeString, value)
+	}
 	if value, ok := pu.mutation.DisplayName(); ok {
 		_spec.SetField(player.FieldDisplayName, field.TypeString, value)
 	}
@@ -203,6 +220,20 @@ func (puo *PlayerUpdateOne) SetHashedPassword(s string) *PlayerUpdateOne {
 func (puo *PlayerUpdateOne) SetNillableHashedPassword(s *string) *PlayerUpdateOne {
 	if s != nil {
 		puo.SetHashedPassword(*s)
+	}
+	return puo
+}
+
+// SetCurrency sets the "currency" field.
+func (puo *PlayerUpdateOne) SetCurrency(s string) *PlayerUpdateOne {
+	puo.mutation.SetCurrency(s)
+	return puo
+}
+
+// SetNillableCurrency sets the "currency" field if the given value is not nil.
+func (puo *PlayerUpdateOne) SetNillableCurrency(s *string) *PlayerUpdateOne {
+	if s != nil {
+		puo.SetCurrency(*s)
 	}
 	return puo
 }
@@ -330,6 +361,9 @@ func (puo *PlayerUpdateOne) sqlSave(ctx context.Context) (_node *Player, err err
 	}
 	if value, ok := puo.mutation.HashedPassword(); ok {
 		_spec.SetField(player.FieldHashedPassword, field.TypeString, value)
+	}
+	if value, ok := puo.mutation.Currency(); ok {
+		_spec.SetField(player.FieldCurrency, field.TypeString, value)
 	}
 	if value, ok := puo.mutation.DisplayName(); ok {
 		_spec.SetField(player.FieldDisplayName, field.TypeString, value)

@@ -27,6 +27,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Fields: map[string]*sqlgraph.FieldSpec{
 			player.FieldUsername:       {Type: field.TypeString, Column: player.FieldUsername},
 			player.FieldHashedPassword: {Type: field.TypeString, Column: player.FieldHashedPassword},
+			player.FieldCurrency:       {Type: field.TypeString, Column: player.FieldCurrency},
 			player.FieldDisplayName:    {Type: field.TypeString, Column: player.FieldDisplayName},
 			player.FieldCreatedAt:      {Type: field.TypeTime, Column: player.FieldCreatedAt},
 		},
@@ -88,6 +89,11 @@ func (f *PlayerFilter) WhereUsername(p entql.StringP) {
 // WhereHashedPassword applies the entql string predicate on the hashed_password field.
 func (f *PlayerFilter) WhereHashedPassword(p entql.StringP) {
 	f.Where(p.Field(player.FieldHashedPassword))
+}
+
+// WhereCurrency applies the entql string predicate on the currency field.
+func (f *PlayerFilter) WhereCurrency(p entql.StringP) {
+	f.Where(p.Field(player.FieldCurrency))
 }
 
 // WhereDisplayName applies the entql string predicate on the display_name field.

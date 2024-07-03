@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/wallet/internal/ent"
-	entplayer "github.com/nautilusgames/demo/wallet/internal/ent/player"
+	entwallet "github.com/nautilusgames/demo/wallet/internal/ent/wallet"
 	"github.com/nautilusgames/demo/wallet/model"
 )
 
@@ -34,8 +34,8 @@ func httpGetWallet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 
 		}
 
-		player, err := entClient.Player.Query().
-			Where(entplayer.ID(request.PlayerID)).
+		player, err := entClient.Wallet.Query().
+			Where(entwallet.ID(request.PlayerID)).
 			Only(r.Context())
 		if err != nil {
 			logger.Error("get player failed", zap.Error(err))

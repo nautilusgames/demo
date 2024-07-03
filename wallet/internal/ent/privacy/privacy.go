@@ -111,30 +111,6 @@ func DenyMutationOperationRule(op ent.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
-// The PlayerQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type PlayerQueryRuleFunc func(context.Context, *ent.PlayerQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f PlayerQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.PlayerQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PlayerQuery", q)
-}
-
-// The PlayerMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type PlayerMutationRuleFunc func(context.Context, *ent.PlayerMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f PlayerMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.PlayerMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PlayerMutation", m)
-}
-
 // The SessionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SessionQueryRuleFunc func(context.Context, *ent.SessionQuery) error
@@ -157,6 +133,30 @@ func (f SessionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SessionMutation", m)
+}
+
+// The WalletQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type WalletQueryRuleFunc func(context.Context, *ent.WalletQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f WalletQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.WalletQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.WalletQuery", q)
+}
+
+// The WalletMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type WalletMutationRuleFunc func(context.Context, *ent.WalletMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f WalletMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.WalletMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.WalletMutation", m)
 }
 
 type (
@@ -194,9 +194,9 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
-	case *ent.PlayerQuery:
-		return q.Filter(), nil
 	case *ent.SessionQuery:
+		return q.Filter(), nil
+	case *ent.WalletQuery:
 		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
@@ -205,9 +205,9 @@ func queryFilter(q ent.Query) (Filter, error) {
 
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
-	case *ent.PlayerMutation:
-		return m.Filter(), nil
 	case *ent.SessionMutation:
+		return m.Filter(), nil
+	case *ent.WalletMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

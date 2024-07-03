@@ -1,15 +1,21 @@
 package mux
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
+
+	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/auth/internal/checker"
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/ent/player"
 	"github.com/nautilusgames/demo/auth/internal/token"
-	"go.uber.org/zap"
+	"github.com/nautilusgames/demo/auth/internal/tx"
+	walletModel "github.com/nautilusgames/demo/wallet/model"
 )
 
 var _expireTokenDuration = 24 * time.Hour
@@ -92,6 +98,8 @@ func handleSignUp(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Ma
 
 		username := r.PostFormValue("username")
 		password := r.PostFormValue("password")
+		currency := r.PostFormValue("currency")
+		token := ""
 
 		if username == "" || password == "" {
 			http.Error(w, "username and password are required", http.StatusBadRequest)
@@ -103,22 +111,51 @@ func handleSignUp(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Ma
 			http.Error(w, "failed to hash password", http.StatusInternalServerError)
 			return
 		}
+		err = tx.WithTx(r.Context(), entClient, func(tx *ent.Tx) error {
+			player, err := tx.Player.
+				Create().
+				SetUsername(username).
+				SetHashedPassword(hashedPassword).
+				SetCurrency(currency).
+				SetDisplayName(username).
+				Save(r.Context())
+			if err != nil {
+				logger.Error("failed to create player", zap.Error(err))
+				return err
+			}
 
-		player, err := entClient.Player.
-			Create().
-			SetUsername(username).
-			SetHashedPassword(hashedPassword).
-			SetDisplayName(username).
-			Save(r.Context())
+			token, _, err = tokenMaker.CreateToken(player.ID, player.Username, _expireTokenDuration)
+			if err != nil {
+				return err
+			}
+
+			var body bytes.Buffer
+			err = json.NewEncoder(&body).Encode(walletModel.CreateWalletRequest{
+				PlayerID: player.ID,
+				Currency: currency,
+			})
+			if err != nil {
+				logger.Error("failed to encode body", zap.Error(err))
+				return err
+			}
+
+			url := fmt.Sprintf("%s%s", walletModel.InternalAddress, walletModel.CreateWalletPath)
+			resp, err := http.Post(url, "application/json", &body)
+			if err != nil {
+				logger.Error("failed to posst", zap.Error(err))
+				return err
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+				logger.Error("status code", zap.Any("code", resp.StatusCode))
+				return errors.New("failed to create wallet")
+			}
+
+			return nil
+		})
 		if err != nil {
-			logger.Error("failed to create player", zap.Error(err))
 			http.Error(w, "failed to create player", http.StatusInternalServerError)
-			return
-		}
-
-		token, _, err := tokenMaker.CreateToken(player.ID, player.Username, _expireTokenDuration)
-		if err != nil {
-			http.Error(w, "failed to create token", http.StatusInternalServerError)
 			return
 		}
 

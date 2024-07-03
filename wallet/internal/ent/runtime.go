@@ -5,8 +5,8 @@ package ent
 import (
 	"time"
 
-	"github.com/nautilusgames/demo/wallet/internal/ent/player"
 	"github.com/nautilusgames/demo/wallet/internal/ent/session"
+	"github.com/nautilusgames/demo/wallet/internal/ent/wallet"
 	"github.com/nautilusgames/demo/wallet/schema"
 )
 
@@ -14,27 +14,6 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	playerMixin := schema.Player{}.Mixin()
-	playerMixinFields0 := playerMixin[0].Fields()
-	_ = playerMixinFields0
-	playerFields := schema.Player{}.Fields()
-	_ = playerFields
-	// playerDescCreatedAt is the schema descriptor for created_at field.
-	playerDescCreatedAt := playerMixinFields0[1].Descriptor()
-	// player.DefaultCreatedAt holds the default value on creation for the created_at field.
-	player.DefaultCreatedAt = playerDescCreatedAt.Default.(func() time.Time)
-	// playerDescUpdatedAt is the schema descriptor for updated_at field.
-	playerDescUpdatedAt := playerMixinFields0[2].Descriptor()
-	// player.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	player.DefaultUpdatedAt = playerDescUpdatedAt.Default.(func() time.Time)
-	// player.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	player.UpdateDefaultUpdatedAt = playerDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// playerDescBalance is the schema descriptor for balance field.
-	playerDescBalance := playerFields[1].Descriptor()
-	// player.DefaultBalance holds the default value on creation for the balance field.
-	player.DefaultBalance = playerDescBalance.Default.(int64)
-	// player.BalanceValidator is a validator for the "balance" field. It is called by the builders before save.
-	player.BalanceValidator = playerDescBalance.Validators[0].(func(int64) error)
 	sessionMixin := schema.Session{}.Mixin()
 	sessionMixinFields0 := sessionMixin[0].Fields()
 	_ = sessionMixinFields0
@@ -50,4 +29,25 @@ func init() {
 	session.DefaultUpdatedAt = sessionDescUpdatedAt.Default.(func() time.Time)
 	// session.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	session.UpdateDefaultUpdatedAt = sessionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	walletMixin := schema.Wallet{}.Mixin()
+	walletMixinFields0 := walletMixin[0].Fields()
+	_ = walletMixinFields0
+	walletFields := schema.Wallet{}.Fields()
+	_ = walletFields
+	// walletDescCreatedAt is the schema descriptor for created_at field.
+	walletDescCreatedAt := walletMixinFields0[1].Descriptor()
+	// wallet.DefaultCreatedAt holds the default value on creation for the created_at field.
+	wallet.DefaultCreatedAt = walletDescCreatedAt.Default.(func() time.Time)
+	// walletDescUpdatedAt is the schema descriptor for updated_at field.
+	walletDescUpdatedAt := walletMixinFields0[2].Descriptor()
+	// wallet.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	wallet.DefaultUpdatedAt = walletDescUpdatedAt.Default.(func() time.Time)
+	// wallet.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	wallet.UpdateDefaultUpdatedAt = walletDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// walletDescBalance is the schema descriptor for balance field.
+	walletDescBalance := walletFields[1].Descriptor()
+	// wallet.DefaultBalance holds the default value on creation for the balance field.
+	wallet.DefaultBalance = walletDescBalance.Default.(int64)
+	// wallet.BalanceValidator is a validator for the "balance" field. It is called by the builders before save.
+	wallet.BalanceValidator = walletDescBalance.Validators[0].(func(int64) error)
 }

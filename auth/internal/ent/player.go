@@ -21,6 +21,8 @@ type Player struct {
 	Username string `json:"username,omitempty"`
 	// HashedPassword holds the value of the "hashed_password" field.
 	HashedPassword string `json:"hashed_password,omitempty"`
+	// Currency holds the value of the "currency" field.
+	Currency string `json:"currency,omitempty"`
 	// DisplayName holds the value of the "display_name" field.
 	DisplayName string `json:"display_name,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -35,7 +37,7 @@ func (*Player) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case player.FieldID:
 			values[i] = new(sql.NullInt64)
-		case player.FieldUsername, player.FieldHashedPassword, player.FieldDisplayName:
+		case player.FieldUsername, player.FieldHashedPassword, player.FieldCurrency, player.FieldDisplayName:
 			values[i] = new(sql.NullString)
 		case player.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -71,6 +73,12 @@ func (pl *Player) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field hashed_password", values[i])
 			} else if value.Valid {
 				pl.HashedPassword = value.String
+			}
+		case player.FieldCurrency:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field currency", values[i])
+			} else if value.Valid {
+				pl.Currency = value.String
 			}
 		case player.FieldDisplayName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -125,6 +133,9 @@ func (pl *Player) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("hashed_password=")
 	builder.WriteString(pl.HashedPassword)
+	builder.WriteString(", ")
+	builder.WriteString("currency=")
+	builder.WriteString(pl.Currency)
 	builder.WriteString(", ")
 	builder.WriteString("display_name=")
 	builder.WriteString(pl.DisplayName)
