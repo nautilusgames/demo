@@ -142,7 +142,7 @@ func handleSignUp(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Ma
 			url := fmt.Sprintf("%s%s", walletModel.InternalAddress, walletModel.CreateWalletPath)
 			resp, err := http.Post(url, "application/json", &body)
 			if err != nil {
-				logger.Error("failed to posst", zap.Error(err))
+				logger.Error("failed to post", zap.Error(err))
 				return err
 			}
 			defer resp.Body.Close()

@@ -1,7 +1,7 @@
 package model
 
 const (
-	InternalAddress  = "0.0.0.0:8082"
+	InternalAddress  = "http://demo-wallet:8082"
 	CreateWalletPath = "/api/v1/wallet/create-wallet"
 	TransferPath     = "/api/v1/wallet/transfer"
 	GetWalletPath    = "/api/v1/wallet/get-wallet"
