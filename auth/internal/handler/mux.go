@@ -39,7 +39,7 @@ func New(
 	handler := corsMiddleware(mux)
 
 	mux.HandleFunc("/status", httpHealth())
-	mux.HandleFunc("/api/v1/player/verify", httpAuth(logger))
+	mux.HandleFunc("/api/v1/player/verify", s.handleVerifyPlayer())
 	mux.HandleFunc("/api/v1/signin", s.handleSignIn())
 	mux.HandleFunc("/api/v1/signup", s.handleSignUp())
 	mux.HandleFunc("/api/v1/create-tenant-token", s.handleCreateTenantToken())

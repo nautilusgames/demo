@@ -27,7 +27,7 @@ func (s *httpServer) handleCreateTenantToken() http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "{\"tenant-token\": \"%s\"}", tenantToken)
+		fmt.Fprintf(w, "{\"tenant_id\": \"%d\",\"tenant-token\": \"%s\"}", s.cfg.GetTenantId(), tenantToken)
 	}
 }
 
