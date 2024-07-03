@@ -14,8 +14,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
-	"github.com/nautilusgames/demo/wallet/internal/ent/player"
 	"github.com/nautilusgames/demo/wallet/internal/ent/session"
+	"github.com/nautilusgames/demo/wallet/internal/ent/wallet"
 )
 
 // Client is the client that holds all ent builders.
@@ -23,10 +23,10 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Player is the client for interacting with the Player builders.
-	Player *PlayerClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
+	// Wallet is the client for interacting with the Wallet builders.
+	Wallet *WalletClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -38,8 +38,8 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Player = NewPlayerClient(c.config)
 	c.Session = NewSessionClient(c.config)
+	c.Wallet = NewWalletClient(c.config)
 }
 
 type (
@@ -132,8 +132,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:     ctx,
 		config:  cfg,
-		Player:  NewPlayerClient(cfg),
 		Session: NewSessionClient(cfg),
+		Wallet:  NewWalletClient(cfg),
 	}, nil
 }
 
@@ -153,15 +153,15 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:     ctx,
 		config:  cfg,
-		Player:  NewPlayerClient(cfg),
 		Session: NewSessionClient(cfg),
+		Wallet:  NewWalletClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Player.
+//		Session.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -183,159 +183,26 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Player.Use(hooks...)
 	c.Session.Use(hooks...)
+	c.Wallet.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.Player.Intercept(interceptors...)
 	c.Session.Intercept(interceptors...)
+	c.Wallet.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
-	case *PlayerMutation:
-		return c.Player.mutate(ctx, m)
 	case *SessionMutation:
 		return c.Session.mutate(ctx, m)
+	case *WalletMutation:
+		return c.Wallet.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
-	}
-}
-
-// PlayerClient is a client for the Player schema.
-type PlayerClient struct {
-	config
-}
-
-// NewPlayerClient returns a client for the Player from the given config.
-func NewPlayerClient(c config) *PlayerClient {
-	return &PlayerClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `player.Hooks(f(g(h())))`.
-func (c *PlayerClient) Use(hooks ...Hook) {
-	c.hooks.Player = append(c.hooks.Player, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `player.Intercept(f(g(h())))`.
-func (c *PlayerClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Player = append(c.inters.Player, interceptors...)
-}
-
-// Create returns a builder for creating a Player entity.
-func (c *PlayerClient) Create() *PlayerCreate {
-	mutation := newPlayerMutation(c.config, OpCreate)
-	return &PlayerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Player entities.
-func (c *PlayerClient) CreateBulk(builders ...*PlayerCreate) *PlayerCreateBulk {
-	return &PlayerCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *PlayerClient) MapCreateBulk(slice any, setFunc func(*PlayerCreate, int)) *PlayerCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &PlayerCreateBulk{err: fmt.Errorf("calling to PlayerClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*PlayerCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &PlayerCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Player.
-func (c *PlayerClient) Update() *PlayerUpdate {
-	mutation := newPlayerMutation(c.config, OpUpdate)
-	return &PlayerUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *PlayerClient) UpdateOne(pl *Player) *PlayerUpdateOne {
-	mutation := newPlayerMutation(c.config, OpUpdateOne, withPlayer(pl))
-	return &PlayerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *PlayerClient) UpdateOneID(id int64) *PlayerUpdateOne {
-	mutation := newPlayerMutation(c.config, OpUpdateOne, withPlayerID(id))
-	return &PlayerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Player.
-func (c *PlayerClient) Delete() *PlayerDelete {
-	mutation := newPlayerMutation(c.config, OpDelete)
-	return &PlayerDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *PlayerClient) DeleteOne(pl *Player) *PlayerDeleteOne {
-	return c.DeleteOneID(pl.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PlayerClient) DeleteOneID(id int64) *PlayerDeleteOne {
-	builder := c.Delete().Where(player.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &PlayerDeleteOne{builder}
-}
-
-// Query returns a query builder for Player.
-func (c *PlayerClient) Query() *PlayerQuery {
-	return &PlayerQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypePlayer},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Player entity by its id.
-func (c *PlayerClient) Get(ctx context.Context, id int64) (*Player, error) {
-	return c.Query().Where(player.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *PlayerClient) GetX(ctx context.Context, id int64) *Player {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *PlayerClient) Hooks() []Hook {
-	return c.hooks.Player
-}
-
-// Interceptors returns the client interceptors.
-func (c *PlayerClient) Interceptors() []Interceptor {
-	return c.inters.Player
-}
-
-func (c *PlayerClient) mutate(ctx context.Context, m *PlayerMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&PlayerCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&PlayerUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&PlayerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&PlayerDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown Player mutation op: %q", m.Op())
 	}
 }
 
@@ -472,12 +339,145 @@ func (c *SessionClient) mutate(ctx context.Context, m *SessionMutation) (Value, 
 	}
 }
 
+// WalletClient is a client for the Wallet schema.
+type WalletClient struct {
+	config
+}
+
+// NewWalletClient returns a client for the Wallet from the given config.
+func NewWalletClient(c config) *WalletClient {
+	return &WalletClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `wallet.Hooks(f(g(h())))`.
+func (c *WalletClient) Use(hooks ...Hook) {
+	c.hooks.Wallet = append(c.hooks.Wallet, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `wallet.Intercept(f(g(h())))`.
+func (c *WalletClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Wallet = append(c.inters.Wallet, interceptors...)
+}
+
+// Create returns a builder for creating a Wallet entity.
+func (c *WalletClient) Create() *WalletCreate {
+	mutation := newWalletMutation(c.config, OpCreate)
+	return &WalletCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Wallet entities.
+func (c *WalletClient) CreateBulk(builders ...*WalletCreate) *WalletCreateBulk {
+	return &WalletCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *WalletClient) MapCreateBulk(slice any, setFunc func(*WalletCreate, int)) *WalletCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &WalletCreateBulk{err: fmt.Errorf("calling to WalletClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*WalletCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &WalletCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Wallet.
+func (c *WalletClient) Update() *WalletUpdate {
+	mutation := newWalletMutation(c.config, OpUpdate)
+	return &WalletUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *WalletClient) UpdateOne(w *Wallet) *WalletUpdateOne {
+	mutation := newWalletMutation(c.config, OpUpdateOne, withWallet(w))
+	return &WalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *WalletClient) UpdateOneID(id int64) *WalletUpdateOne {
+	mutation := newWalletMutation(c.config, OpUpdateOne, withWalletID(id))
+	return &WalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Wallet.
+func (c *WalletClient) Delete() *WalletDelete {
+	mutation := newWalletMutation(c.config, OpDelete)
+	return &WalletDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *WalletClient) DeleteOne(w *Wallet) *WalletDeleteOne {
+	return c.DeleteOneID(w.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *WalletClient) DeleteOneID(id int64) *WalletDeleteOne {
+	builder := c.Delete().Where(wallet.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &WalletDeleteOne{builder}
+}
+
+// Query returns a query builder for Wallet.
+func (c *WalletClient) Query() *WalletQuery {
+	return &WalletQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeWallet},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Wallet entity by its id.
+func (c *WalletClient) Get(ctx context.Context, id int64) (*Wallet, error) {
+	return c.Query().Where(wallet.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *WalletClient) GetX(ctx context.Context, id int64) *Wallet {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *WalletClient) Hooks() []Hook {
+	return c.hooks.Wallet
+}
+
+// Interceptors returns the client interceptors.
+func (c *WalletClient) Interceptors() []Interceptor {
+	return c.inters.Wallet
+}
+
+func (c *WalletClient) mutate(ctx context.Context, m *WalletMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&WalletCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&WalletUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&WalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&WalletDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Wallet mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Player, Session []ent.Hook
+		Session, Wallet []ent.Hook
 	}
 	inters struct {
-		Player, Session []ent.Interceptor
+		Session, Wallet []ent.Interceptor
 	}
 )

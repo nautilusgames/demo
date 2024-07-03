@@ -19,6 +19,8 @@ func (Player) Fields() []ent.Field {
 		field.String("username").Unique(),
 		field.String("hashed_password").NotEmpty(),
 
+		field.String("currency"),
+
 		field.String("display_name"),
 
 		field.Time("created_at").Default(time.Now),

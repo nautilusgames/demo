@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"time"
 
+	"entgo.io/ent/dialect/sql/schema"
 	_ "github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
 
@@ -53,7 +54,7 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed opening connection to mysql", zap.Error(err))
 	}
 	defer entClient.Close()
-	if err := entClient.Schema.Create(context.Background()); err != nil {
+	if err := entClient.Schema.Create(context.Background(), schema.WithDropColumn(true)); err != nil {
 		logger.Fatal("failed creating schema resources", zap.Error(err))
 	}
 

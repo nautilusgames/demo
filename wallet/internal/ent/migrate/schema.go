@@ -8,20 +8,6 @@ import (
 )
 
 var (
-	// PlayersColumns holds the columns for the "players" table.
-	PlayersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "currency", Type: field.TypeString},
-		{Name: "balance", Type: field.TypeInt64, Default: 0},
-	}
-	// PlayersTable holds the schema information for the "players" table.
-	PlayersTable = &schema.Table{
-		Name:       "players",
-		Columns:    PlayersColumns,
-		PrimaryKey: []*schema.Column{PlayersColumns[0]},
-	}
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -42,10 +28,24 @@ var (
 		Columns:    SessionsColumns,
 		PrimaryKey: []*schema.Column{SessionsColumns[0]},
 	}
+	// WalletsColumns holds the columns for the "wallets" table.
+	WalletsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "currency", Type: field.TypeString},
+		{Name: "balance", Type: field.TypeInt64, Default: 0},
+	}
+	// WalletsTable holds the schema information for the "wallets" table.
+	WalletsTable = &schema.Table{
+		Name:       "wallets",
+		Columns:    WalletsColumns,
+		PrimaryKey: []*schema.Column{WalletsColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		PlayersTable,
 		SessionsTable,
+		WalletsTable,
 	}
 )
 

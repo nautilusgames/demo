@@ -35,6 +35,7 @@ type PlayerMutation struct {
 	id              *int64
 	username        *string
 	hashed_password *string
+	currency        *string
 	display_name    *string
 	created_at      *time.Time
 	clearedFields   map[string]struct{}
@@ -219,6 +220,42 @@ func (m *PlayerMutation) ResetHashedPassword() {
 	m.hashed_password = nil
 }
 
+// SetCurrency sets the "currency" field.
+func (m *PlayerMutation) SetCurrency(s string) {
+	m.currency = &s
+}
+
+// Currency returns the value of the "currency" field in the mutation.
+func (m *PlayerMutation) Currency() (r string, exists bool) {
+	v := m.currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrency returns the old "currency" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldCurrency(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrency: %w", err)
+	}
+	return oldValue.Currency, nil
+}
+
+// ResetCurrency resets all changes to the "currency" field.
+func (m *PlayerMutation) ResetCurrency() {
+	m.currency = nil
+}
+
 // SetDisplayName sets the "display_name" field.
 func (m *PlayerMutation) SetDisplayName(s string) {
 	m.display_name = &s
@@ -325,12 +362,15 @@ func (m *PlayerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PlayerMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.username != nil {
 		fields = append(fields, player.FieldUsername)
 	}
 	if m.hashed_password != nil {
 		fields = append(fields, player.FieldHashedPassword)
+	}
+	if m.currency != nil {
+		fields = append(fields, player.FieldCurrency)
 	}
 	if m.display_name != nil {
 		fields = append(fields, player.FieldDisplayName)
@@ -350,6 +390,8 @@ func (m *PlayerMutation) Field(name string) (ent.Value, bool) {
 		return m.Username()
 	case player.FieldHashedPassword:
 		return m.HashedPassword()
+	case player.FieldCurrency:
+		return m.Currency()
 	case player.FieldDisplayName:
 		return m.DisplayName()
 	case player.FieldCreatedAt:
@@ -367,6 +409,8 @@ func (m *PlayerMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldUsername(ctx)
 	case player.FieldHashedPassword:
 		return m.OldHashedPassword(ctx)
+	case player.FieldCurrency:
+		return m.OldCurrency(ctx)
 	case player.FieldDisplayName:
 		return m.OldDisplayName(ctx)
 	case player.FieldCreatedAt:
@@ -393,6 +437,13 @@ func (m *PlayerMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetHashedPassword(v)
+		return nil
+	case player.FieldCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrency(v)
 		return nil
 	case player.FieldDisplayName:
 		v, ok := value.(string)
@@ -462,6 +513,9 @@ func (m *PlayerMutation) ResetField(name string) error {
 		return nil
 	case player.FieldHashedPassword:
 		m.ResetHashedPassword()
+		return nil
+	case player.FieldCurrency:
+		m.ResetCurrency()
 		return nil
 	case player.FieldDisplayName:
 		m.ResetDisplayName()

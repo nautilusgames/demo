@@ -13,6 +13,7 @@ var (
 		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "username", Type: field.TypeString, Unique: true},
 		{Name: "hashed_password", Type: field.TypeString},
+		{Name: "currency", Type: field.TypeString},
 		{Name: "display_name", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 	}

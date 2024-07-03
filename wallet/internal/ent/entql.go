@@ -3,8 +3,8 @@
 package ent
 
 import (
-	"github.com/nautilusgames/demo/wallet/internal/ent/player"
 	"github.com/nautilusgames/demo/wallet/internal/ent/session"
+	"github.com/nautilusgames/demo/wallet/internal/ent/wallet"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -16,23 +16,6 @@ import (
 var schemaGraph = func() *sqlgraph.Schema {
 	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 2)}
 	graph.Nodes[0] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
-			Table:   player.Table,
-			Columns: player.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt64,
-				Column: player.FieldID,
-			},
-		},
-		Type: "Player",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			player.FieldCreatedAt: {Type: field.TypeTime, Column: player.FieldCreatedAt},
-			player.FieldUpdatedAt: {Type: field.TypeTime, Column: player.FieldUpdatedAt},
-			player.FieldCurrency:  {Type: field.TypeString, Column: player.FieldCurrency},
-			player.FieldBalance:   {Type: field.TypeInt64, Column: player.FieldBalance},
-		},
-	}
-	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   session.Table,
 			Columns: session.Columns,
@@ -55,6 +38,23 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldNewBalance: {Type: field.TypeInt64, Column: session.FieldNewBalance},
 		},
 	}
+	graph.Nodes[1] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   wallet.Table,
+			Columns: wallet.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt64,
+				Column: wallet.FieldID,
+			},
+		},
+		Type: "Wallet",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			wallet.FieldCreatedAt: {Type: field.TypeTime, Column: wallet.FieldCreatedAt},
+			wallet.FieldUpdatedAt: {Type: field.TypeTime, Column: wallet.FieldUpdatedAt},
+			wallet.FieldCurrency:  {Type: field.TypeString, Column: wallet.FieldCurrency},
+			wallet.FieldBalance:   {Type: field.TypeInt64, Column: wallet.FieldBalance},
+		},
+	}
 	return graph
 }()
 
@@ -62,66 +62,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 // All update, update-one and query builders implement this interface.
 type predicateAdder interface {
 	addPredicate(func(s *sql.Selector))
-}
-
-// addPredicate implements the predicateAdder interface.
-func (pq *PlayerQuery) addPredicate(pred func(s *sql.Selector)) {
-	pq.predicates = append(pq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the PlayerQuery builder.
-func (pq *PlayerQuery) Filter() *PlayerFilter {
-	return &PlayerFilter{config: pq.config, predicateAdder: pq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *PlayerMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the PlayerMutation builder.
-func (m *PlayerMutation) Filter() *PlayerFilter {
-	return &PlayerFilter{config: m.config, predicateAdder: m}
-}
-
-// PlayerFilter provides a generic filtering capability at runtime for PlayerQuery.
-type PlayerFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *PlayerFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql int64 predicate on the id field.
-func (f *PlayerFilter) WhereID(p entql.Int64P) {
-	f.Where(p.Field(player.FieldID))
-}
-
-// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *PlayerFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(player.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *PlayerFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(player.FieldUpdatedAt))
-}
-
-// WhereCurrency applies the entql string predicate on the currency field.
-func (f *PlayerFilter) WhereCurrency(p entql.StringP) {
-	f.Where(p.Field(player.FieldCurrency))
-}
-
-// WhereBalance applies the entql int64 predicate on the balance field.
-func (f *PlayerFilter) WhereBalance(p entql.Int64P) {
-	f.Where(p.Field(player.FieldBalance))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -153,7 +93,7 @@ type SessionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SessionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -212,4 +152,64 @@ func (f *SessionFilter) WhereChange(p entql.Int64P) {
 // WhereNewBalance applies the entql int64 predicate on the new_balance field.
 func (f *SessionFilter) WhereNewBalance(p entql.Int64P) {
 	f.Where(p.Field(session.FieldNewBalance))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (wq *WalletQuery) addPredicate(pred func(s *sql.Selector)) {
+	wq.predicates = append(wq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the WalletQuery builder.
+func (wq *WalletQuery) Filter() *WalletFilter {
+	return &WalletFilter{config: wq.config, predicateAdder: wq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *WalletMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the WalletMutation builder.
+func (m *WalletMutation) Filter() *WalletFilter {
+	return &WalletFilter{config: m.config, predicateAdder: m}
+}
+
+// WalletFilter provides a generic filtering capability at runtime for WalletQuery.
+type WalletFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *WalletFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int64 predicate on the id field.
+func (f *WalletFilter) WhereID(p entql.Int64P) {
+	f.Where(p.Field(wallet.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *WalletFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(wallet.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *WalletFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(wallet.FieldUpdatedAt))
+}
+
+// WhereCurrency applies the entql string predicate on the currency field.
+func (f *WalletFilter) WhereCurrency(p entql.StringP) {
+	f.Where(p.Field(wallet.FieldCurrency))
+}
+
+// WhereBalance applies the entql int64 predicate on the balance field.
+func (f *WalletFilter) WhereBalance(p entql.Int64P) {
+	f.Where(p.Field(wallet.FieldBalance))
 }

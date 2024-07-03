@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/wallet/internal/ent"
-	entplayer "github.com/nautilusgames/demo/wallet/internal/ent/player"
+	entwallet "github.com/nautilusgames/demo/wallet/internal/ent/wallet"
 	"github.com/nautilusgames/demo/wallet/internal/tx"
 	"github.com/nautilusgames/demo/wallet/model"
 )
@@ -37,8 +37,8 @@ func httpTransfer(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 			transaction model.Transaction
 		)
 		err := tx.WithTx(r.Context(), entClient, func(tx *ent.Tx) error {
-			p, err := tx.Player.Query().
-				Where(entplayer.ID(request.PlayerID)).
+			p, err := tx.Wallet.Query().
+				Where(entwallet.ID(request.PlayerID)).
 				ForUpdate().
 				Only(r.Context())
 			if err != nil {
@@ -71,8 +71,8 @@ func httpTransfer(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 				return nil
 			}
 
-			err = tx.Player.Update().
-				Where(entplayer.ID(p.ID)).
+			err = tx.Wallet.Update().
+				Where(entwallet.ID(p.ID)).
 				SetBalance(p.Balance).
 				Exec(r.Context())
 			if err != nil {

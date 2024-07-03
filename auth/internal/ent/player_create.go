@@ -34,6 +34,12 @@ func (pc *PlayerCreate) SetHashedPassword(s string) *PlayerCreate {
 	return pc
 }
 
+// SetCurrency sets the "currency" field.
+func (pc *PlayerCreate) SetCurrency(s string) *PlayerCreate {
+	pc.mutation.SetCurrency(s)
+	return pc
+}
+
 // SetDisplayName sets the "display_name" field.
 func (pc *PlayerCreate) SetDisplayName(s string) *PlayerCreate {
 	pc.mutation.SetDisplayName(s)
@@ -114,6 +120,9 @@ func (pc *PlayerCreate) check() error {
 			return &ValidationError{Name: "hashed_password", err: fmt.Errorf(`ent: validator failed for field "Player.hashed_password": %w`, err)}
 		}
 	}
+	if _, ok := pc.mutation.Currency(); !ok {
+		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required field "Player.currency"`)}
+	}
 	if _, ok := pc.mutation.DisplayName(); !ok {
 		return &ValidationError{Name: "display_name", err: errors.New(`ent: missing required field "Player.display_name"`)}
 	}
@@ -160,6 +169,10 @@ func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.HashedPassword(); ok {
 		_spec.SetField(player.FieldHashedPassword, field.TypeString, value)
 		_node.HashedPassword = value
+	}
+	if value, ok := pc.mutation.Currency(); ok {
+		_spec.SetField(player.FieldCurrency, field.TypeString, value)
+		_node.Currency = value
 	}
 	if value, ok := pc.mutation.DisplayName(); ok {
 		_spec.SetField(player.FieldDisplayName, field.TypeString, value)
@@ -242,6 +255,18 @@ func (u *PlayerUpsert) SetHashedPassword(v string) *PlayerUpsert {
 // UpdateHashedPassword sets the "hashed_password" field to the value that was provided on create.
 func (u *PlayerUpsert) UpdateHashedPassword() *PlayerUpsert {
 	u.SetExcluded(player.FieldHashedPassword)
+	return u
+}
+
+// SetCurrency sets the "currency" field.
+func (u *PlayerUpsert) SetCurrency(v string) *PlayerUpsert {
+	u.Set(player.FieldCurrency, v)
+	return u
+}
+
+// UpdateCurrency sets the "currency" field to the value that was provided on create.
+func (u *PlayerUpsert) UpdateCurrency() *PlayerUpsert {
+	u.SetExcluded(player.FieldCurrency)
 	return u
 }
 
@@ -342,6 +367,20 @@ func (u *PlayerUpsertOne) SetHashedPassword(v string) *PlayerUpsertOne {
 func (u *PlayerUpsertOne) UpdateHashedPassword() *PlayerUpsertOne {
 	return u.Update(func(s *PlayerUpsert) {
 		s.UpdateHashedPassword()
+	})
+}
+
+// SetCurrency sets the "currency" field.
+func (u *PlayerUpsertOne) SetCurrency(v string) *PlayerUpsertOne {
+	return u.Update(func(s *PlayerUpsert) {
+		s.SetCurrency(v)
+	})
+}
+
+// UpdateCurrency sets the "currency" field to the value that was provided on create.
+func (u *PlayerUpsertOne) UpdateCurrency() *PlayerUpsertOne {
+	return u.Update(func(s *PlayerUpsert) {
+		s.UpdateCurrency()
 	})
 }
 
@@ -612,6 +651,20 @@ func (u *PlayerUpsertBulk) SetHashedPassword(v string) *PlayerUpsertBulk {
 func (u *PlayerUpsertBulk) UpdateHashedPassword() *PlayerUpsertBulk {
 	return u.Update(func(s *PlayerUpsert) {
 		s.UpdateHashedPassword()
+	})
+}
+
+// SetCurrency sets the "currency" field.
+func (u *PlayerUpsertBulk) SetCurrency(v string) *PlayerUpsertBulk {
+	return u.Update(func(s *PlayerUpsert) {
+		s.SetCurrency(v)
+	})
+}
+
+// UpdateCurrency sets the "currency" field to the value that was provided on create.
+func (u *PlayerUpsertBulk) UpdateCurrency() *PlayerUpsertBulk {
+	return u.Update(func(s *PlayerUpsert) {
+		s.UpdateCurrency()
 	})
 }
 
