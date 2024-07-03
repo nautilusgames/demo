@@ -10,6 +10,9 @@ message Config {
   Listener listener = 1;
   Logger logger     = 2;
   Database database = 3;
+  string tenant_id  = 4;
+  string api_key    = 5;
+  string token_url  = 6;
 }
 
 message Logger {

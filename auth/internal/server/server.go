@@ -48,7 +48,6 @@ func RunWithConfig(cfg *pb.Config) {
 		cfg.GetDatabase().GetPort(),
 		cfg.GetDatabase().GetName(),
 	)
-	logger.Info("---", zap.Any("db", cfg.GetDatabase()), zap.Any("dsn", dsn))
 	entClient, err := ent.Open("mysql", dsn)
 	if err != nil {
 		logger.Fatal("failed opening connection to mysql", zap.Error(err))
@@ -64,7 +63,7 @@ func RunWithConfig(cfg *pb.Config) {
 	}
 
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
-	mux := mux.New(logger, entClient, tokenMaker)
+	mux := mux.New(logger, cfg, entClient, tokenMaker)
 	server := &http.Server{
 		Addr:    address,
 		Handler: mux,
