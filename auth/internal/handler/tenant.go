@@ -1,4 +1,4 @@
-package mux
+package handler
 
 import (
 	"context"
@@ -37,7 +37,7 @@ func (s *httpServer) createToken(ctx context.Context) (string, error) {
 		s.logger.Error("create request failed", zap.Error(err))
 		return "", err
 	}
-	req.Header.Set("x-tenant-id", s.cfg.GetTenantId())
+	req.Header.Set("x-tenant-id", fmt.Sprintf("%d", s.cfg.GetTenantId()))
 	req.Header.Set("x-api-key", s.cfg.GetTenantApiKey())
 
 	resp, err := http.DefaultClient.Do(req)

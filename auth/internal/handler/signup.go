@@ -1,16 +1,15 @@
-package mux
+package handler
 
 import (
 	"fmt"
 	"net/http"
 
-	"github.com/nautilusgames/demo/auth/internal/checker"
-	"github.com/nautilusgames/demo/auth/internal/ent"
-	"github.com/nautilusgames/demo/auth/internal/ent/player"
 	"go.uber.org/zap"
+
+	"github.com/nautilusgames/demo/auth/internal/checker"
 )
 
-func (s *httpServer) handleSignIn() http.HandlerFunc {
+func (s *httpServer) handleSignUp() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -25,22 +24,21 @@ func (s *httpServer) handleSignIn() http.HandlerFunc {
 			return
 		}
 
-		player, err := s.entClient.Player.
-			Query().
-			Where(player.Username(username)).
-			Only(r.Context())
+		hashedPassword, err := checker.HashPassword(password)
 		if err != nil {
-			if ent.IsNotFound(err) {
-				http.Error(w, "invalid username or password", http.StatusUnauthorized)
-				return
-			}
-			s.logger.Error("failed to query player", zap.Error(err))
-			http.Error(w, "failed to query player", http.StatusInternalServerError)
+			http.Error(w, "failed to hash password", http.StatusInternalServerError)
 			return
 		}
 
-		if err := checker.CheckPassword(password, player.HashedPassword); err != nil {
-			http.Error(w, "invalid username or password", http.StatusUnauthorized)
+		player, err := s.entClient.Player.
+			Create().
+			SetUsername(username).
+			SetHashedPassword(hashedPassword).
+			SetDisplayName(username).
+			Save(r.Context())
+		if err != nil {
+			s.logger.Error("failed to create player", zap.Error(err))
+			http.Error(w, "failed to create player", http.StatusInternalServerError)
 			return
 		}
 
