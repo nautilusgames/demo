@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/auth/internal/ent"
-	"github.com/nautilusgames/demo/auth/internal/mux"
+	"github.com/nautilusgames/demo/auth/internal/handler"
 	"github.com/nautilusgames/demo/auth/internal/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
@@ -48,7 +48,6 @@ func RunWithConfig(cfg *pb.Config) {
 		cfg.GetDatabase().GetPort(),
 		cfg.GetDatabase().GetName(),
 	)
-	logger.Info("---", zap.Any("db", cfg.GetDatabase()), zap.Any("dsn", dsn))
 	entClient, err := ent.Open("mysql", dsn)
 	if err != nil {
 		logger.Fatal("failed opening connection to mysql", zap.Error(err))
@@ -64,10 +63,10 @@ func RunWithConfig(cfg *pb.Config) {
 	}
 
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
-	mux := mux.New(logger, entClient, tokenMaker)
+	handler := handler.New(logger, cfg, entClient, tokenMaker)
 	server := &http.Server{
 		Addr:    address,
-		Handler: mux,
+		Handler: handler,
 	}
 
 	serverCh := make(chan struct{})
