@@ -18,6 +18,7 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 
 		username := r.PostFormValue("username")
 		password := r.PostFormValue("password")
+		currency := r.PostFormValue("currency")
 
 		if username == "" || password == "" {
 			http.Error(w, "username and password are required", http.StatusBadRequest)
@@ -35,6 +36,7 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 			SetUsername(username).
 			SetHashedPassword(hashedPassword).
 			SetDisplayName(username).
+			SetCurrency(currency).
 			Save(r.Context())
 		if err != nil {
 			s.logger.Error("failed to create player", zap.Error(err))
