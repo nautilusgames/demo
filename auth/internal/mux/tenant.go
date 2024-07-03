@@ -19,7 +19,7 @@ func (s *httpServer) handleCreateTenantToken() http.HandlerFunc {
 			return
 		}
 
-		tenantToken, err := s.createToken(r.Context(), s.cfg.TenantId, s.cfg.ApiKey)
+		tenantToken, err := s.createToken(r.Context())
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -31,14 +31,14 @@ func (s *httpServer) handleCreateTenantToken() http.HandlerFunc {
 	}
 }
 
-func (s *httpServer) createToken(ctx context.Context, tenantID, apiKey string) (string, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.cfg.TokenUrl, nil)
+func (s *httpServer) createToken(ctx context.Context) (string, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.cfg.GetTenantTokenUrl(), nil)
 	if err != nil {
 		s.logger.Error("create request failed", zap.Error(err))
 		return "", err
 	}
-	req.Header.Set("x-tenant-id", tenantID)
-	req.Header.Set("x-api-key", apiKey)
+	req.Header.Set("x-tenant-id", s.cfg.GetTenantId())
+	req.Header.Set("x-api-key", s.cfg.GetTenantApiKey())
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
