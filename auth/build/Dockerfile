@@ -1,8 +1,8 @@
 #build stage
 FROM golang:alpine AS builder
-ADD . /go/src/github.com/nautilusgames/demo
 WORKDIR /go/src/github.com/nautilusgames/demo
 RUN apk add --no-cache git
+ADD . /go/src/github.com/nautilusgames/demo
 RUN go mod vendor
 RUN go build -o ./auth/cmd/server ./auth/cmd/main.go
 

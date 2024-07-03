@@ -177,19 +177,18 @@
     </div>
 
     <script type="text/javascript">
-        var signInUrl = ""
-        var signUpUrl = ""
+        var domain = "http://localhost:8081"
         var listGameDomain = "https://p.n11s.io/api/gnome/v1/games?pageSize=9999"
         var resourceDomain = "https://s.n11s.io/"
-        var tenantID = ""
+        var tenantID = "" 
         var tenantPlayerToken = ""
-        var tenantToken = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIzIiwiZXhwIjoxNzUxNDk0ODUwLCJqdGkiOiI3NWVmMmZiZS03YmM3LTQzNGEtODczNi1jMDhiMTdiNzgwODIiLCJpYXQiOjE3MTk5Mzc4OTgsImlzcyI6Im5hdXRpbHVzIiwibmJmIjoxNzE5OTM3ODk4LCJzdWIiOiIzIiwiYXBpX2tleV9pZCI6Mn0.uFcC5YiFqu9ZHSIaDRmg2MuioM9CvwF6aAjmidXsFXu5DsR4YE9l-w9qru1DucFHdUUDcB8m7S6t9F3Ll2YgBw" // hard code
+        var tenantToken = "" 
         var currency = ""
         var language = ""
 
         function playGame(url) {
             console.log(url)
-            var newUrl = `${url}?tenant_id=${tenantID}&tenant_player_token=${tenantToken}&tenant_token=${tenantToken}&l=${language}&currency=${currency}`
+            var newUrl = `${url}?tenant_id=${tenantID}&tenant_player_token=${tenantPlayerToken}&tenant_token=${tenantToken}&l=${language}&currency=${currency}`
             var iframe = document.getElementById('iframe-game')
             iframe.style.display = 'block'
             iframe.src = url
@@ -197,31 +196,33 @@
         }
 
         $(document).ready(function () {
-            $('#sign-in-button').click(function () {
+            $('#sign-in-button').click(async function () {
                 const username = $('#username').val();
                 const password = $('#password').val();
 
                 // Simulate login success
-                if (signIn(username, password)) {
+                if (await signIn(username, password)==true) {
                     $('#form-container').hide();
                     $('#list-game').show();
                     $('#language-select-container').show();
+                    await createTenantToken()
                     listGame()
                 } else {
                     alert('Invalid username or password');
                 }
             });
 
-            $('#sign-up-button').click(function () {
+            $('#sign-up-button').click(async function () {
                 const username = $('#username').val();
                 const password = $('#password').val();
                 const currency = $('#currency').val();
 
                 // Simulate login success
-                if (signUp(username, password, currency)) {
+                if (await signUp(username, password, currency) == true) {
                     $('#form-container').hide();
                     $('#list-game').show();
                     $('#language-select-container').show();
+                    await createTenantToken()
                     listGame()
                 } else {
                     alert('Invalid username or password or currency');
@@ -230,70 +231,66 @@
 
             $('#language-select').change(function () {
                 const selectedLanguage = $(this).val();
-                // Here you can add the logic to change the language
+                language = selectedLanguage
             });
         });
 
         async function signIn(username, password) {
             try {
-                let url = `${signInUrl}`;
+                console.log("sign in")
+                let url = `${domain}/api/v1/signin`;
                 if ((username == "") || (password == "")) {
                     alert("username or password is invalid");
                     return false;
                 }
 
-                var request = {
-                    username: username,
-                    password: password,
-                }
+                var bodyFormData = new FormData() 
+                bodyFormData.append('username', username)
+                bodyFormData.append('password', password)
 
                 const response = await fetch(url, {
                     method: "POST",
-                    body: request,
-                    credentials: "include",
+                    body: bodyFormData,
                 });
                 const data = await response.json();
                 if (response.status === 200) {
                     // get token
-                    tenantID = data.tenant_id // can hard code
-                    tenant_player_token = data.tenant_player_token // access token
+                    tenant_player_token = data.token // access token
                     currency = data.currency
                     return true
                 } else {
-                    alert("fail to signin");
+                    alert("fail to sign in");
                     return false;
                 }
             } catch (error) {
-                alert("fail to signin");
+                alert("fail to sign in");
                 return false;
             }
         }
 
-        async function signUp(username, password, currency) {
+        async function signUp(username, password,currency) {
             try {
-                let url = `${signUpUrl}`;
+                let url = `${domain}/api/v1/signup`;
                 if ((username == "") || (password == "") || (currency == "")) {
                     alert("username or password or currency is invalid");
                     return false;
                 }
 
-                var request = {
-                    currency: currency,
-                    username: username,
-                    password: password,
-                }
+                var bodyFormData = new FormData()
+                bodyFormData.append('username', username)
+                bodyFormData.append('password', password)
+                bodyFormData.append('currency', currency)
 
                 const response = await fetch(url, {
                     method: "POST",
-                    body: request,
-                    credentials: "include",
+                    body: bodyFormData,
                 });
                 const data = await response.json();
                 if (response.status === 200) {
                     // get token
-                    tenantID = data.tenant_id
-                    tenant_player_token = data.tenant_player_token
+                    tenant_player_token = data.token
                     currency = data.currency
+                    return true
                 } else {
                     alert("fail to signup");
                     return false;
@@ -359,6 +356,31 @@
             return rows;
         }
 
+        async function createTenantToken() {
+            try {
+                let url = `${domain}/api/v1/create-tenant-token`;
+                const response = await fetch(url, {
+                    method: "POST",
+                });
+                const data = await response.json();
+                if (response.status === 200) {
+                    // get token
+                    tenantToken = data.token
+                    tenantID = data.tenantId
+                    return true
+                } else {
+                    console.log(response)
+                    alert("fail to create tenant token");
+                    return false;
+                }
+            } catch (error) {
+                console.error("Error create tenant token:", error);
+                alert("fail to create tenant token");
+                return false;
+            }
+        }
+
+        
     </script>
 
 </body>
