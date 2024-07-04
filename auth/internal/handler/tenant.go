@@ -8,8 +8,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/nautilusgames/demo/auth/internal/model"
 	"go.uber.org/zap"
+
+	"github.com/nautilusgames/demo/auth/internal/model"
 )
 
 func (s *httpServer) handleCreateTenantToken() http.HandlerFunc {
