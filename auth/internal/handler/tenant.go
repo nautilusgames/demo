@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/nautilusgames/demo/auth/internal/model"
 	"go.uber.org/zap"
 )
 
@@ -25,9 +26,10 @@ func (s *httpServer) handleCreateTenantToken() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "{\"tenant_id\": \"%d\",\"tenant-token\": \"%s\"}", s.cfg.GetTenantId(), tenantToken)
+		respond(s.logger, w, &model.CreateTenantTokenResponse{
+			TenantId: s.cfg.GetTenantId(),
+			Token:    tenantToken,
+		})
 	}
 }
 

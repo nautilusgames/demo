@@ -20,6 +20,7 @@ type SignInResponse struct {
 	Username    string `json:"username"`
 	DisplayName string `json:"display_name"`
 	Token       string `json:"token"`
+	Currency    string `json:"currency"`
 }
 
 type VerifyPlayerRequest struct {

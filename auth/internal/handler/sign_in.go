@@ -60,6 +60,7 @@ func (s *httpServer) handleSignIn() http.HandlerFunc {
 			DisplayName: player.DisplayName,
 			Username:    player.Username,
 			Token:       token,
+			
 		})
 	}
 }
