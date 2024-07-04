@@ -20,7 +20,7 @@ func (s *httpServer) handleVerifyPlayer() http.HandlerFunc {
 			return
 		}
 
-		player, err := s.entClient.Player.Get(r.Context(), payload.PlayerId)
+		player, err := s.entClient.Player.Get(r.Context(), payload.PlayerID)
 		if err != nil {
 			s.logger.Error("failed to get player", zap.Error(err))
 			http.Error(w, "failed to get player", http.StatusInternalServerError)

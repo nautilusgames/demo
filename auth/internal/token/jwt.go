@@ -9,7 +9,6 @@ import (
 
 const (
 	_signingKey = "secret"
-	_issuer     = "game"
 	_audience   = "game"
 )
 
@@ -19,23 +18,23 @@ type jwtImpl struct {
 	audience   string
 }
 
-func New() (Maker, error) {
+func New(issuer string) (Maker, error) {
 	return &jwtImpl{
 		signingKey: _signingKey,
-		issuer:     _issuer,
 		audience:   _audience,
+		issuer:     issuer,
 	}, nil
 }
 
-func (j *jwtImpl) CreateToken(playerId int64, username string, duration time.Duration) (string, *Payload, error) {
-	payload, err := newPayload(playerId, username, duration)
+func (j *jwtImpl) CreateToken(gameID string, playerID int64, username string, duration time.Duration) (string, *Payload, error) {
+	payload, err := newPayload(gameID, playerID, username, duration)
 	if err != nil {
 		return "", payload, err
 	}
 
 	claims := &MyClaim{
 		Username: username,
-		PlayerId: playerId,
+		PlayerID: playerID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ID:        payload.ID.String(),
 			ExpiresAt: jwt.NewNumericDate(payload.ExpiredAt),
@@ -70,7 +69,8 @@ func (j *jwtImpl) VerifyToken(token string) (*Payload, error) {
 
 	return &Payload{
 		ID:        uuid.MustParse(claims.ID),
-		PlayerId:  claims.PlayerId,
+		GameID:    claims.GameID,
+		PlayerID:  claims.PlayerID,
 		Username:  claims.Username,
 		IssuedAt:  claims.IssuedAt.Time,
 		ExpiredAt: claims.ExpiresAt.Time,

@@ -15,25 +15,28 @@ import (
 var _expireTokenDuration = 24 * time.Hour
 
 type httpServer struct {
-	logger     *zap.Logger
-	cfg        *pb.Config
-	entClient  *ent.Client
-	tokenMaker token.Maker
+	logger      *zap.Logger
+	cfg         *pb.Config
+	entClient   *ent.Client
+	webToken    token.Maker
+	tenantToken token.Maker
 }
 
 func New(
 	logger *zap.Logger,
 	cfg *pb.Config,
 	entClient *ent.Client,
-	tokenMaker token.Maker,
+	webToken token.Maker,
+	tenantToken token.Maker,
 ) http.Handler {
 	mux := http.NewServeMux()
 
 	s := &httpServer{
-		logger:     logger,
-		cfg:        cfg,
-		entClient:  entClient,
-		tokenMaker: tokenMaker,
+		logger:      logger,
+		cfg:         cfg,
+		entClient:   entClient,
+		webToken:    webToken,
+		tenantToken: tenantToken,
 	}
 
 	handler := corsMiddleware(mux)

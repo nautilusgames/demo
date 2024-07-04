@@ -30,7 +30,7 @@ func (s *httpServer) authorize(_ http.ResponseWriter, r *http.Request) (*token.P
 	}
 
 	accessToken := fields[1]
-	payload, err := s.tokenMaker.VerifyToken(accessToken)
+	payload, err := s.webToken.VerifyToken(accessToken)
 	if err != nil {
 		return nil, fmt.Errorf("invalid access token: %s", err)
 	}
