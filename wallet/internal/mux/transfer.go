@@ -14,11 +14,11 @@ import (
 	"github.com/nautilusgames/demo/wallet/model"
 )
 
-func httpBet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
+func httpTransfer(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger.Info("transfer")
 
-		var request model.BetRequest
+		var request model.TransferRequest
 		if err := readRequest(logger, r, &request); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(err.Error()))

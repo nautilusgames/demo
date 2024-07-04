@@ -16,7 +16,9 @@ type (
 )
 
 type (
-	GetWalletRequest  struct{}
+	GetWalletRequest struct {
+		PlayerID int64 `json:"player_id"`
+	}
 	GetWalletResponse struct {
 		Data  *PlayerWallet `json:"data,omitempty"`
 		Error *Error        `json:"error,omitempty"`
@@ -54,6 +56,19 @@ type (
 	RefundResponse struct {
 		Data  *Transaction `json:"data,omitempty"`
 		Error *Error       `json:"error,omitempty"`
+	}
+)
+
+type (
+	TransferRequest struct {
+		SessionID int64  `json:"session_id"`
+		GameID    string `json:"game_id"`
+		PlayerID  int64  `json:"player_id"`
+		Amount    int64  `json:"amount"`
+	}
+	TransferResponse struct {
+		SessionID int64       `json:"session_id"`
+		Tx        Transaction `json:"tx"`
 	}
 )
 

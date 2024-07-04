@@ -10,7 +10,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/nautilusgames/demo/auth/internal/model"
+	"github.com/nautilusgames/demo/auth/model"
 )
 
 func (s *httpServer) handleCreateTenantToken() http.HandlerFunc {
