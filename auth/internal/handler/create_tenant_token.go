@@ -15,7 +15,7 @@ import (
 
 func (s *httpServer) handleCreateTenantToken() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, err := s.authorize(w, r)
+		_, err := s.authorizeAccessToken(w, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return

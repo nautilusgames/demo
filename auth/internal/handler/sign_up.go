@@ -69,7 +69,7 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 				return err
 			}
 
-			token, _, err = s.webToken.CreateToken("", player.ID, player.Username, _expireTokenDuration)
+			token, _, err = s.accessToken.CreateToken("", player.ID, player.Username, _expireTokenDuration)
 			if err != nil {
 				s.logger.Error("failed to create token", zap.Error(err))
 				return err

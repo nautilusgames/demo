@@ -18,7 +18,7 @@ type httpServer struct {
 	logger      *zap.Logger
 	cfg         *pb.Config
 	entClient   *ent.Client
-	webToken    token.Maker
+	accessToken token.Maker
 	tenantToken token.Maker
 }
 
@@ -26,7 +26,7 @@ func New(
 	logger *zap.Logger,
 	cfg *pb.Config,
 	entClient *ent.Client,
-	webToken token.Maker,
+	accessToken token.Maker,
 	tenantToken token.Maker,
 ) http.Handler {
 	mux := http.NewServeMux()
@@ -35,7 +35,7 @@ func New(
 		logger:      logger,
 		cfg:         cfg,
 		entClient:   entClient,
-		webToken:    webToken,
+		accessToken: accessToken,
 		tenantToken: tenantToken,
 	}
 
@@ -46,7 +46,7 @@ func New(
 	mux.HandleFunc("/api/v1/signup", s.handleSignUp())
 	mux.HandleFunc("/api/v1/player/verify", s.handleVerifyPlayer())
 	mux.HandleFunc("/api/v1/create-tenant-token", s.handleCreateTenantToken())
-	mux.HandleFunc("/api/v1/create-tenant-session", s.handleCreateTenantSession())
+	mux.HandleFunc("/api/v1/create-session", s.handleCreateSession())
 
 	return handler
 }

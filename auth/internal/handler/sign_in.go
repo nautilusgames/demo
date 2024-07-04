@@ -51,7 +51,7 @@ func (s *httpServer) handleSignIn() http.HandlerFunc {
 			return
 		}
 
-		token, _, err := s.webToken.CreateToken("", player.ID, player.Username, _expireTokenDuration)
+		token, _, err := s.accessToken.CreateToken("", player.ID, player.Username, _expireTokenDuration)
 		if err != nil {
 			http.Error(w, "failed to create token", http.StatusInternalServerError)
 			return
