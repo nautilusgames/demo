@@ -1,13 +1,15 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/auth/internal/checker"
+	"github.com/nautilusgames/demo/auth/internal/model"
 )
+
+const _defaultCurrency = "vnd"
 
 func (s *httpServer) handleSignUp() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -16,13 +18,27 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 			return
 		}
 
-		username := r.PostFormValue("username")
-		password := r.PostFormValue("password")
-		currency := r.PostFormValue("currency")
+		var request *model.SignUpRequest
+		err := readRequest(s.logger, r, &request)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		username := request.Username
+		password := request.Password
+		displayName := request.DisplayName
+		currency := request.Currency
 
 		if username == "" || password == "" {
 			http.Error(w, "username and password are required", http.StatusBadRequest)
 			return
+		}
+		if displayName == "" {
+			displayName = username
+		}
+		if currency == "" {
+			currency = _defaultCurrency
 		}
 
 		hashedPassword, err := checker.HashPassword(password)
@@ -35,7 +51,7 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 			Create().
 			SetUsername(username).
 			SetHashedPassword(hashedPassword).
-			SetDisplayName(username).
+			SetDisplayName(displayName).
 			SetCurrency(currency).
 			Save(r.Context())
 		if err != nil {
@@ -50,8 +66,10 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "{\"display_name\": \"%s\", \"username\": \"%s\",\"token\": \"%s\"}", player.DisplayName, player.Username, token)
+		respond(s.logger, w, &model.SignUpResponse{
+			DisplayName: player.DisplayName,
+			Username:    player.Username,
+			Token:       token,
+		})
 	}
 }

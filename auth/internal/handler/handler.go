@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -38,9 +39,9 @@ func New(
 	handler := corsMiddleware(mux)
 
 	mux.HandleFunc("/status", httpHealth())
-	mux.HandleFunc("/api/v1/player/verify", s.handleVerifyPlayer())
 	mux.HandleFunc("/api/v1/signin", s.handleSignIn())
 	mux.HandleFunc("/api/v1/signup", s.handleSignUp())
+	mux.HandleFunc("/api/v1/player/verify", s.handleVerifyPlayer())
 	mux.HandleFunc("/api/v1/create-tenant-token", s.handleCreateTenantToken())
 
 	return handler
@@ -49,5 +50,36 @@ func New(
 func httpHealth() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func readRequest(logger *zap.Logger, r *http.Request, request interface{}) error {
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		logger.Error("decode request failed",
+			zap.Any("request", &request),
+			zap.Error(err))
+		return err
+	}
+	defer r.Body.Close()
+
+	return nil
+}
+
+func respond(logger *zap.Logger, w http.ResponseWriter, response interface{}) {
+	bytes, err := json.Marshal(response)
+	if err != nil {
+		logger.Error("marshal response body failed",
+			zap.Any("response", response),
+			zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		logger.Error("write message failed", zap.Error(err))
 	}
 }

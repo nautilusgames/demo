@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/nautilusgames/demo/auth/internal/checker"
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/ent/player"
+	"github.com/nautilusgames/demo/auth/internal/model"
 	"go.uber.org/zap"
 )
 
@@ -17,9 +17,15 @@ func (s *httpServer) handleSignIn() http.HandlerFunc {
 			return
 		}
 
-		username := r.PostFormValue("username")
-		password := r.PostFormValue("password")
+		var request *model.SignInRequest
+		err := readRequest(s.logger, r, &request)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
+		username := request.Username
+		password := request.Password
 		if username == "" || password == "" {
 			http.Error(w, "username and password are required", http.StatusBadRequest)
 			return
@@ -50,8 +56,10 @@ func (s *httpServer) handleSignIn() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "{\"display_name\": \"%s\", \"username\": \"%s\",\"token\": \"%s\"}", player.DisplayName, player.Username, token)
+		respond(s.logger, w, &model.SignInResponse{
+			DisplayName: player.DisplayName,
+			Username:    player.Username,
+			Token:       token,
+		})
 	}
 }
