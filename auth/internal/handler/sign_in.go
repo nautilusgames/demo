@@ -59,8 +59,8 @@ func (s *httpServer) handleSignIn() http.HandlerFunc {
 		respond(s.logger, w, &model.SignInResponse{
 			DisplayName: player.DisplayName,
 			Username:    player.Username,
+			Currency:    player.Currency,
 			Token:       token,
-			
 		})
 	}
 }
