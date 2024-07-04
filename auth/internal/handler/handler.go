@@ -46,6 +46,7 @@ func New(
 	mux.HandleFunc("/api/v1/signup", s.handleSignUp())
 	mux.HandleFunc("/api/v1/player/verify", s.handleVerifyPlayer())
 	mux.HandleFunc("/api/v1/create-tenant-token", s.handleCreateTenantToken())
+	mux.HandleFunc("/api/v1/create-tenant-session", s.handleCreateTenantSession())
 
 	return handler
 }

@@ -14,11 +14,11 @@ import (
 	"github.com/nautilusgames/demo/wallet/model"
 )
 
-func httpTransfer(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
+func httpBet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger.Info("transfer")
 
-		var request model.TransferRequest
+		var request model.BetRequest
 		if err := readRequest(logger, r, &request); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(err.Error()))
@@ -60,11 +60,11 @@ func httpTransfer(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 			}
 
 			transaction = model.Transaction{
-				TxID:      now.UnixNano(),
-				CreatedAt: now.UnixNano(),
-				PlayerID:  p.ID,
-				GameID:    gameID,
-				Amount:    amount,
+				ID:         now.UnixNano(),
+				SessionID:  sessionID,
+				Amount:     amount,
+				NewBalance: p.Balance,
+				CreatedAt:  now.UnixNano(),
 			}
 
 			if amount == 0 {

@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/nautilusgames/demo/wallet/internal/ent"
 	"go.uber.org/zap"
+
+	"github.com/nautilusgames/demo/wallet/internal/ent"
+	"github.com/nautilusgames/demo/wallet/model"
 )
 
 func New(logger *zap.Logger, entClient *ent.Client) *http.ServeMux {
@@ -13,9 +15,9 @@ func New(logger *zap.Logger, entClient *ent.Client) *http.ServeMux {
 	mux := http.NewServeMux()
 	// Health endpoint
 	mux.HandleFunc("/status", httpHealth())
-	mux.HandleFunc("/api/v1/wallet/create-wallet", httpCreateWallet(logger, entClient))
-	mux.HandleFunc("/api/v1/wallet/transfer", httpTransfer(logger, entClient))
-	mux.HandleFunc("/api/v1/wallet/get-wallet", httpGetWallet(logger, entClient))
+	mux.HandleFunc(model.CreateWalletPath, httpCreateWallet(logger, entClient))
+	mux.HandleFunc(model.TransferPath, httpTransfer(logger, entClient))
+	mux.HandleFunc(model.GetWalletPath, httpGetWallet(logger, entClient))
 
 	return mux
 }

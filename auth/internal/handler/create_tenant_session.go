@@ -6,7 +6,7 @@ import (
 	"github.com/nautilusgames/demo/auth/model"
 )
 
-func (s *httpServer) handleCreateTenantToken() http.HandlerFunc {
+func (s *httpServer) handleCreateTenantSession() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		info, err := s.authorize(w, r)
 		if err != nil {
