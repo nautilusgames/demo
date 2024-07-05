@@ -14,7 +14,7 @@ import (
 
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/handler"
-	"github.com/nautilusgames/demo/auth/internal/token"
+	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
 )
@@ -58,17 +58,23 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed creating schema resources", zap.Error(err))
 	}
 
-	webToken, err := token.New("access-token")
+	playerSigning := cfg.GetAuth().GetPlayerSigning()
+	playerToken, err := token.New(playerSigning.GetSigningKey(), playerSigning.GetIssuer(), playerSigning.GetAudience())
 	if err != nil {
-		logger.Fatal("failed to create web token", zap.Error(err))
+		logger.Fatal("failed to create player token", zap.Error(err))
 	}
-	tenantToken, err := token.New("tenant-token")
+
+	playerTenantSigning := cfg.GetAuth().GetPlayerTenantSigning()
+	playerTenantToken, err := token.New(
+		playerTenantSigning.GetSigningKey(),
+		playerTenantSigning.GetIssuer(),
+		playerTenantSigning.GetAudience())
 	if err != nil {
-		logger.Fatal("failed to create tenant maker", zap.Error(err))
+		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
-	handler := handler.New(logger, cfg, entClient, webToken, tenantToken)
+	handler := handler.New(logger, cfg, entClient, playerToken, playerTenantToken)
 	server := &http.Server{
 		Addr:    address,
 		Handler: handler,

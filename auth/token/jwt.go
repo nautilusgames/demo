@@ -7,22 +7,17 @@ import (
 	"github.com/google/uuid"
 )
 
-const (
-	_signingKey = "secret"
-	_audience   = "game"
-)
-
 type jwtImpl struct {
 	signingKey string
 	issuer     string
 	audience   string
 }
 
-func New(issuer string) (Maker, error) {
+func New(signingKey, issuer, audience string) (Maker, error) {
 	return &jwtImpl{
-		signingKey: _signingKey,
-		audience:   _audience,
+		signingKey: signingKey,
 		issuer:     issuer,
+		audience:   audience,
 	}, nil
 }
 

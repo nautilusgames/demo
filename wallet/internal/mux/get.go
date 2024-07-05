@@ -3,18 +3,23 @@ package mux
 import (
 	"context"
 	"net/http"
-	"strconv"
 
 	"go.uber.org/zap"
 
+	"github.com/nautilusgames/demo/auth/tenant"
 	"github.com/nautilusgames/demo/wallet/internal/ent"
 	entwallet "github.com/nautilusgames/demo/wallet/internal/ent/wallet"
 	"github.com/nautilusgames/demo/wallet/model"
 )
 
-func httpGet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
+func httpGet(logger *zap.Logger, entClient *ent.Client, tenantAuth tenant.TenantAuthorization) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger.Info("get wallet")
+		_, playerID, _, err := tenantAuth(w, r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
 
 		var request model.GetWalletRequest
 		if err := readRequest(logger, r, &request); err != nil {
@@ -22,20 +27,8 @@ func httpGet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 			w.Write([]byte(err.Error()))
 			return
 		}
-		if request.PlayerID == 0 {
-			// TODO: get header name from constant
-			value := r.Header.Get("x-player-id")
-			id, err := strconv.ParseInt(value, 10, 64)
-			if err != nil {
-				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte("unauthenticated"))
-				return
-			}
-			request.PlayerID = id
 
-		}
-
-		playerWallet, err := GetWallet(r.Context(), entClient, request.PlayerID)
+		playerWallet, err := GetWallet(r.Context(), entClient, playerID)
 		if err != nil {
 			logger.Error("get wallet failed", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)

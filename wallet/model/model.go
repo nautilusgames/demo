@@ -19,7 +19,6 @@ type (
 
 type (
 	GetWalletRequest struct {
-		PlayerID int64 `json:"player_id"`
 	}
 	GetWalletResponse struct {
 		Data  *PlayerWallet `json:"data,omitempty"`
@@ -29,28 +28,20 @@ type (
 
 type (
 	BetRequest struct {
-		GameID    string `json:"game_id"`
-		PlayerID  int64  `json:"player_id"`
-		SessionID int64  `json:"session_id,omitempty"`
-		Amount    int64  `json:"amount,omitempty"`
+		SessionID int64 `json:"session_id,omitempty"`
+		Amount    int64 `json:"amount,omitempty"`
 	}
 	PayoutRequest struct {
-		GameID    string `json:"game_id"`
-		PlayerID  int64  `json:"player_id"`
-		SessionID int64  `json:"session_id,omitempty"`
-		Amount    int64  `json:"amount,omitempty"`
+		SessionID int64 `json:"session_id,omitempty"`
+		Amount    int64 `json:"amount,omitempty"`
 	}
 	RefundRequest struct {
-		GameID    string `json:"game_id"`
-		PlayerID  int64  `json:"player_id"`
-		SessionID int64  `json:"session_id,omitempty"`
-		Amount    int64  `json:"amount,omitempty"`
+		SessionID int64 `json:"session_id,omitempty"`
+		Amount    int64 `json:"amount,omitempty"`
 	}
 	RollbackRequest struct {
-		GameID    string `json:"game_id"`
-		PlayerID  int64  `json:"player_id"`
-		SessionID int64  `json:"session_id,omitempty"`
-		Amount    int64  `json:"amount,omitempty"`
+		SessionID int64 `json:"session_id,omitempty"`
+		Amount    int64 `json:"amount,omitempty"`
 	}
 	Response struct {
 		Data  *Transaction `json:"data,omitempty"`

@@ -6,13 +6,19 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/nautilusgames/demo/auth/tenant"
 	"github.com/nautilusgames/demo/wallet/internal/ent"
 	"github.com/nautilusgames/demo/wallet/model"
 )
 
-func httpRollback(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
+func httpRollback(logger *zap.Logger, entClient *ent.Client, tenantAuth tenant.TenantAuthorization) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		logger.Info("bet")
+		logger.Info("roll back")
+		_, playerID, gameID, err := tenantAuth(w, r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
 
 		var request model.RollbackRequest
 		if err := readRequest(logger, r, &request); err != nil {
@@ -29,8 +35,8 @@ func httpRollback(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 			entClient,
 			logger,
 			request.SessionID,
-			request.GameID,
-			request.PlayerID,
+			gameID,
+			playerID,
 			-request.Amount,
 		)
 		if err != nil {
