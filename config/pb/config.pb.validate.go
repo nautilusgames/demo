@@ -149,6 +149,35 @@ func (m *Config) validate(all bool) error {
 
 	// no validation rules for TenantTokenUrl
 
+	if all {
+		switch v := interface{}(m.GetAuth()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ConfigValidationError{
+					field:  "Auth",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ConfigValidationError{
+					field:  "Auth",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAuth()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ConfigValidationError{
+				field:  "Auth",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return ConfigMultiError(errors)
 	}
@@ -919,3 +948,291 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DatabaseValidationError{}
+
+// Validate checks the field values on Auth with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Auth) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Auth with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in AuthMultiError, or nil if none found.
+func (m *Auth) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Auth) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPlayerSigning()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AuthValidationError{
+					field:  "PlayerSigning",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AuthValidationError{
+					field:  "PlayerSigning",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPlayerSigning()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AuthValidationError{
+				field:  "PlayerSigning",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetPlayerTenantSigning()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AuthValidationError{
+					field:  "PlayerTenantSigning",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AuthValidationError{
+					field:  "PlayerTenantSigning",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPlayerTenantSigning()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AuthValidationError{
+				field:  "PlayerTenantSigning",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AuthMultiError(errors)
+	}
+
+	return nil
+}
+
+// AuthMultiError is an error wrapping multiple validation errors returned by
+// Auth.ValidateAll() if the designated constraints aren't met.
+type AuthMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AuthMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AuthMultiError) AllErrors() []error { return m }
+
+// AuthValidationError is the validation error returned by Auth.Validate if the
+// designated constraints aren't met.
+type AuthValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AuthValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AuthValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AuthValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AuthValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AuthValidationError) ErrorName() string { return "AuthValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AuthValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAuth.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AuthValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AuthValidationError{}
+
+// Validate checks the field values on JwtSigning with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JwtSigning) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JwtSigning with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JwtSigningMultiError, or
+// nil if none found.
+func (m *JwtSigning) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JwtSigning) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetSigningKey()) < 1 {
+		err := JwtSigningValidationError{
+			field:  "SigningKey",
+			reason: "value length must be at least 1 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetAudience()) < 1 {
+		err := JwtSigningValidationError{
+			field:  "Audience",
+			reason: "value length must be at least 1 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetIssuer()) < 1 {
+		err := JwtSigningValidationError{
+			field:  "Issuer",
+			reason: "value length must be at least 1 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return JwtSigningMultiError(errors)
+	}
+
+	return nil
+}
+
+// JwtSigningMultiError is an error wrapping multiple validation errors
+// returned by JwtSigning.ValidateAll() if the designated constraints aren't met.
+type JwtSigningMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JwtSigningMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JwtSigningMultiError) AllErrors() []error { return m }
+
+// JwtSigningValidationError is the validation error returned by
+// JwtSigning.Validate if the designated constraints aren't met.
+type JwtSigningValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JwtSigningValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JwtSigningValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JwtSigningValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JwtSigningValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JwtSigningValidationError) ErrorName() string { return "JwtSigningValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JwtSigningValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJwtSigning.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JwtSigningValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JwtSigningValidationError{}

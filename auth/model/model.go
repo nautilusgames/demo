@@ -33,10 +33,18 @@ type VerifyPlayerResponse struct {
 }
 
 type (
-	CreateTenantTokenRequest struct {
+	CreateTenantTokenRequest struct {}
+	CreateTenantTokenResponse struct {
+		TenantId int64  `json:"tenant_id"`
+		Token    string `json:"token"`
+	}
+)
+
+type (
+	CreatePlayerTenantTokenRequest struct {
 		GameId string `json:"game_id"`
 	}
-	CreateTenantTokenResponse struct {
+	CreatePlayerTenantTokenResponse struct {
 		TenantId int64  `json:"tenant_id"`
 		Token    string `json:"token"`
 	}
