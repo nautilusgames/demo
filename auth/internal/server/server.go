@@ -14,7 +14,7 @@ import (
 
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/handler"
-	"github.com/nautilusgames/demo/auth/internal/token"
+	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
 )

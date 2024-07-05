@@ -84,7 +84,7 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 				s.logger.Error("failed to encode body", zap.Error(err))
 				return err
 			}
-			url := fmt.Sprintf("%s%s", walletmodel.InternalAddress, walletmodel.CreateWalletPath)
+			url := fmt.Sprintf("%s%s", walletmodel.InternalAddress, walletmodel.CreatePath)
 			resp, err := http.Post(url, "application/json", &body)
 			if err != nil {
 				s.logger.Error("failed to post http request", zap.Error(err))

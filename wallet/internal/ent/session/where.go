@@ -64,44 +64,14 @@ func UpdatedAt(v time.Time) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// PlayerID applies equality check predicate on the "player_id" field. It's identical to PlayerIDEQ.
-func PlayerID(v string) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldPlayerID, v))
-}
-
 // GameID applies equality check predicate on the "game_id" field. It's identical to GameIDEQ.
 func GameID(v string) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldGameID, v))
 }
 
-// SessionID applies equality check predicate on the "session_id" field. It's identical to SessionIDEQ.
-func SessionID(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldSessionID, v))
-}
-
-// WalletType applies equality check predicate on the "wallet_type" field. It's identical to WalletTypeEQ.
-func WalletType(v string) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldWalletType, v))
-}
-
-// BetAmount applies equality check predicate on the "bet_amount" field. It's identical to BetAmountEQ.
-func BetAmount(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldBetAmount, v))
-}
-
-// WinAmount applies equality check predicate on the "win_amount" field. It's identical to WinAmountEQ.
-func WinAmount(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldWinAmount, v))
-}
-
-// Change applies equality check predicate on the "change" field. It's identical to ChangeEQ.
-func Change(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldChange, v))
-}
-
-// NewBalance applies equality check predicate on the "new_balance" field. It's identical to NewBalanceEQ.
-func NewBalance(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldNewBalance, v))
+// GameSessionID applies equality check predicate on the "game_session_id" field. It's identical to GameSessionIDEQ.
+func GameSessionID(v int64) predicate.Session {
+	return predicate.Session(sql.FieldEQ(FieldGameSessionID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -184,71 +154,6 @@ func UpdatedAtLTE(v time.Time) predicate.Session {
 	return predicate.Session(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// PlayerIDEQ applies the EQ predicate on the "player_id" field.
-func PlayerIDEQ(v string) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldPlayerID, v))
-}
-
-// PlayerIDNEQ applies the NEQ predicate on the "player_id" field.
-func PlayerIDNEQ(v string) predicate.Session {
-	return predicate.Session(sql.FieldNEQ(FieldPlayerID, v))
-}
-
-// PlayerIDIn applies the In predicate on the "player_id" field.
-func PlayerIDIn(vs ...string) predicate.Session {
-	return predicate.Session(sql.FieldIn(FieldPlayerID, vs...))
-}
-
-// PlayerIDNotIn applies the NotIn predicate on the "player_id" field.
-func PlayerIDNotIn(vs ...string) predicate.Session {
-	return predicate.Session(sql.FieldNotIn(FieldPlayerID, vs...))
-}
-
-// PlayerIDGT applies the GT predicate on the "player_id" field.
-func PlayerIDGT(v string) predicate.Session {
-	return predicate.Session(sql.FieldGT(FieldPlayerID, v))
-}
-
-// PlayerIDGTE applies the GTE predicate on the "player_id" field.
-func PlayerIDGTE(v string) predicate.Session {
-	return predicate.Session(sql.FieldGTE(FieldPlayerID, v))
-}
-
-// PlayerIDLT applies the LT predicate on the "player_id" field.
-func PlayerIDLT(v string) predicate.Session {
-	return predicate.Session(sql.FieldLT(FieldPlayerID, v))
-}
-
-// PlayerIDLTE applies the LTE predicate on the "player_id" field.
-func PlayerIDLTE(v string) predicate.Session {
-	return predicate.Session(sql.FieldLTE(FieldPlayerID, v))
-}
-
-// PlayerIDContains applies the Contains predicate on the "player_id" field.
-func PlayerIDContains(v string) predicate.Session {
-	return predicate.Session(sql.FieldContains(FieldPlayerID, v))
-}
-
-// PlayerIDHasPrefix applies the HasPrefix predicate on the "player_id" field.
-func PlayerIDHasPrefix(v string) predicate.Session {
-	return predicate.Session(sql.FieldHasPrefix(FieldPlayerID, v))
-}
-
-// PlayerIDHasSuffix applies the HasSuffix predicate on the "player_id" field.
-func PlayerIDHasSuffix(v string) predicate.Session {
-	return predicate.Session(sql.FieldHasSuffix(FieldPlayerID, v))
-}
-
-// PlayerIDEqualFold applies the EqualFold predicate on the "player_id" field.
-func PlayerIDEqualFold(v string) predicate.Session {
-	return predicate.Session(sql.FieldEqualFold(FieldPlayerID, v))
-}
-
-// PlayerIDContainsFold applies the ContainsFold predicate on the "player_id" field.
-func PlayerIDContainsFold(v string) predicate.Session {
-	return predicate.Session(sql.FieldContainsFold(FieldPlayerID, v))
-}
-
 // GameIDEQ applies the EQ predicate on the "game_id" field.
 func GameIDEQ(v string) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldGameID, v))
@@ -314,289 +219,44 @@ func GameIDContainsFold(v string) predicate.Session {
 	return predicate.Session(sql.FieldContainsFold(FieldGameID, v))
 }
 
-// SessionIDEQ applies the EQ predicate on the "session_id" field.
-func SessionIDEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldSessionID, v))
+// GameSessionIDEQ applies the EQ predicate on the "game_session_id" field.
+func GameSessionIDEQ(v int64) predicate.Session {
+	return predicate.Session(sql.FieldEQ(FieldGameSessionID, v))
 }
 
-// SessionIDNEQ applies the NEQ predicate on the "session_id" field.
-func SessionIDNEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldNEQ(FieldSessionID, v))
+// GameSessionIDNEQ applies the NEQ predicate on the "game_session_id" field.
+func GameSessionIDNEQ(v int64) predicate.Session {
+	return predicate.Session(sql.FieldNEQ(FieldGameSessionID, v))
 }
 
-// SessionIDIn applies the In predicate on the "session_id" field.
-func SessionIDIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldIn(FieldSessionID, vs...))
+// GameSessionIDIn applies the In predicate on the "game_session_id" field.
+func GameSessionIDIn(vs ...int64) predicate.Session {
+	return predicate.Session(sql.FieldIn(FieldGameSessionID, vs...))
 }
 
-// SessionIDNotIn applies the NotIn predicate on the "session_id" field.
-func SessionIDNotIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldNotIn(FieldSessionID, vs...))
+// GameSessionIDNotIn applies the NotIn predicate on the "game_session_id" field.
+func GameSessionIDNotIn(vs ...int64) predicate.Session {
+	return predicate.Session(sql.FieldNotIn(FieldGameSessionID, vs...))
 }
 
-// SessionIDGT applies the GT predicate on the "session_id" field.
-func SessionIDGT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGT(FieldSessionID, v))
+// GameSessionIDGT applies the GT predicate on the "game_session_id" field.
+func GameSessionIDGT(v int64) predicate.Session {
+	return predicate.Session(sql.FieldGT(FieldGameSessionID, v))
 }
 
-// SessionIDGTE applies the GTE predicate on the "session_id" field.
-func SessionIDGTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGTE(FieldSessionID, v))
+// GameSessionIDGTE applies the GTE predicate on the "game_session_id" field.
+func GameSessionIDGTE(v int64) predicate.Session {
+	return predicate.Session(sql.FieldGTE(FieldGameSessionID, v))
 }
 
-// SessionIDLT applies the LT predicate on the "session_id" field.
-func SessionIDLT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLT(FieldSessionID, v))
+// GameSessionIDLT applies the LT predicate on the "game_session_id" field.
+func GameSessionIDLT(v int64) predicate.Session {
+	return predicate.Session(sql.FieldLT(FieldGameSessionID, v))
 }
 
-// SessionIDLTE applies the LTE predicate on the "session_id" field.
-func SessionIDLTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLTE(FieldSessionID, v))
-}
-
-// WalletTypeEQ applies the EQ predicate on the "wallet_type" field.
-func WalletTypeEQ(v string) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldWalletType, v))
-}
-
-// WalletTypeNEQ applies the NEQ predicate on the "wallet_type" field.
-func WalletTypeNEQ(v string) predicate.Session {
-	return predicate.Session(sql.FieldNEQ(FieldWalletType, v))
-}
-
-// WalletTypeIn applies the In predicate on the "wallet_type" field.
-func WalletTypeIn(vs ...string) predicate.Session {
-	return predicate.Session(sql.FieldIn(FieldWalletType, vs...))
-}
-
-// WalletTypeNotIn applies the NotIn predicate on the "wallet_type" field.
-func WalletTypeNotIn(vs ...string) predicate.Session {
-	return predicate.Session(sql.FieldNotIn(FieldWalletType, vs...))
-}
-
-// WalletTypeGT applies the GT predicate on the "wallet_type" field.
-func WalletTypeGT(v string) predicate.Session {
-	return predicate.Session(sql.FieldGT(FieldWalletType, v))
-}
-
-// WalletTypeGTE applies the GTE predicate on the "wallet_type" field.
-func WalletTypeGTE(v string) predicate.Session {
-	return predicate.Session(sql.FieldGTE(FieldWalletType, v))
-}
-
-// WalletTypeLT applies the LT predicate on the "wallet_type" field.
-func WalletTypeLT(v string) predicate.Session {
-	return predicate.Session(sql.FieldLT(FieldWalletType, v))
-}
-
-// WalletTypeLTE applies the LTE predicate on the "wallet_type" field.
-func WalletTypeLTE(v string) predicate.Session {
-	return predicate.Session(sql.FieldLTE(FieldWalletType, v))
-}
-
-// WalletTypeContains applies the Contains predicate on the "wallet_type" field.
-func WalletTypeContains(v string) predicate.Session {
-	return predicate.Session(sql.FieldContains(FieldWalletType, v))
-}
-
-// WalletTypeHasPrefix applies the HasPrefix predicate on the "wallet_type" field.
-func WalletTypeHasPrefix(v string) predicate.Session {
-	return predicate.Session(sql.FieldHasPrefix(FieldWalletType, v))
-}
-
-// WalletTypeHasSuffix applies the HasSuffix predicate on the "wallet_type" field.
-func WalletTypeHasSuffix(v string) predicate.Session {
-	return predicate.Session(sql.FieldHasSuffix(FieldWalletType, v))
-}
-
-// WalletTypeIsNil applies the IsNil predicate on the "wallet_type" field.
-func WalletTypeIsNil() predicate.Session {
-	return predicate.Session(sql.FieldIsNull(FieldWalletType))
-}
-
-// WalletTypeNotNil applies the NotNil predicate on the "wallet_type" field.
-func WalletTypeNotNil() predicate.Session {
-	return predicate.Session(sql.FieldNotNull(FieldWalletType))
-}
-
-// WalletTypeEqualFold applies the EqualFold predicate on the "wallet_type" field.
-func WalletTypeEqualFold(v string) predicate.Session {
-	return predicate.Session(sql.FieldEqualFold(FieldWalletType, v))
-}
-
-// WalletTypeContainsFold applies the ContainsFold predicate on the "wallet_type" field.
-func WalletTypeContainsFold(v string) predicate.Session {
-	return predicate.Session(sql.FieldContainsFold(FieldWalletType, v))
-}
-
-// BetAmountEQ applies the EQ predicate on the "bet_amount" field.
-func BetAmountEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldBetAmount, v))
-}
-
-// BetAmountNEQ applies the NEQ predicate on the "bet_amount" field.
-func BetAmountNEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldNEQ(FieldBetAmount, v))
-}
-
-// BetAmountIn applies the In predicate on the "bet_amount" field.
-func BetAmountIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldIn(FieldBetAmount, vs...))
-}
-
-// BetAmountNotIn applies the NotIn predicate on the "bet_amount" field.
-func BetAmountNotIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldNotIn(FieldBetAmount, vs...))
-}
-
-// BetAmountGT applies the GT predicate on the "bet_amount" field.
-func BetAmountGT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGT(FieldBetAmount, v))
-}
-
-// BetAmountGTE applies the GTE predicate on the "bet_amount" field.
-func BetAmountGTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGTE(FieldBetAmount, v))
-}
-
-// BetAmountLT applies the LT predicate on the "bet_amount" field.
-func BetAmountLT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLT(FieldBetAmount, v))
-}
-
-// BetAmountLTE applies the LTE predicate on the "bet_amount" field.
-func BetAmountLTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLTE(FieldBetAmount, v))
-}
-
-// WinAmountEQ applies the EQ predicate on the "win_amount" field.
-func WinAmountEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldWinAmount, v))
-}
-
-// WinAmountNEQ applies the NEQ predicate on the "win_amount" field.
-func WinAmountNEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldNEQ(FieldWinAmount, v))
-}
-
-// WinAmountIn applies the In predicate on the "win_amount" field.
-func WinAmountIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldIn(FieldWinAmount, vs...))
-}
-
-// WinAmountNotIn applies the NotIn predicate on the "win_amount" field.
-func WinAmountNotIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldNotIn(FieldWinAmount, vs...))
-}
-
-// WinAmountGT applies the GT predicate on the "win_amount" field.
-func WinAmountGT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGT(FieldWinAmount, v))
-}
-
-// WinAmountGTE applies the GTE predicate on the "win_amount" field.
-func WinAmountGTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGTE(FieldWinAmount, v))
-}
-
-// WinAmountLT applies the LT predicate on the "win_amount" field.
-func WinAmountLT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLT(FieldWinAmount, v))
-}
-
-// WinAmountLTE applies the LTE predicate on the "win_amount" field.
-func WinAmountLTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLTE(FieldWinAmount, v))
-}
-
-// ChangeEQ applies the EQ predicate on the "change" field.
-func ChangeEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldChange, v))
-}
-
-// ChangeNEQ applies the NEQ predicate on the "change" field.
-func ChangeNEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldNEQ(FieldChange, v))
-}
-
-// ChangeIn applies the In predicate on the "change" field.
-func ChangeIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldIn(FieldChange, vs...))
-}
-
-// ChangeNotIn applies the NotIn predicate on the "change" field.
-func ChangeNotIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldNotIn(FieldChange, vs...))
-}
-
-// ChangeGT applies the GT predicate on the "change" field.
-func ChangeGT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGT(FieldChange, v))
-}
-
-// ChangeGTE applies the GTE predicate on the "change" field.
-func ChangeGTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGTE(FieldChange, v))
-}
-
-// ChangeLT applies the LT predicate on the "change" field.
-func ChangeLT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLT(FieldChange, v))
-}
-
-// ChangeLTE applies the LTE predicate on the "change" field.
-func ChangeLTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLTE(FieldChange, v))
-}
-
-// NewBalanceEQ applies the EQ predicate on the "new_balance" field.
-func NewBalanceEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldNewBalance, v))
-}
-
-// NewBalanceNEQ applies the NEQ predicate on the "new_balance" field.
-func NewBalanceNEQ(v int64) predicate.Session {
-	return predicate.Session(sql.FieldNEQ(FieldNewBalance, v))
-}
-
-// NewBalanceIn applies the In predicate on the "new_balance" field.
-func NewBalanceIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldIn(FieldNewBalance, vs...))
-}
-
-// NewBalanceNotIn applies the NotIn predicate on the "new_balance" field.
-func NewBalanceNotIn(vs ...int64) predicate.Session {
-	return predicate.Session(sql.FieldNotIn(FieldNewBalance, vs...))
-}
-
-// NewBalanceGT applies the GT predicate on the "new_balance" field.
-func NewBalanceGT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGT(FieldNewBalance, v))
-}
-
-// NewBalanceGTE applies the GTE predicate on the "new_balance" field.
-func NewBalanceGTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldGTE(FieldNewBalance, v))
-}
-
-// NewBalanceLT applies the LT predicate on the "new_balance" field.
-func NewBalanceLT(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLT(FieldNewBalance, v))
-}
-
-// NewBalanceLTE applies the LTE predicate on the "new_balance" field.
-func NewBalanceLTE(v int64) predicate.Session {
-	return predicate.Session(sql.FieldLTE(FieldNewBalance, v))
-}
-
-// NewBalanceIsNil applies the IsNil predicate on the "new_balance" field.
-func NewBalanceIsNil() predicate.Session {
-	return predicate.Session(sql.FieldIsNull(FieldNewBalance))
-}
-
-// NewBalanceNotNil applies the NotNil predicate on the "new_balance" field.
-func NewBalanceNotNil() predicate.Session {
-	return predicate.Session(sql.FieldNotNull(FieldNewBalance))
+// GameSessionIDLTE applies the LTE predicate on the "game_session_id" field.
+func GameSessionIDLTE(v int64) predicate.Session {
+	return predicate.Session(sql.FieldLTE(FieldGameSessionID, v))
 }
 
 // And groups predicates with the AND operator between them.

@@ -9,7 +9,7 @@ import (
 	"github.com/nautilusgames/demo/wallet/model"
 )
 
-func httpCreateWallet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
+func httpCreate(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger.Info("create wallet")
 

@@ -32,28 +32,18 @@ const (
 // SessionMutation represents an operation that mutates the Session nodes in the graph.
 type SessionMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *int64
-	created_at     *time.Time
-	updated_at     *time.Time
-	player_id      *string
-	game_id        *string
-	session_id     *int64
-	addsession_id  *int64
-	wallet_type    *string
-	bet_amount     *int64
-	addbet_amount  *int64
-	win_amount     *int64
-	addwin_amount  *int64
-	change         *int64
-	addchange      *int64
-	new_balance    *int64
-	addnew_balance *int64
-	clearedFields  map[string]struct{}
-	done           bool
-	oldValue       func(context.Context) (*Session, error)
-	predicates     []predicate.Session
+	op                 Op
+	typ                string
+	id                 *int64
+	created_at         *time.Time
+	updated_at         *time.Time
+	game_id            *string
+	game_session_id    *int64
+	addgame_session_id *int64
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*Session, error)
+	predicates         []predicate.Session
 }
 
 var _ ent.Mutation = (*SessionMutation)(nil)
@@ -232,42 +222,6 @@ func (m *SessionMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
-// SetPlayerID sets the "player_id" field.
-func (m *SessionMutation) SetPlayerID(s string) {
-	m.player_id = &s
-}
-
-// PlayerID returns the value of the "player_id" field in the mutation.
-func (m *SessionMutation) PlayerID() (r string, exists bool) {
-	v := m.player_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPlayerID returns the old "player_id" field's value of the Session entity.
-// If the Session object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldPlayerID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPlayerID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPlayerID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPlayerID: %w", err)
-	}
-	return oldValue.PlayerID, nil
-}
-
-// ResetPlayerID resets all changes to the "player_id" field.
-func (m *SessionMutation) ResetPlayerID() {
-	m.player_id = nil
-}
-
 // SetGameID sets the "game_id" field.
 func (m *SessionMutation) SetGameID(s string) {
 	m.game_id = &s
@@ -304,347 +258,60 @@ func (m *SessionMutation) ResetGameID() {
 	m.game_id = nil
 }
 
-// SetSessionID sets the "session_id" field.
-func (m *SessionMutation) SetSessionID(i int64) {
-	m.session_id = &i
-	m.addsession_id = nil
+// SetGameSessionID sets the "game_session_id" field.
+func (m *SessionMutation) SetGameSessionID(i int64) {
+	m.game_session_id = &i
+	m.addgame_session_id = nil
 }
 
-// SessionID returns the value of the "session_id" field in the mutation.
-func (m *SessionMutation) SessionID() (r int64, exists bool) {
-	v := m.session_id
+// GameSessionID returns the value of the "game_session_id" field in the mutation.
+func (m *SessionMutation) GameSessionID() (r int64, exists bool) {
+	v := m.game_session_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSessionID returns the old "session_id" field's value of the Session entity.
+// OldGameSessionID returns the old "game_session_id" field's value of the Session entity.
 // If the Session object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldSessionID(ctx context.Context) (v int64, err error) {
+func (m *SessionMutation) OldGameSessionID(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSessionID is only allowed on UpdateOne operations")
+		return v, errors.New("OldGameSessionID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSessionID requires an ID field in the mutation")
+		return v, errors.New("OldGameSessionID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSessionID: %w", err)
+		return v, fmt.Errorf("querying old value for OldGameSessionID: %w", err)
 	}
-	return oldValue.SessionID, nil
+	return oldValue.GameSessionID, nil
 }
 
-// AddSessionID adds i to the "session_id" field.
-func (m *SessionMutation) AddSessionID(i int64) {
-	if m.addsession_id != nil {
-		*m.addsession_id += i
+// AddGameSessionID adds i to the "game_session_id" field.
+func (m *SessionMutation) AddGameSessionID(i int64) {
+	if m.addgame_session_id != nil {
+		*m.addgame_session_id += i
 	} else {
-		m.addsession_id = &i
+		m.addgame_session_id = &i
 	}
 }
 
-// AddedSessionID returns the value that was added to the "session_id" field in this mutation.
-func (m *SessionMutation) AddedSessionID() (r int64, exists bool) {
-	v := m.addsession_id
+// AddedGameSessionID returns the value that was added to the "game_session_id" field in this mutation.
+func (m *SessionMutation) AddedGameSessionID() (r int64, exists bool) {
+	v := m.addgame_session_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetSessionID resets all changes to the "session_id" field.
-func (m *SessionMutation) ResetSessionID() {
-	m.session_id = nil
-	m.addsession_id = nil
-}
-
-// SetWalletType sets the "wallet_type" field.
-func (m *SessionMutation) SetWalletType(s string) {
-	m.wallet_type = &s
-}
-
-// WalletType returns the value of the "wallet_type" field in the mutation.
-func (m *SessionMutation) WalletType() (r string, exists bool) {
-	v := m.wallet_type
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldWalletType returns the old "wallet_type" field's value of the Session entity.
-// If the Session object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldWalletType(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldWalletType is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldWalletType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldWalletType: %w", err)
-	}
-	return oldValue.WalletType, nil
-}
-
-// ClearWalletType clears the value of the "wallet_type" field.
-func (m *SessionMutation) ClearWalletType() {
-	m.wallet_type = nil
-	m.clearedFields[session.FieldWalletType] = struct{}{}
-}
-
-// WalletTypeCleared returns if the "wallet_type" field was cleared in this mutation.
-func (m *SessionMutation) WalletTypeCleared() bool {
-	_, ok := m.clearedFields[session.FieldWalletType]
-	return ok
-}
-
-// ResetWalletType resets all changes to the "wallet_type" field.
-func (m *SessionMutation) ResetWalletType() {
-	m.wallet_type = nil
-	delete(m.clearedFields, session.FieldWalletType)
-}
-
-// SetBetAmount sets the "bet_amount" field.
-func (m *SessionMutation) SetBetAmount(i int64) {
-	m.bet_amount = &i
-	m.addbet_amount = nil
-}
-
-// BetAmount returns the value of the "bet_amount" field in the mutation.
-func (m *SessionMutation) BetAmount() (r int64, exists bool) {
-	v := m.bet_amount
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldBetAmount returns the old "bet_amount" field's value of the Session entity.
-// If the Session object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldBetAmount(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldBetAmount is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldBetAmount requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldBetAmount: %w", err)
-	}
-	return oldValue.BetAmount, nil
-}
-
-// AddBetAmount adds i to the "bet_amount" field.
-func (m *SessionMutation) AddBetAmount(i int64) {
-	if m.addbet_amount != nil {
-		*m.addbet_amount += i
-	} else {
-		m.addbet_amount = &i
-	}
-}
-
-// AddedBetAmount returns the value that was added to the "bet_amount" field in this mutation.
-func (m *SessionMutation) AddedBetAmount() (r int64, exists bool) {
-	v := m.addbet_amount
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetBetAmount resets all changes to the "bet_amount" field.
-func (m *SessionMutation) ResetBetAmount() {
-	m.bet_amount = nil
-	m.addbet_amount = nil
-}
-
-// SetWinAmount sets the "win_amount" field.
-func (m *SessionMutation) SetWinAmount(i int64) {
-	m.win_amount = &i
-	m.addwin_amount = nil
-}
-
-// WinAmount returns the value of the "win_amount" field in the mutation.
-func (m *SessionMutation) WinAmount() (r int64, exists bool) {
-	v := m.win_amount
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldWinAmount returns the old "win_amount" field's value of the Session entity.
-// If the Session object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldWinAmount(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldWinAmount is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldWinAmount requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldWinAmount: %w", err)
-	}
-	return oldValue.WinAmount, nil
-}
-
-// AddWinAmount adds i to the "win_amount" field.
-func (m *SessionMutation) AddWinAmount(i int64) {
-	if m.addwin_amount != nil {
-		*m.addwin_amount += i
-	} else {
-		m.addwin_amount = &i
-	}
-}
-
-// AddedWinAmount returns the value that was added to the "win_amount" field in this mutation.
-func (m *SessionMutation) AddedWinAmount() (r int64, exists bool) {
-	v := m.addwin_amount
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetWinAmount resets all changes to the "win_amount" field.
-func (m *SessionMutation) ResetWinAmount() {
-	m.win_amount = nil
-	m.addwin_amount = nil
-}
-
-// SetChange sets the "change" field.
-func (m *SessionMutation) SetChange(i int64) {
-	m.change = &i
-	m.addchange = nil
-}
-
-// Change returns the value of the "change" field in the mutation.
-func (m *SessionMutation) Change() (r int64, exists bool) {
-	v := m.change
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldChange returns the old "change" field's value of the Session entity.
-// If the Session object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldChange(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChange is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChange requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChange: %w", err)
-	}
-	return oldValue.Change, nil
-}
-
-// AddChange adds i to the "change" field.
-func (m *SessionMutation) AddChange(i int64) {
-	if m.addchange != nil {
-		*m.addchange += i
-	} else {
-		m.addchange = &i
-	}
-}
-
-// AddedChange returns the value that was added to the "change" field in this mutation.
-func (m *SessionMutation) AddedChange() (r int64, exists bool) {
-	v := m.addchange
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetChange resets all changes to the "change" field.
-func (m *SessionMutation) ResetChange() {
-	m.change = nil
-	m.addchange = nil
-}
-
-// SetNewBalance sets the "new_balance" field.
-func (m *SessionMutation) SetNewBalance(i int64) {
-	m.new_balance = &i
-	m.addnew_balance = nil
-}
-
-// NewBalance returns the value of the "new_balance" field in the mutation.
-func (m *SessionMutation) NewBalance() (r int64, exists bool) {
-	v := m.new_balance
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldNewBalance returns the old "new_balance" field's value of the Session entity.
-// If the Session object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldNewBalance(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldNewBalance is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldNewBalance requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldNewBalance: %w", err)
-	}
-	return oldValue.NewBalance, nil
-}
-
-// AddNewBalance adds i to the "new_balance" field.
-func (m *SessionMutation) AddNewBalance(i int64) {
-	if m.addnew_balance != nil {
-		*m.addnew_balance += i
-	} else {
-		m.addnew_balance = &i
-	}
-}
-
-// AddedNewBalance returns the value that was added to the "new_balance" field in this mutation.
-func (m *SessionMutation) AddedNewBalance() (r int64, exists bool) {
-	v := m.addnew_balance
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearNewBalance clears the value of the "new_balance" field.
-func (m *SessionMutation) ClearNewBalance() {
-	m.new_balance = nil
-	m.addnew_balance = nil
-	m.clearedFields[session.FieldNewBalance] = struct{}{}
-}
-
-// NewBalanceCleared returns if the "new_balance" field was cleared in this mutation.
-func (m *SessionMutation) NewBalanceCleared() bool {
-	_, ok := m.clearedFields[session.FieldNewBalance]
-	return ok
-}
-
-// ResetNewBalance resets all changes to the "new_balance" field.
-func (m *SessionMutation) ResetNewBalance() {
-	m.new_balance = nil
-	m.addnew_balance = nil
-	delete(m.clearedFields, session.FieldNewBalance)
+// ResetGameSessionID resets all changes to the "game_session_id" field.
+func (m *SessionMutation) ResetGameSessionID() {
+	m.game_session_id = nil
+	m.addgame_session_id = nil
 }
 
 // Where appends a list predicates to the SessionMutation builder.
@@ -681,36 +348,18 @@ func (m *SessionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SessionMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 4)
 	if m.created_at != nil {
 		fields = append(fields, session.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, session.FieldUpdatedAt)
 	}
-	if m.player_id != nil {
-		fields = append(fields, session.FieldPlayerID)
-	}
 	if m.game_id != nil {
 		fields = append(fields, session.FieldGameID)
 	}
-	if m.session_id != nil {
-		fields = append(fields, session.FieldSessionID)
-	}
-	if m.wallet_type != nil {
-		fields = append(fields, session.FieldWalletType)
-	}
-	if m.bet_amount != nil {
-		fields = append(fields, session.FieldBetAmount)
-	}
-	if m.win_amount != nil {
-		fields = append(fields, session.FieldWinAmount)
-	}
-	if m.change != nil {
-		fields = append(fields, session.FieldChange)
-	}
-	if m.new_balance != nil {
-		fields = append(fields, session.FieldNewBalance)
+	if m.game_session_id != nil {
+		fields = append(fields, session.FieldGameSessionID)
 	}
 	return fields
 }
@@ -724,22 +373,10 @@ func (m *SessionMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case session.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case session.FieldPlayerID:
-		return m.PlayerID()
 	case session.FieldGameID:
 		return m.GameID()
-	case session.FieldSessionID:
-		return m.SessionID()
-	case session.FieldWalletType:
-		return m.WalletType()
-	case session.FieldBetAmount:
-		return m.BetAmount()
-	case session.FieldWinAmount:
-		return m.WinAmount()
-	case session.FieldChange:
-		return m.Change()
-	case session.FieldNewBalance:
-		return m.NewBalance()
+	case session.FieldGameSessionID:
+		return m.GameSessionID()
 	}
 	return nil, false
 }
@@ -753,22 +390,10 @@ func (m *SessionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreatedAt(ctx)
 	case session.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case session.FieldPlayerID:
-		return m.OldPlayerID(ctx)
 	case session.FieldGameID:
 		return m.OldGameID(ctx)
-	case session.FieldSessionID:
-		return m.OldSessionID(ctx)
-	case session.FieldWalletType:
-		return m.OldWalletType(ctx)
-	case session.FieldBetAmount:
-		return m.OldBetAmount(ctx)
-	case session.FieldWinAmount:
-		return m.OldWinAmount(ctx)
-	case session.FieldChange:
-		return m.OldChange(ctx)
-	case session.FieldNewBalance:
-		return m.OldNewBalance(ctx)
+	case session.FieldGameSessionID:
+		return m.OldGameSessionID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Session field %s", name)
 }
@@ -792,13 +417,6 @@ func (m *SessionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case session.FieldPlayerID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPlayerID(v)
-		return nil
 	case session.FieldGameID:
 		v, ok := value.(string)
 		if !ok {
@@ -806,47 +424,12 @@ func (m *SessionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetGameID(v)
 		return nil
-	case session.FieldSessionID:
+	case session.FieldGameSessionID:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSessionID(v)
-		return nil
-	case session.FieldWalletType:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetWalletType(v)
-		return nil
-	case session.FieldBetAmount:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetBetAmount(v)
-		return nil
-	case session.FieldWinAmount:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetWinAmount(v)
-		return nil
-	case session.FieldChange:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetChange(v)
-		return nil
-	case session.FieldNewBalance:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetNewBalance(v)
+		m.SetGameSessionID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Session field %s", name)
@@ -856,20 +439,8 @@ func (m *SessionMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *SessionMutation) AddedFields() []string {
 	var fields []string
-	if m.addsession_id != nil {
-		fields = append(fields, session.FieldSessionID)
-	}
-	if m.addbet_amount != nil {
-		fields = append(fields, session.FieldBetAmount)
-	}
-	if m.addwin_amount != nil {
-		fields = append(fields, session.FieldWinAmount)
-	}
-	if m.addchange != nil {
-		fields = append(fields, session.FieldChange)
-	}
-	if m.addnew_balance != nil {
-		fields = append(fields, session.FieldNewBalance)
+	if m.addgame_session_id != nil {
+		fields = append(fields, session.FieldGameSessionID)
 	}
 	return fields
 }
@@ -879,16 +450,8 @@ func (m *SessionMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *SessionMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case session.FieldSessionID:
-		return m.AddedSessionID()
-	case session.FieldBetAmount:
-		return m.AddedBetAmount()
-	case session.FieldWinAmount:
-		return m.AddedWinAmount()
-	case session.FieldChange:
-		return m.AddedChange()
-	case session.FieldNewBalance:
-		return m.AddedNewBalance()
+	case session.FieldGameSessionID:
+		return m.AddedGameSessionID()
 	}
 	return nil, false
 }
@@ -898,40 +461,12 @@ func (m *SessionMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *SessionMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case session.FieldSessionID:
+	case session.FieldGameSessionID:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddSessionID(v)
-		return nil
-	case session.FieldBetAmount:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddBetAmount(v)
-		return nil
-	case session.FieldWinAmount:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddWinAmount(v)
-		return nil
-	case session.FieldChange:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChange(v)
-		return nil
-	case session.FieldNewBalance:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddNewBalance(v)
+		m.AddGameSessionID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Session numeric field %s", name)
@@ -940,14 +475,7 @@ func (m *SessionMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *SessionMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(session.FieldWalletType) {
-		fields = append(fields, session.FieldWalletType)
-	}
-	if m.FieldCleared(session.FieldNewBalance) {
-		fields = append(fields, session.FieldNewBalance)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -960,14 +488,6 @@ func (m *SessionMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *SessionMutation) ClearField(name string) error {
-	switch name {
-	case session.FieldWalletType:
-		m.ClearWalletType()
-		return nil
-	case session.FieldNewBalance:
-		m.ClearNewBalance()
-		return nil
-	}
 	return fmt.Errorf("unknown Session nullable field %s", name)
 }
 
@@ -981,29 +501,11 @@ func (m *SessionMutation) ResetField(name string) error {
 	case session.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case session.FieldPlayerID:
-		m.ResetPlayerID()
-		return nil
 	case session.FieldGameID:
 		m.ResetGameID()
 		return nil
-	case session.FieldSessionID:
-		m.ResetSessionID()
-		return nil
-	case session.FieldWalletType:
-		m.ResetWalletType()
-		return nil
-	case session.FieldBetAmount:
-		m.ResetBetAmount()
-		return nil
-	case session.FieldWinAmount:
-		m.ResetWinAmount()
-		return nil
-	case session.FieldChange:
-		m.ResetChange()
-		return nil
-	case session.FieldNewBalance:
-		m.ResetNewBalance()
+	case session.FieldGameSessionID:
+		m.ResetGameSessionID()
 		return nil
 	}
 	return fmt.Errorf("unknown Session field %s", name)

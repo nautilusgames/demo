@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/nautilusgames/demo/auth/tenant"
 	"go.uber.org/zap"
 )
 
@@ -14,7 +15,7 @@ type VerifyPlayerResponse struct {
 
 func (s *httpServer) handleVerifyPlayer() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, playerID, _, err := s.authorizePlayerTenantToken(w, r)
+		_, playerID, _, err := tenant.GetTenantAuthorization(s.cfg, s.playerTenantToken)(w, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return

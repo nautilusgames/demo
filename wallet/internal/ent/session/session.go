@@ -17,22 +17,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
-	// FieldPlayerID holds the string denoting the player_id field in the database.
-	FieldPlayerID = "player_id"
 	// FieldGameID holds the string denoting the game_id field in the database.
 	FieldGameID = "game_id"
-	// FieldSessionID holds the string denoting the session_id field in the database.
-	FieldSessionID = "session_id"
-	// FieldWalletType holds the string denoting the wallet_type field in the database.
-	FieldWalletType = "wallet_type"
-	// FieldBetAmount holds the string denoting the bet_amount field in the database.
-	FieldBetAmount = "bet_amount"
-	// FieldWinAmount holds the string denoting the win_amount field in the database.
-	FieldWinAmount = "win_amount"
-	// FieldChange holds the string denoting the change field in the database.
-	FieldChange = "change"
-	// FieldNewBalance holds the string denoting the new_balance field in the database.
-	FieldNewBalance = "new_balance"
+	// FieldGameSessionID holds the string denoting the game_session_id field in the database.
+	FieldGameSessionID = "game_session_id"
 	// Table holds the table name of the session in the database.
 	Table = "sessions"
 )
@@ -42,14 +30,8 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
-	FieldPlayerID,
 	FieldGameID,
-	FieldSessionID,
-	FieldWalletType,
-	FieldBetAmount,
-	FieldWinAmount,
-	FieldChange,
-	FieldNewBalance,
+	FieldGameSessionID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -89,42 +71,12 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByPlayerID orders the results by the player_id field.
-func ByPlayerID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldPlayerID, opts...).ToFunc()
-}
-
 // ByGameID orders the results by the game_id field.
 func ByGameID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGameID, opts...).ToFunc()
 }
 
-// BySessionID orders the results by the session_id field.
-func BySessionID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSessionID, opts...).ToFunc()
-}
-
-// ByWalletType orders the results by the wallet_type field.
-func ByWalletType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldWalletType, opts...).ToFunc()
-}
-
-// ByBetAmount orders the results by the bet_amount field.
-func ByBetAmount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldBetAmount, opts...).ToFunc()
-}
-
-// ByWinAmount orders the results by the win_amount field.
-func ByWinAmount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldWinAmount, opts...).ToFunc()
-}
-
-// ByChange orders the results by the change field.
-func ByChange(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldChange, opts...).ToFunc()
-}
-
-// ByNewBalance orders the results by the new_balance field.
-func ByNewBalance(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldNewBalance, opts...).ToFunc()
+// ByGameSessionID orders the results by the game_session_id field.
+func ByGameSessionID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGameSessionID, opts...).ToFunc()
 }

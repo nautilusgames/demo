@@ -1,10 +1,12 @@
 package model
 
 const (
-	InternalAddress  = "http://demo-wallet:8080"
-	CreateWalletPath = "/api/v1/wallet/create-wallet"
-	TransferPath     = "/api/v1/wallet/transfer"
-	GetWalletPath    = "/api/v1/wallet/get-wallet"
+	InternalAddress = "http://demo-wallet:8080"
+	CreatePath      = "/wallet/create"
+	BetPath         = "/wallet/bet"
+	PayoutPath      = "/wallet/payout"
+	RefundPath      = "/wallet/refund"
+	GetPath         = "/wallet/get"
 )
 
 type (
@@ -17,7 +19,6 @@ type (
 
 type (
 	GetWalletRequest struct {
-		PlayerID int64 `json:"player_id"`
 	}
 	GetWalletResponse struct {
 		Data  *PlayerWallet `json:"data,omitempty"`
@@ -30,48 +31,23 @@ type (
 		SessionID int64 `json:"session_id,omitempty"`
 		Amount    int64 `json:"amount,omitempty"`
 	}
-	BettResponse struct {
-		Data  *Transaction `json:"data,omitempty"`
-		Error *Error       `json:"error"`
-	}
-)
-
-type (
 	PayoutRequest struct {
 		SessionID int64 `json:"session_id,omitempty"`
 		Amount    int64 `json:"amount,omitempty"`
 	}
-
-	PayoutResponse struct {
-		Data  *Transaction `json:"data,omitempty"`
-		Error *Error       `json:"error,omitempty"`
-	}
-)
-
-type (
 	RefundRequest struct {
 		SessionID int64 `json:"session_id,omitempty"`
 		Amount    int64 `json:"amount,omitempty"`
 	}
-	RefundResponse struct {
+	RollbackRequest struct {
+		SessionID int64 `json:"session_id,omitempty"`
+		Amount    int64 `json:"amount,omitempty"`
+	}
+	Response struct {
 		Data  *Transaction `json:"data,omitempty"`
-		Error *Error       `json:"error,omitempty"`
+		Error *Error       `json:"error"`
 	}
 )
-
-type (
-	TransferRequest struct {
-		SessionID int64  `json:"session_id"`
-		GameID    string `json:"game_id"`
-		PlayerID  int64  `json:"player_id"`
-		Amount    int64  `json:"amount"`
-	}
-	TransferResponse struct {
-		SessionID int64       `json:"session_id"`
-		Tx        Transaction `json:"tx"`
-	}
-)
-
 type Transaction struct {
 	ID         int64 `json:"id,omitempty"`
 	SessionID  int64 `json:"session_id,omitempty"`
