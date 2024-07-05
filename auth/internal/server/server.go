@@ -58,11 +58,11 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed creating schema resources", zap.Error(err))
 	}
 
-	webToken, err := token.New("web")
+	webToken, err := token.New("access-token")
 	if err != nil {
 		logger.Fatal("failed to create web token", zap.Error(err))
 	}
-	tenantToken, err := token.New("tenant")
+	tenantToken, err := token.New("tenant-token")
 	if err != nil {
 		logger.Fatal("failed to create tenant maker", zap.Error(err))
 	}

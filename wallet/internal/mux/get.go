@@ -1,6 +1,7 @@
 package mux
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/nautilusgames/demo/wallet/model"
 )
 
-func httpGetWallet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
+func httpGet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger.Info("get wallet")
 
@@ -23,7 +24,7 @@ func httpGetWallet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 		}
 		if request.PlayerID == 0 {
 			// TODO: get header name from constant
-			value := r.Header.Get("X-Player-Id")
+			value := r.Header.Get("x-player-id")
 			id, err := strconv.ParseInt(value, 10, 64)
 			if err != nil {
 				w.WriteHeader(http.StatusUnauthorized)
@@ -34,21 +35,29 @@ func httpGetWallet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 
 		}
 
-		player, err := entClient.Wallet.Query().
-			Where(entwallet.ID(request.PlayerID)).
-			Only(r.Context())
+		playerWallet, err := GetWallet(r.Context(), entClient, request.PlayerID)
 		if err != nil {
-			logger.Error("get player failed", zap.Error(err))
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
-			return
+			logger.Error("get wallet failed", zap.Error(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
 		respond(logger, w, model.GetWalletResponse{
-			Data: &model.PlayerWallet{
-				Balance:  player.Balance,
-				LastTxID: player.UpdatedAt.Unix(),
-			},
+			Data:  playerWallet,
+			Error: nil,
 		})
 	}
+}
+
+func GetWallet(ctx context.Context, entClient *ent.Client, playerID int64) (*model.PlayerWallet, error) {
+	player, err := entClient.Wallet.Query().
+		Where(entwallet.ID(playerID)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.PlayerWallet{
+		Balance:  player.Balance,
+		LastTxID: player.UpdatedAt.Unix(),
+	}, nil
 }

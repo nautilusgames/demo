@@ -1,13 +1,23 @@
 package mux
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
+	"time"
 
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/wallet/internal/ent"
+	entwallet "github.com/nautilusgames/demo/wallet/internal/ent/wallet"
+	"github.com/nautilusgames/demo/wallet/internal/tx"
 	"github.com/nautilusgames/demo/wallet/model"
+)
+
+var (
+	_insufficientBalanceCode  = 1
+	_insufficientBalanceError = errors.New("insufficient balance")
 )
 
 func New(logger *zap.Logger, entClient *ent.Client) *http.ServeMux {
@@ -15,9 +25,11 @@ func New(logger *zap.Logger, entClient *ent.Client) *http.ServeMux {
 	mux := http.NewServeMux()
 	// Health endpoint
 	mux.HandleFunc("/status", httpHealth())
-	mux.HandleFunc(model.CreateWalletPath, httpCreateWallet(logger, entClient))
-	mux.HandleFunc(model.TransferPath, httpTransfer(logger, entClient))
-	mux.HandleFunc(model.GetWalletPath, httpGetWallet(logger, entClient))
+	mux.HandleFunc(model.CreatePath, httpCreate(logger, entClient))
+	mux.HandleFunc(model.BetPath, httpBet(logger, entClient))
+	mux.HandleFunc(model.PayoutPath, httpPayout(logger, entClient))
+	mux.HandleFunc(model.RefundPath, httpRefund(logger, entClient))
+	mux.HandleFunc(model.GetPath, httpGet(logger, entClient))
 
 	return mux
 }
@@ -57,4 +69,106 @@ func respond(logger *zap.Logger, w http.ResponseWriter, response interface{}) {
 	if _, err := w.Write(bytes); err != nil {
 		logger.Error("write message failed", zap.Error(err))
 	}
+}
+
+func transfer(
+	ctx context.Context,
+	entClient *ent.Client,
+	logger *zap.Logger,
+	sessionID int64,
+	gameID string,
+	playerID int64,
+	amount int64,
+) (*model.Transaction, error) {
+	var (
+		now         = time.Now()
+		transaction *model.Transaction
+	)
+	err := tx.WithTx(ctx, entClient, func(tx *ent.Tx) error {
+		p, err := tx.Wallet.Query().
+			Where(entwallet.ID(playerID)).
+			ForUpdate().
+			Only(ctx)
+		if err != nil {
+			logger.Error("get player failed", zap.Error(err))
+			return err
+		}
+
+		if p.Balance+amount < 0 {
+			return _insufficientBalanceError
+		} else {
+			p.Balance += amount
+		}
+
+		walletSessionID, err := getOrCreateSession(ctx, tx.Session, gameID, sessionID)
+		if err != nil {
+			logger.Error("get or create session failed", zap.Error(err))
+			return err
+		}
+
+		transaction = &model.Transaction{
+			ID:         now.UnixNano(),
+			SessionID:  walletSessionID,
+			Amount:     amount,
+			NewBalance: p.Balance,
+			CreatedAt:  now.UnixNano(),
+		}
+
+		if amount == 0 {
+			return nil
+		}
+
+		err = tx.Wallet.Update().
+			Where(entwallet.ID(p.ID)).
+			SetBalance(p.Balance).
+			Exec(ctx)
+		if err != nil {
+			logger.Error("update player failed", zap.Error(err))
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return transaction, nil
+}
+
+func getOrCreateSession(
+	ctx context.Context,
+	entSession *ent.SessionClient,
+	gameID string,
+	sessionID int64,
+) (int64, error) {
+	if sessionID == 0 {
+		return create(ctx, entSession, gameID)
+	}
+
+	session, err := entSession.Get(ctx, sessionID)
+	if err != nil {
+		return 0, errors.New("get session failed")
+	}
+
+	if session.GameID != gameID {
+		return 0, errors.New("session service id mismatch")
+	}
+
+	return session.ID, nil
+}
+
+func create(
+	ctx context.Context,
+	entSession *ent.SessionClient,
+	GameID string,
+) (int64, error) {
+	session, err := entSession.Create().
+		SetGameID(GameID).
+		Save(ctx)
+	if err != nil {
+		return 0, errors.New("create session failed")
+	}
+
+	return session.ID, nil
 }

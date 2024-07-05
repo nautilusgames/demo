@@ -26,16 +26,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Session",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			session.FieldCreatedAt:  {Type: field.TypeTime, Column: session.FieldCreatedAt},
-			session.FieldUpdatedAt:  {Type: field.TypeTime, Column: session.FieldUpdatedAt},
-			session.FieldPlayerID:   {Type: field.TypeString, Column: session.FieldPlayerID},
-			session.FieldGameID:     {Type: field.TypeString, Column: session.FieldGameID},
-			session.FieldSessionID:  {Type: field.TypeInt64, Column: session.FieldSessionID},
-			session.FieldWalletType: {Type: field.TypeString, Column: session.FieldWalletType},
-			session.FieldBetAmount:  {Type: field.TypeInt64, Column: session.FieldBetAmount},
-			session.FieldWinAmount:  {Type: field.TypeInt64, Column: session.FieldWinAmount},
-			session.FieldChange:     {Type: field.TypeInt64, Column: session.FieldChange},
-			session.FieldNewBalance: {Type: field.TypeInt64, Column: session.FieldNewBalance},
+			session.FieldCreatedAt:     {Type: field.TypeTime, Column: session.FieldCreatedAt},
+			session.FieldUpdatedAt:     {Type: field.TypeTime, Column: session.FieldUpdatedAt},
+			session.FieldGameID:        {Type: field.TypeString, Column: session.FieldGameID},
+			session.FieldGameSessionID: {Type: field.TypeInt64, Column: session.FieldGameSessionID},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -114,44 +108,14 @@ func (f *SessionFilter) WhereUpdatedAt(p entql.TimeP) {
 	f.Where(p.Field(session.FieldUpdatedAt))
 }
 
-// WherePlayerID applies the entql string predicate on the player_id field.
-func (f *SessionFilter) WherePlayerID(p entql.StringP) {
-	f.Where(p.Field(session.FieldPlayerID))
-}
-
 // WhereGameID applies the entql string predicate on the game_id field.
 func (f *SessionFilter) WhereGameID(p entql.StringP) {
 	f.Where(p.Field(session.FieldGameID))
 }
 
-// WhereSessionID applies the entql int64 predicate on the session_id field.
-func (f *SessionFilter) WhereSessionID(p entql.Int64P) {
-	f.Where(p.Field(session.FieldSessionID))
-}
-
-// WhereWalletType applies the entql string predicate on the wallet_type field.
-func (f *SessionFilter) WhereWalletType(p entql.StringP) {
-	f.Where(p.Field(session.FieldWalletType))
-}
-
-// WhereBetAmount applies the entql int64 predicate on the bet_amount field.
-func (f *SessionFilter) WhereBetAmount(p entql.Int64P) {
-	f.Where(p.Field(session.FieldBetAmount))
-}
-
-// WhereWinAmount applies the entql int64 predicate on the win_amount field.
-func (f *SessionFilter) WhereWinAmount(p entql.Int64P) {
-	f.Where(p.Field(session.FieldWinAmount))
-}
-
-// WhereChange applies the entql int64 predicate on the change field.
-func (f *SessionFilter) WhereChange(p entql.Int64P) {
-	f.Where(p.Field(session.FieldChange))
-}
-
-// WhereNewBalance applies the entql int64 predicate on the new_balance field.
-func (f *SessionFilter) WhereNewBalance(p entql.Int64P) {
-	f.Where(p.Field(session.FieldNewBalance))
+// WhereGameSessionID applies the entql int64 predicate on the game_session_id field.
+func (f *SessionFilter) WhereGameSessionID(p entql.Int64P) {
+	f.Where(p.Field(session.FieldGameSessionID))
 }
 
 // addPredicate implements the predicateAdder interface.

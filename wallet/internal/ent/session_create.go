@@ -50,67 +50,15 @@ func (sc *SessionCreate) SetNillableUpdatedAt(t *time.Time) *SessionCreate {
 	return sc
 }
 
-// SetPlayerID sets the "player_id" field.
-func (sc *SessionCreate) SetPlayerID(s string) *SessionCreate {
-	sc.mutation.SetPlayerID(s)
-	return sc
-}
-
 // SetGameID sets the "game_id" field.
 func (sc *SessionCreate) SetGameID(s string) *SessionCreate {
 	sc.mutation.SetGameID(s)
 	return sc
 }
 
-// SetSessionID sets the "session_id" field.
-func (sc *SessionCreate) SetSessionID(i int64) *SessionCreate {
-	sc.mutation.SetSessionID(i)
-	return sc
-}
-
-// SetWalletType sets the "wallet_type" field.
-func (sc *SessionCreate) SetWalletType(s string) *SessionCreate {
-	sc.mutation.SetWalletType(s)
-	return sc
-}
-
-// SetNillableWalletType sets the "wallet_type" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableWalletType(s *string) *SessionCreate {
-	if s != nil {
-		sc.SetWalletType(*s)
-	}
-	return sc
-}
-
-// SetBetAmount sets the "bet_amount" field.
-func (sc *SessionCreate) SetBetAmount(i int64) *SessionCreate {
-	sc.mutation.SetBetAmount(i)
-	return sc
-}
-
-// SetWinAmount sets the "win_amount" field.
-func (sc *SessionCreate) SetWinAmount(i int64) *SessionCreate {
-	sc.mutation.SetWinAmount(i)
-	return sc
-}
-
-// SetChange sets the "change" field.
-func (sc *SessionCreate) SetChange(i int64) *SessionCreate {
-	sc.mutation.SetChange(i)
-	return sc
-}
-
-// SetNewBalance sets the "new_balance" field.
-func (sc *SessionCreate) SetNewBalance(i int64) *SessionCreate {
-	sc.mutation.SetNewBalance(i)
-	return sc
-}
-
-// SetNillableNewBalance sets the "new_balance" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableNewBalance(i *int64) *SessionCreate {
-	if i != nil {
-		sc.SetNewBalance(*i)
-	}
+// SetGameSessionID sets the "game_session_id" field.
+func (sc *SessionCreate) SetGameSessionID(i int64) *SessionCreate {
+	sc.mutation.SetGameSessionID(i)
 	return sc
 }
 
@@ -173,23 +121,11 @@ func (sc *SessionCreate) check() error {
 	if _, ok := sc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Session.updated_at"`)}
 	}
-	if _, ok := sc.mutation.PlayerID(); !ok {
-		return &ValidationError{Name: "player_id", err: errors.New(`ent: missing required field "Session.player_id"`)}
-	}
 	if _, ok := sc.mutation.GameID(); !ok {
 		return &ValidationError{Name: "game_id", err: errors.New(`ent: missing required field "Session.game_id"`)}
 	}
-	if _, ok := sc.mutation.SessionID(); !ok {
-		return &ValidationError{Name: "session_id", err: errors.New(`ent: missing required field "Session.session_id"`)}
-	}
-	if _, ok := sc.mutation.BetAmount(); !ok {
-		return &ValidationError{Name: "bet_amount", err: errors.New(`ent: missing required field "Session.bet_amount"`)}
-	}
-	if _, ok := sc.mutation.WinAmount(); !ok {
-		return &ValidationError{Name: "win_amount", err: errors.New(`ent: missing required field "Session.win_amount"`)}
-	}
-	if _, ok := sc.mutation.Change(); !ok {
-		return &ValidationError{Name: "change", err: errors.New(`ent: missing required field "Session.change"`)}
+	if _, ok := sc.mutation.GameSessionID(); !ok {
+		return &ValidationError{Name: "game_session_id", err: errors.New(`ent: missing required field "Session.game_session_id"`)}
 	}
 	return nil
 }
@@ -232,37 +168,13 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := sc.mutation.PlayerID(); ok {
-		_spec.SetField(session.FieldPlayerID, field.TypeString, value)
-		_node.PlayerID = value
-	}
 	if value, ok := sc.mutation.GameID(); ok {
 		_spec.SetField(session.FieldGameID, field.TypeString, value)
 		_node.GameID = value
 	}
-	if value, ok := sc.mutation.SessionID(); ok {
-		_spec.SetField(session.FieldSessionID, field.TypeInt64, value)
-		_node.SessionID = value
-	}
-	if value, ok := sc.mutation.WalletType(); ok {
-		_spec.SetField(session.FieldWalletType, field.TypeString, value)
-		_node.WalletType = value
-	}
-	if value, ok := sc.mutation.BetAmount(); ok {
-		_spec.SetField(session.FieldBetAmount, field.TypeInt64, value)
-		_node.BetAmount = value
-	}
-	if value, ok := sc.mutation.WinAmount(); ok {
-		_spec.SetField(session.FieldWinAmount, field.TypeInt64, value)
-		_node.WinAmount = value
-	}
-	if value, ok := sc.mutation.Change(); ok {
-		_spec.SetField(session.FieldChange, field.TypeInt64, value)
-		_node.Change = value
-	}
-	if value, ok := sc.mutation.NewBalance(); ok {
-		_spec.SetField(session.FieldNewBalance, field.TypeInt64, value)
-		_node.NewBalance = value
+	if value, ok := sc.mutation.GameSessionID(); ok {
+		_spec.SetField(session.FieldGameSessionID, field.TypeInt64, value)
+		_node.GameSessionID = value
 	}
 	return _node, _spec
 }
@@ -328,18 +240,6 @@ func (u *SessionUpsert) UpdateUpdatedAt() *SessionUpsert {
 	return u
 }
 
-// SetPlayerID sets the "player_id" field.
-func (u *SessionUpsert) SetPlayerID(v string) *SessionUpsert {
-	u.Set(session.FieldPlayerID, v)
-	return u
-}
-
-// UpdatePlayerID sets the "player_id" field to the value that was provided on create.
-func (u *SessionUpsert) UpdatePlayerID() *SessionUpsert {
-	u.SetExcluded(session.FieldPlayerID)
-	return u
-}
-
 // SetGameID sets the "game_id" field.
 func (u *SessionUpsert) SetGameID(v string) *SessionUpsert {
 	u.Set(session.FieldGameID, v)
@@ -352,117 +252,21 @@ func (u *SessionUpsert) UpdateGameID() *SessionUpsert {
 	return u
 }
 
-// SetSessionID sets the "session_id" field.
-func (u *SessionUpsert) SetSessionID(v int64) *SessionUpsert {
-	u.Set(session.FieldSessionID, v)
+// SetGameSessionID sets the "game_session_id" field.
+func (u *SessionUpsert) SetGameSessionID(v int64) *SessionUpsert {
+	u.Set(session.FieldGameSessionID, v)
 	return u
 }
 
-// UpdateSessionID sets the "session_id" field to the value that was provided on create.
-func (u *SessionUpsert) UpdateSessionID() *SessionUpsert {
-	u.SetExcluded(session.FieldSessionID)
+// UpdateGameSessionID sets the "game_session_id" field to the value that was provided on create.
+func (u *SessionUpsert) UpdateGameSessionID() *SessionUpsert {
+	u.SetExcluded(session.FieldGameSessionID)
 	return u
 }
 
-// AddSessionID adds v to the "session_id" field.
-func (u *SessionUpsert) AddSessionID(v int64) *SessionUpsert {
-	u.Add(session.FieldSessionID, v)
-	return u
-}
-
-// SetWalletType sets the "wallet_type" field.
-func (u *SessionUpsert) SetWalletType(v string) *SessionUpsert {
-	u.Set(session.FieldWalletType, v)
-	return u
-}
-
-// UpdateWalletType sets the "wallet_type" field to the value that was provided on create.
-func (u *SessionUpsert) UpdateWalletType() *SessionUpsert {
-	u.SetExcluded(session.FieldWalletType)
-	return u
-}
-
-// ClearWalletType clears the value of the "wallet_type" field.
-func (u *SessionUpsert) ClearWalletType() *SessionUpsert {
-	u.SetNull(session.FieldWalletType)
-	return u
-}
-
-// SetBetAmount sets the "bet_amount" field.
-func (u *SessionUpsert) SetBetAmount(v int64) *SessionUpsert {
-	u.Set(session.FieldBetAmount, v)
-	return u
-}
-
-// UpdateBetAmount sets the "bet_amount" field to the value that was provided on create.
-func (u *SessionUpsert) UpdateBetAmount() *SessionUpsert {
-	u.SetExcluded(session.FieldBetAmount)
-	return u
-}
-
-// AddBetAmount adds v to the "bet_amount" field.
-func (u *SessionUpsert) AddBetAmount(v int64) *SessionUpsert {
-	u.Add(session.FieldBetAmount, v)
-	return u
-}
-
-// SetWinAmount sets the "win_amount" field.
-func (u *SessionUpsert) SetWinAmount(v int64) *SessionUpsert {
-	u.Set(session.FieldWinAmount, v)
-	return u
-}
-
-// UpdateWinAmount sets the "win_amount" field to the value that was provided on create.
-func (u *SessionUpsert) UpdateWinAmount() *SessionUpsert {
-	u.SetExcluded(session.FieldWinAmount)
-	return u
-}
-
-// AddWinAmount adds v to the "win_amount" field.
-func (u *SessionUpsert) AddWinAmount(v int64) *SessionUpsert {
-	u.Add(session.FieldWinAmount, v)
-	return u
-}
-
-// SetChange sets the "change" field.
-func (u *SessionUpsert) SetChange(v int64) *SessionUpsert {
-	u.Set(session.FieldChange, v)
-	return u
-}
-
-// UpdateChange sets the "change" field to the value that was provided on create.
-func (u *SessionUpsert) UpdateChange() *SessionUpsert {
-	u.SetExcluded(session.FieldChange)
-	return u
-}
-
-// AddChange adds v to the "change" field.
-func (u *SessionUpsert) AddChange(v int64) *SessionUpsert {
-	u.Add(session.FieldChange, v)
-	return u
-}
-
-// SetNewBalance sets the "new_balance" field.
-func (u *SessionUpsert) SetNewBalance(v int64) *SessionUpsert {
-	u.Set(session.FieldNewBalance, v)
-	return u
-}
-
-// UpdateNewBalance sets the "new_balance" field to the value that was provided on create.
-func (u *SessionUpsert) UpdateNewBalance() *SessionUpsert {
-	u.SetExcluded(session.FieldNewBalance)
-	return u
-}
-
-// AddNewBalance adds v to the "new_balance" field.
-func (u *SessionUpsert) AddNewBalance(v int64) *SessionUpsert {
-	u.Add(session.FieldNewBalance, v)
-	return u
-}
-
-// ClearNewBalance clears the value of the "new_balance" field.
-func (u *SessionUpsert) ClearNewBalance() *SessionUpsert {
-	u.SetNull(session.FieldNewBalance)
+// AddGameSessionID adds v to the "game_session_id" field.
+func (u *SessionUpsert) AddGameSessionID(v int64) *SessionUpsert {
+	u.Add(session.FieldGameSessionID, v)
 	return u
 }
 
@@ -531,20 +335,6 @@ func (u *SessionUpsertOne) UpdateUpdatedAt() *SessionUpsertOne {
 	})
 }
 
-// SetPlayerID sets the "player_id" field.
-func (u *SessionUpsertOne) SetPlayerID(v string) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetPlayerID(v)
-	})
-}
-
-// UpdatePlayerID sets the "player_id" field to the value that was provided on create.
-func (u *SessionUpsertOne) UpdatePlayerID() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdatePlayerID()
-	})
-}
-
 // SetGameID sets the "game_id" field.
 func (u *SessionUpsertOne) SetGameID(v string) *SessionUpsertOne {
 	return u.Update(func(s *SessionUpsert) {
@@ -559,136 +349,24 @@ func (u *SessionUpsertOne) UpdateGameID() *SessionUpsertOne {
 	})
 }
 
-// SetSessionID sets the "session_id" field.
-func (u *SessionUpsertOne) SetSessionID(v int64) *SessionUpsertOne {
+// SetGameSessionID sets the "game_session_id" field.
+func (u *SessionUpsertOne) SetGameSessionID(v int64) *SessionUpsertOne {
 	return u.Update(func(s *SessionUpsert) {
-		s.SetSessionID(v)
+		s.SetGameSessionID(v)
 	})
 }
 
-// AddSessionID adds v to the "session_id" field.
-func (u *SessionUpsertOne) AddSessionID(v int64) *SessionUpsertOne {
+// AddGameSessionID adds v to the "game_session_id" field.
+func (u *SessionUpsertOne) AddGameSessionID(v int64) *SessionUpsertOne {
 	return u.Update(func(s *SessionUpsert) {
-		s.AddSessionID(v)
+		s.AddGameSessionID(v)
 	})
 }
 
-// UpdateSessionID sets the "session_id" field to the value that was provided on create.
-func (u *SessionUpsertOne) UpdateSessionID() *SessionUpsertOne {
+// UpdateGameSessionID sets the "game_session_id" field to the value that was provided on create.
+func (u *SessionUpsertOne) UpdateGameSessionID() *SessionUpsertOne {
 	return u.Update(func(s *SessionUpsert) {
-		s.UpdateSessionID()
-	})
-}
-
-// SetWalletType sets the "wallet_type" field.
-func (u *SessionUpsertOne) SetWalletType(v string) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetWalletType(v)
-	})
-}
-
-// UpdateWalletType sets the "wallet_type" field to the value that was provided on create.
-func (u *SessionUpsertOne) UpdateWalletType() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateWalletType()
-	})
-}
-
-// ClearWalletType clears the value of the "wallet_type" field.
-func (u *SessionUpsertOne) ClearWalletType() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.ClearWalletType()
-	})
-}
-
-// SetBetAmount sets the "bet_amount" field.
-func (u *SessionUpsertOne) SetBetAmount(v int64) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetBetAmount(v)
-	})
-}
-
-// AddBetAmount adds v to the "bet_amount" field.
-func (u *SessionUpsertOne) AddBetAmount(v int64) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddBetAmount(v)
-	})
-}
-
-// UpdateBetAmount sets the "bet_amount" field to the value that was provided on create.
-func (u *SessionUpsertOne) UpdateBetAmount() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateBetAmount()
-	})
-}
-
-// SetWinAmount sets the "win_amount" field.
-func (u *SessionUpsertOne) SetWinAmount(v int64) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetWinAmount(v)
-	})
-}
-
-// AddWinAmount adds v to the "win_amount" field.
-func (u *SessionUpsertOne) AddWinAmount(v int64) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddWinAmount(v)
-	})
-}
-
-// UpdateWinAmount sets the "win_amount" field to the value that was provided on create.
-func (u *SessionUpsertOne) UpdateWinAmount() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateWinAmount()
-	})
-}
-
-// SetChange sets the "change" field.
-func (u *SessionUpsertOne) SetChange(v int64) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetChange(v)
-	})
-}
-
-// AddChange adds v to the "change" field.
-func (u *SessionUpsertOne) AddChange(v int64) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddChange(v)
-	})
-}
-
-// UpdateChange sets the "change" field to the value that was provided on create.
-func (u *SessionUpsertOne) UpdateChange() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateChange()
-	})
-}
-
-// SetNewBalance sets the "new_balance" field.
-func (u *SessionUpsertOne) SetNewBalance(v int64) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetNewBalance(v)
-	})
-}
-
-// AddNewBalance adds v to the "new_balance" field.
-func (u *SessionUpsertOne) AddNewBalance(v int64) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddNewBalance(v)
-	})
-}
-
-// UpdateNewBalance sets the "new_balance" field to the value that was provided on create.
-func (u *SessionUpsertOne) UpdateNewBalance() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateNewBalance()
-	})
-}
-
-// ClearNewBalance clears the value of the "new_balance" field.
-func (u *SessionUpsertOne) ClearNewBalance() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.ClearNewBalance()
+		s.UpdateGameSessionID()
 	})
 }
 
@@ -923,20 +601,6 @@ func (u *SessionUpsertBulk) UpdateUpdatedAt() *SessionUpsertBulk {
 	})
 }
 
-// SetPlayerID sets the "player_id" field.
-func (u *SessionUpsertBulk) SetPlayerID(v string) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetPlayerID(v)
-	})
-}
-
-// UpdatePlayerID sets the "player_id" field to the value that was provided on create.
-func (u *SessionUpsertBulk) UpdatePlayerID() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdatePlayerID()
-	})
-}
-
 // SetGameID sets the "game_id" field.
 func (u *SessionUpsertBulk) SetGameID(v string) *SessionUpsertBulk {
 	return u.Update(func(s *SessionUpsert) {
@@ -951,136 +615,24 @@ func (u *SessionUpsertBulk) UpdateGameID() *SessionUpsertBulk {
 	})
 }
 
-// SetSessionID sets the "session_id" field.
-func (u *SessionUpsertBulk) SetSessionID(v int64) *SessionUpsertBulk {
+// SetGameSessionID sets the "game_session_id" field.
+func (u *SessionUpsertBulk) SetGameSessionID(v int64) *SessionUpsertBulk {
 	return u.Update(func(s *SessionUpsert) {
-		s.SetSessionID(v)
+		s.SetGameSessionID(v)
 	})
 }
 
-// AddSessionID adds v to the "session_id" field.
-func (u *SessionUpsertBulk) AddSessionID(v int64) *SessionUpsertBulk {
+// AddGameSessionID adds v to the "game_session_id" field.
+func (u *SessionUpsertBulk) AddGameSessionID(v int64) *SessionUpsertBulk {
 	return u.Update(func(s *SessionUpsert) {
-		s.AddSessionID(v)
+		s.AddGameSessionID(v)
 	})
 }
 
-// UpdateSessionID sets the "session_id" field to the value that was provided on create.
-func (u *SessionUpsertBulk) UpdateSessionID() *SessionUpsertBulk {
+// UpdateGameSessionID sets the "game_session_id" field to the value that was provided on create.
+func (u *SessionUpsertBulk) UpdateGameSessionID() *SessionUpsertBulk {
 	return u.Update(func(s *SessionUpsert) {
-		s.UpdateSessionID()
-	})
-}
-
-// SetWalletType sets the "wallet_type" field.
-func (u *SessionUpsertBulk) SetWalletType(v string) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetWalletType(v)
-	})
-}
-
-// UpdateWalletType sets the "wallet_type" field to the value that was provided on create.
-func (u *SessionUpsertBulk) UpdateWalletType() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateWalletType()
-	})
-}
-
-// ClearWalletType clears the value of the "wallet_type" field.
-func (u *SessionUpsertBulk) ClearWalletType() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.ClearWalletType()
-	})
-}
-
-// SetBetAmount sets the "bet_amount" field.
-func (u *SessionUpsertBulk) SetBetAmount(v int64) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetBetAmount(v)
-	})
-}
-
-// AddBetAmount adds v to the "bet_amount" field.
-func (u *SessionUpsertBulk) AddBetAmount(v int64) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddBetAmount(v)
-	})
-}
-
-// UpdateBetAmount sets the "bet_amount" field to the value that was provided on create.
-func (u *SessionUpsertBulk) UpdateBetAmount() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateBetAmount()
-	})
-}
-
-// SetWinAmount sets the "win_amount" field.
-func (u *SessionUpsertBulk) SetWinAmount(v int64) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetWinAmount(v)
-	})
-}
-
-// AddWinAmount adds v to the "win_amount" field.
-func (u *SessionUpsertBulk) AddWinAmount(v int64) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddWinAmount(v)
-	})
-}
-
-// UpdateWinAmount sets the "win_amount" field to the value that was provided on create.
-func (u *SessionUpsertBulk) UpdateWinAmount() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateWinAmount()
-	})
-}
-
-// SetChange sets the "change" field.
-func (u *SessionUpsertBulk) SetChange(v int64) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetChange(v)
-	})
-}
-
-// AddChange adds v to the "change" field.
-func (u *SessionUpsertBulk) AddChange(v int64) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddChange(v)
-	})
-}
-
-// UpdateChange sets the "change" field to the value that was provided on create.
-func (u *SessionUpsertBulk) UpdateChange() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateChange()
-	})
-}
-
-// SetNewBalance sets the "new_balance" field.
-func (u *SessionUpsertBulk) SetNewBalance(v int64) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetNewBalance(v)
-	})
-}
-
-// AddNewBalance adds v to the "new_balance" field.
-func (u *SessionUpsertBulk) AddNewBalance(v int64) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddNewBalance(v)
-	})
-}
-
-// UpdateNewBalance sets the "new_balance" field to the value that was provided on create.
-func (u *SessionUpsertBulk) UpdateNewBalance() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateNewBalance()
-	})
-}
-
-// ClearNewBalance clears the value of the "new_balance" field.
-func (u *SessionUpsertBulk) ClearNewBalance() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.ClearNewBalance()
+		s.UpdateGameSessionID()
 	})
 }
 

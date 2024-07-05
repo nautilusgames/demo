@@ -35,20 +35,6 @@ func (su *SessionUpdate) SetUpdatedAt(t time.Time) *SessionUpdate {
 	return su
 }
 
-// SetPlayerID sets the "player_id" field.
-func (su *SessionUpdate) SetPlayerID(s string) *SessionUpdate {
-	su.mutation.SetPlayerID(s)
-	return su
-}
-
-// SetNillablePlayerID sets the "player_id" field if the given value is not nil.
-func (su *SessionUpdate) SetNillablePlayerID(s *string) *SessionUpdate {
-	if s != nil {
-		su.SetPlayerID(*s)
-	}
-	return su
-}
-
 // SetGameID sets the "game_id" field.
 func (su *SessionUpdate) SetGameID(s string) *SessionUpdate {
 	su.mutation.SetGameID(s)
@@ -63,134 +49,24 @@ func (su *SessionUpdate) SetNillableGameID(s *string) *SessionUpdate {
 	return su
 }
 
-// SetSessionID sets the "session_id" field.
-func (su *SessionUpdate) SetSessionID(i int64) *SessionUpdate {
-	su.mutation.ResetSessionID()
-	su.mutation.SetSessionID(i)
+// SetGameSessionID sets the "game_session_id" field.
+func (su *SessionUpdate) SetGameSessionID(i int64) *SessionUpdate {
+	su.mutation.ResetGameSessionID()
+	su.mutation.SetGameSessionID(i)
 	return su
 }
 
-// SetNillableSessionID sets the "session_id" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableSessionID(i *int64) *SessionUpdate {
+// SetNillableGameSessionID sets the "game_session_id" field if the given value is not nil.
+func (su *SessionUpdate) SetNillableGameSessionID(i *int64) *SessionUpdate {
 	if i != nil {
-		su.SetSessionID(*i)
+		su.SetGameSessionID(*i)
 	}
 	return su
 }
 
-// AddSessionID adds i to the "session_id" field.
-func (su *SessionUpdate) AddSessionID(i int64) *SessionUpdate {
-	su.mutation.AddSessionID(i)
-	return su
-}
-
-// SetWalletType sets the "wallet_type" field.
-func (su *SessionUpdate) SetWalletType(s string) *SessionUpdate {
-	su.mutation.SetWalletType(s)
-	return su
-}
-
-// SetNillableWalletType sets the "wallet_type" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableWalletType(s *string) *SessionUpdate {
-	if s != nil {
-		su.SetWalletType(*s)
-	}
-	return su
-}
-
-// ClearWalletType clears the value of the "wallet_type" field.
-func (su *SessionUpdate) ClearWalletType() *SessionUpdate {
-	su.mutation.ClearWalletType()
-	return su
-}
-
-// SetBetAmount sets the "bet_amount" field.
-func (su *SessionUpdate) SetBetAmount(i int64) *SessionUpdate {
-	su.mutation.ResetBetAmount()
-	su.mutation.SetBetAmount(i)
-	return su
-}
-
-// SetNillableBetAmount sets the "bet_amount" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableBetAmount(i *int64) *SessionUpdate {
-	if i != nil {
-		su.SetBetAmount(*i)
-	}
-	return su
-}
-
-// AddBetAmount adds i to the "bet_amount" field.
-func (su *SessionUpdate) AddBetAmount(i int64) *SessionUpdate {
-	su.mutation.AddBetAmount(i)
-	return su
-}
-
-// SetWinAmount sets the "win_amount" field.
-func (su *SessionUpdate) SetWinAmount(i int64) *SessionUpdate {
-	su.mutation.ResetWinAmount()
-	su.mutation.SetWinAmount(i)
-	return su
-}
-
-// SetNillableWinAmount sets the "win_amount" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableWinAmount(i *int64) *SessionUpdate {
-	if i != nil {
-		su.SetWinAmount(*i)
-	}
-	return su
-}
-
-// AddWinAmount adds i to the "win_amount" field.
-func (su *SessionUpdate) AddWinAmount(i int64) *SessionUpdate {
-	su.mutation.AddWinAmount(i)
-	return su
-}
-
-// SetChange sets the "change" field.
-func (su *SessionUpdate) SetChange(i int64) *SessionUpdate {
-	su.mutation.ResetChange()
-	su.mutation.SetChange(i)
-	return su
-}
-
-// SetNillableChange sets the "change" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableChange(i *int64) *SessionUpdate {
-	if i != nil {
-		su.SetChange(*i)
-	}
-	return su
-}
-
-// AddChange adds i to the "change" field.
-func (su *SessionUpdate) AddChange(i int64) *SessionUpdate {
-	su.mutation.AddChange(i)
-	return su
-}
-
-// SetNewBalance sets the "new_balance" field.
-func (su *SessionUpdate) SetNewBalance(i int64) *SessionUpdate {
-	su.mutation.ResetNewBalance()
-	su.mutation.SetNewBalance(i)
-	return su
-}
-
-// SetNillableNewBalance sets the "new_balance" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableNewBalance(i *int64) *SessionUpdate {
-	if i != nil {
-		su.SetNewBalance(*i)
-	}
-	return su
-}
-
-// AddNewBalance adds i to the "new_balance" field.
-func (su *SessionUpdate) AddNewBalance(i int64) *SessionUpdate {
-	su.mutation.AddNewBalance(i)
-	return su
-}
-
-// ClearNewBalance clears the value of the "new_balance" field.
-func (su *SessionUpdate) ClearNewBalance() *SessionUpdate {
-	su.mutation.ClearNewBalance()
+// AddGameSessionID adds i to the "game_session_id" field.
+func (su *SessionUpdate) AddGameSessionID(i int64) *SessionUpdate {
+	su.mutation.AddGameSessionID(i)
 	return su
 }
 
@@ -253,50 +129,14 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := su.mutation.UpdatedAt(); ok {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := su.mutation.PlayerID(); ok {
-		_spec.SetField(session.FieldPlayerID, field.TypeString, value)
-	}
 	if value, ok := su.mutation.GameID(); ok {
 		_spec.SetField(session.FieldGameID, field.TypeString, value)
 	}
-	if value, ok := su.mutation.SessionID(); ok {
-		_spec.SetField(session.FieldSessionID, field.TypeInt64, value)
+	if value, ok := su.mutation.GameSessionID(); ok {
+		_spec.SetField(session.FieldGameSessionID, field.TypeInt64, value)
 	}
-	if value, ok := su.mutation.AddedSessionID(); ok {
-		_spec.AddField(session.FieldSessionID, field.TypeInt64, value)
-	}
-	if value, ok := su.mutation.WalletType(); ok {
-		_spec.SetField(session.FieldWalletType, field.TypeString, value)
-	}
-	if su.mutation.WalletTypeCleared() {
-		_spec.ClearField(session.FieldWalletType, field.TypeString)
-	}
-	if value, ok := su.mutation.BetAmount(); ok {
-		_spec.SetField(session.FieldBetAmount, field.TypeInt64, value)
-	}
-	if value, ok := su.mutation.AddedBetAmount(); ok {
-		_spec.AddField(session.FieldBetAmount, field.TypeInt64, value)
-	}
-	if value, ok := su.mutation.WinAmount(); ok {
-		_spec.SetField(session.FieldWinAmount, field.TypeInt64, value)
-	}
-	if value, ok := su.mutation.AddedWinAmount(); ok {
-		_spec.AddField(session.FieldWinAmount, field.TypeInt64, value)
-	}
-	if value, ok := su.mutation.Change(); ok {
-		_spec.SetField(session.FieldChange, field.TypeInt64, value)
-	}
-	if value, ok := su.mutation.AddedChange(); ok {
-		_spec.AddField(session.FieldChange, field.TypeInt64, value)
-	}
-	if value, ok := su.mutation.NewBalance(); ok {
-		_spec.SetField(session.FieldNewBalance, field.TypeInt64, value)
-	}
-	if value, ok := su.mutation.AddedNewBalance(); ok {
-		_spec.AddField(session.FieldNewBalance, field.TypeInt64, value)
-	}
-	if su.mutation.NewBalanceCleared() {
-		_spec.ClearField(session.FieldNewBalance, field.TypeInt64)
+	if value, ok := su.mutation.AddedGameSessionID(); ok {
+		_spec.AddField(session.FieldGameSessionID, field.TypeInt64, value)
 	}
 	_spec.AddModifiers(su.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
@@ -326,20 +166,6 @@ func (suo *SessionUpdateOne) SetUpdatedAt(t time.Time) *SessionUpdateOne {
 	return suo
 }
 
-// SetPlayerID sets the "player_id" field.
-func (suo *SessionUpdateOne) SetPlayerID(s string) *SessionUpdateOne {
-	suo.mutation.SetPlayerID(s)
-	return suo
-}
-
-// SetNillablePlayerID sets the "player_id" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillablePlayerID(s *string) *SessionUpdateOne {
-	if s != nil {
-		suo.SetPlayerID(*s)
-	}
-	return suo
-}
-
 // SetGameID sets the "game_id" field.
 func (suo *SessionUpdateOne) SetGameID(s string) *SessionUpdateOne {
 	suo.mutation.SetGameID(s)
@@ -354,134 +180,24 @@ func (suo *SessionUpdateOne) SetNillableGameID(s *string) *SessionUpdateOne {
 	return suo
 }
 
-// SetSessionID sets the "session_id" field.
-func (suo *SessionUpdateOne) SetSessionID(i int64) *SessionUpdateOne {
-	suo.mutation.ResetSessionID()
-	suo.mutation.SetSessionID(i)
+// SetGameSessionID sets the "game_session_id" field.
+func (suo *SessionUpdateOne) SetGameSessionID(i int64) *SessionUpdateOne {
+	suo.mutation.ResetGameSessionID()
+	suo.mutation.SetGameSessionID(i)
 	return suo
 }
 
-// SetNillableSessionID sets the "session_id" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableSessionID(i *int64) *SessionUpdateOne {
+// SetNillableGameSessionID sets the "game_session_id" field if the given value is not nil.
+func (suo *SessionUpdateOne) SetNillableGameSessionID(i *int64) *SessionUpdateOne {
 	if i != nil {
-		suo.SetSessionID(*i)
+		suo.SetGameSessionID(*i)
 	}
 	return suo
 }
 
-// AddSessionID adds i to the "session_id" field.
-func (suo *SessionUpdateOne) AddSessionID(i int64) *SessionUpdateOne {
-	suo.mutation.AddSessionID(i)
-	return suo
-}
-
-// SetWalletType sets the "wallet_type" field.
-func (suo *SessionUpdateOne) SetWalletType(s string) *SessionUpdateOne {
-	suo.mutation.SetWalletType(s)
-	return suo
-}
-
-// SetNillableWalletType sets the "wallet_type" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableWalletType(s *string) *SessionUpdateOne {
-	if s != nil {
-		suo.SetWalletType(*s)
-	}
-	return suo
-}
-
-// ClearWalletType clears the value of the "wallet_type" field.
-func (suo *SessionUpdateOne) ClearWalletType() *SessionUpdateOne {
-	suo.mutation.ClearWalletType()
-	return suo
-}
-
-// SetBetAmount sets the "bet_amount" field.
-func (suo *SessionUpdateOne) SetBetAmount(i int64) *SessionUpdateOne {
-	suo.mutation.ResetBetAmount()
-	suo.mutation.SetBetAmount(i)
-	return suo
-}
-
-// SetNillableBetAmount sets the "bet_amount" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableBetAmount(i *int64) *SessionUpdateOne {
-	if i != nil {
-		suo.SetBetAmount(*i)
-	}
-	return suo
-}
-
-// AddBetAmount adds i to the "bet_amount" field.
-func (suo *SessionUpdateOne) AddBetAmount(i int64) *SessionUpdateOne {
-	suo.mutation.AddBetAmount(i)
-	return suo
-}
-
-// SetWinAmount sets the "win_amount" field.
-func (suo *SessionUpdateOne) SetWinAmount(i int64) *SessionUpdateOne {
-	suo.mutation.ResetWinAmount()
-	suo.mutation.SetWinAmount(i)
-	return suo
-}
-
-// SetNillableWinAmount sets the "win_amount" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableWinAmount(i *int64) *SessionUpdateOne {
-	if i != nil {
-		suo.SetWinAmount(*i)
-	}
-	return suo
-}
-
-// AddWinAmount adds i to the "win_amount" field.
-func (suo *SessionUpdateOne) AddWinAmount(i int64) *SessionUpdateOne {
-	suo.mutation.AddWinAmount(i)
-	return suo
-}
-
-// SetChange sets the "change" field.
-func (suo *SessionUpdateOne) SetChange(i int64) *SessionUpdateOne {
-	suo.mutation.ResetChange()
-	suo.mutation.SetChange(i)
-	return suo
-}
-
-// SetNillableChange sets the "change" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableChange(i *int64) *SessionUpdateOne {
-	if i != nil {
-		suo.SetChange(*i)
-	}
-	return suo
-}
-
-// AddChange adds i to the "change" field.
-func (suo *SessionUpdateOne) AddChange(i int64) *SessionUpdateOne {
-	suo.mutation.AddChange(i)
-	return suo
-}
-
-// SetNewBalance sets the "new_balance" field.
-func (suo *SessionUpdateOne) SetNewBalance(i int64) *SessionUpdateOne {
-	suo.mutation.ResetNewBalance()
-	suo.mutation.SetNewBalance(i)
-	return suo
-}
-
-// SetNillableNewBalance sets the "new_balance" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableNewBalance(i *int64) *SessionUpdateOne {
-	if i != nil {
-		suo.SetNewBalance(*i)
-	}
-	return suo
-}
-
-// AddNewBalance adds i to the "new_balance" field.
-func (suo *SessionUpdateOne) AddNewBalance(i int64) *SessionUpdateOne {
-	suo.mutation.AddNewBalance(i)
-	return suo
-}
-
-// ClearNewBalance clears the value of the "new_balance" field.
-func (suo *SessionUpdateOne) ClearNewBalance() *SessionUpdateOne {
-	suo.mutation.ClearNewBalance()
+// AddGameSessionID adds i to the "game_session_id" field.
+func (suo *SessionUpdateOne) AddGameSessionID(i int64) *SessionUpdateOne {
+	suo.mutation.AddGameSessionID(i)
 	return suo
 }
 
@@ -574,50 +290,14 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 	if value, ok := suo.mutation.UpdatedAt(); ok {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := suo.mutation.PlayerID(); ok {
-		_spec.SetField(session.FieldPlayerID, field.TypeString, value)
-	}
 	if value, ok := suo.mutation.GameID(); ok {
 		_spec.SetField(session.FieldGameID, field.TypeString, value)
 	}
-	if value, ok := suo.mutation.SessionID(); ok {
-		_spec.SetField(session.FieldSessionID, field.TypeInt64, value)
+	if value, ok := suo.mutation.GameSessionID(); ok {
+		_spec.SetField(session.FieldGameSessionID, field.TypeInt64, value)
 	}
-	if value, ok := suo.mutation.AddedSessionID(); ok {
-		_spec.AddField(session.FieldSessionID, field.TypeInt64, value)
-	}
-	if value, ok := suo.mutation.WalletType(); ok {
-		_spec.SetField(session.FieldWalletType, field.TypeString, value)
-	}
-	if suo.mutation.WalletTypeCleared() {
-		_spec.ClearField(session.FieldWalletType, field.TypeString)
-	}
-	if value, ok := suo.mutation.BetAmount(); ok {
-		_spec.SetField(session.FieldBetAmount, field.TypeInt64, value)
-	}
-	if value, ok := suo.mutation.AddedBetAmount(); ok {
-		_spec.AddField(session.FieldBetAmount, field.TypeInt64, value)
-	}
-	if value, ok := suo.mutation.WinAmount(); ok {
-		_spec.SetField(session.FieldWinAmount, field.TypeInt64, value)
-	}
-	if value, ok := suo.mutation.AddedWinAmount(); ok {
-		_spec.AddField(session.FieldWinAmount, field.TypeInt64, value)
-	}
-	if value, ok := suo.mutation.Change(); ok {
-		_spec.SetField(session.FieldChange, field.TypeInt64, value)
-	}
-	if value, ok := suo.mutation.AddedChange(); ok {
-		_spec.AddField(session.FieldChange, field.TypeInt64, value)
-	}
-	if value, ok := suo.mutation.NewBalance(); ok {
-		_spec.SetField(session.FieldNewBalance, field.TypeInt64, value)
-	}
-	if value, ok := suo.mutation.AddedNewBalance(); ok {
-		_spec.AddField(session.FieldNewBalance, field.TypeInt64, value)
-	}
-	if suo.mutation.NewBalanceCleared() {
-		_spec.ClearField(session.FieldNewBalance, field.TypeInt64)
+	if value, ok := suo.mutation.AddedGameSessionID(); ok {
+		_spec.AddField(session.FieldGameSessionID, field.TypeInt64, value)
 	}
 	_spec.AddModifiers(suo.modifiers...)
 	_node = &Session{config: suo.config}

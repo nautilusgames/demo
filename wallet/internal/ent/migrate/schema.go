@@ -13,14 +13,8 @@ var (
 		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "player_id", Type: field.TypeString},
 		{Name: "game_id", Type: field.TypeString},
-		{Name: "session_id", Type: field.TypeInt64},
-		{Name: "wallet_type", Type: field.TypeString, Nullable: true},
-		{Name: "bet_amount", Type: field.TypeInt64},
-		{Name: "win_amount", Type: field.TypeInt64},
-		{Name: "change", Type: field.TypeInt64},
-		{Name: "new_balance", Type: field.TypeInt64, Nullable: true},
+		{Name: "game_session_id", Type: field.TypeInt64},
 	}
 	// SessionsTable holds the schema information for the "sessions" table.
 	SessionsTable = &schema.Table{
