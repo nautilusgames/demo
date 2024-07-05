@@ -14,20 +14,26 @@ func (s *httpServer) handleCreateSession() http.HandlerFunc {
 			return
 		}
 
-		var request *model.CreateTenantTokenRequest
+		var request *model.CreatePlayerTenantTokenRequest
 		err = readRequest(s.logger, r, &request)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		token, _, err := s.tenantToken.CreateToken(request.GameId, info.PlayerID, info.Username, _expireTokenDuration)
+		token, _, err := s.playerTenantToken.CreateToken(
+			request.GameId,
+			info.PlayerID,
+			info.Username,
+			_expireTokenDuration,
+		)
 		if err != nil {
 			http.Error(w, "failed to create token", http.StatusInternalServerError)
 			return
 		}
-		respond(s.logger, w, &model.CreateTenantTokenResponse{
-			Token: token,
+		respond(s.logger, w, &model.CreatePlayerTenantTokenResponse{
+			TenantId: s.cfg.GetTenantId(),
+			Token:    token,
 		})
 	}
 }

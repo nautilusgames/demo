@@ -52,7 +52,7 @@ func (s *httpServer) authorizeAccessToken(_ http.ResponseWriter, r *http.Request
 	return payload, nil
 }
 
-func (s *httpServer) authorizeTenantToken(_ http.ResponseWriter, r *http.Request) (tenantID string, playerID int64, gameID string, err error) {
+func (s *httpServer) authorizePlayerTenantToken(_ http.ResponseWriter, r *http.Request) (tenantID string, playerID int64, gameID string, err error) {
 	headers := &Headers{
 		TenantID:     r.Header.Get(HeaderTenantID),
 		TenantSecret: r.Header.Get(HeaderTenantSecret),
@@ -73,7 +73,7 @@ func (s *httpServer) authorizeTenantToken(_ http.ResponseWriter, r *http.Request
 		return "", 0, "", errors.New("unauthorized")
 	}
 
-	payload, err := s.tenantToken.VerifyToken(headers.TenantToken)
+	payload, err := s.playerTenantToken.VerifyToken(headers.TenantToken)
 	if err != nil {
 		return "", 0, "", errors.New("unauthorized")
 	}

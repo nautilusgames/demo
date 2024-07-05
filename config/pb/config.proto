@@ -15,6 +15,9 @@ message Config {
   int64 tenant_id         = 4;
   string tenant_api_key   = 5;
   string tenant_token_url = 6;
+
+  // auth
+  Auth auth = 7;
 }
 
 message Logger {
@@ -59,4 +62,15 @@ message Database {
   string username = 4 [(validate.rules).string = { min_bytes: 1 }];
   string password = 5;
   // Keep it simple first
+}
+
+message Auth {
+  JwtSigning player_signing        = 1;
+  JwtSigning player_tenant_signing = 2;
+}
+
+message JwtSigning {
+  string signing_key = 1 [(validate.rules).string = { min_bytes: 1 }];
+  string audience    = 2 [(validate.rules).string = { min_bytes: 1 }];
+  string issuer      = 3 [(validate.rules).string = { min_bytes: 1 }];
 }

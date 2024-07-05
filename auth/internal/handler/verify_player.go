@@ -14,7 +14,7 @@ type VerifyPlayerResponse struct {
 
 func (s *httpServer) handleVerifyPlayer() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, playerID, _, err := s.authorizeTenantToken(w, r)
+		_, playerID, _, err := s.authorizePlayerTenantToken(w, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
