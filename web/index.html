@@ -185,8 +185,10 @@
         var tenantToken = ""
         var currency = "vnd"
         var language = "en"
+        var accessToken = ""
 
-        function playGame(url) {
+        async function playGame(url, gameID) {
+            await createSession(gameID)
             var newUrl = `${url}/?tenant_id=${tenantID}&tenant_player_token=${tenantPlayerToken}&tenant_token=${tenantToken}&l=${language}&currency=${currency}`
             var iframe = document.getElementById('iframe-game')
             iframe.style.display = 'block'
@@ -255,7 +257,7 @@
                 const data = await response.json();
                 if (response.status === 200) {
                     // get token
-                    tenantPlayerToken = data.token // access token
+                    accessToken = data.token // access token
                     currency = data.currency
                     return true
                 } else {
@@ -289,7 +291,7 @@
                 const data = await response.json();
                 if (response.status === 200) {
                     // get token
-                    tenantPlayerToken = data.token
+                    accessToken = data.token
                     currency = data.currency
                     return true
                 } else {
@@ -306,17 +308,16 @@
         async function listGame() {
             try {
                 let url = `${listGameDomain}`;
-                if ((tenantToken == "")) {
+                if (tenantToken == "") {
                     alert("tenant token is invalid");
                     return false;
                 }
-                let token = "Bearer " + tenantToken
 
                 const response = await fetch(url, {
                     method: "GET",
                     // credentials: "include",
                     headers: {
-                        "authorization": token,
+                        "authorization": `Bearer ${tenantToken}` ,
                     }
                 });
                 const data = await response.json();
@@ -344,7 +345,7 @@
                         <td>${record.gameId}</td>
                         <td>${assets.values[0].name}</td>
                         <td>${record.status}</td>
-                        <td><Button class="play-button" onclick="playGame('${record.url}')">Play</Button></td>
+                        <td><Button class="play-button" onclick="playGame('${record.url}', '${record.gameId}')">Play</Button></td>
                         </tr>`;
         }
 
@@ -364,13 +365,13 @@
                 const response = await fetch(url, {
                     method: "POST",
                     headers: {
-                        "authorization": `Bearer ${tenantPlayerToken}`,
+                        "authorization": `Bearer ${accessToken}`,
                     }
                 });
                 const data = await response.json();
                 if (response.status === 200) {
                     // get token
-                    tenantToken = data.tenant_token
+                    tenantToken = data.token
                     tenantID = data.tenant_id
                     return true
                 } else {
@@ -381,6 +382,39 @@
             } catch (error) {
                 console.error("Error create tenant token:", error);
                 alert("fail to create tenant token");
+                return false;
+            }
+        }
+
+        async function createSession(gameID) {
+            try {
+                let url = `${domain}/api/v1/create-session`;
+
+                var request = {
+                    game_id: gameID
+                }
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    body: JSON.stringify(request),
+                    headers: {
+                        "authorization": `Bearer ${accessToken}`,
+                    }
+                });
+                const data = await response.json();
+                if (response.status === 200) {
+                    // get token
+                    tenantPlayerToken = data.token
+                    // tenantID = data.tenant_id
+                    return true
+                } else {
+                    console.log(response)
+                    alert("fail to create session");
+                    return false;
+                }
+            } catch (error) {
+                console.error("Error create tenant token:", error);
+                alert("fail to create session");
                 return false;
             }
         }
