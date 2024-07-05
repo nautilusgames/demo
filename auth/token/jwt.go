@@ -28,6 +28,7 @@ func (j *jwtImpl) CreateToken(gameID string, playerID int64, username string, du
 	}
 
 	claims := &MyClaim{
+		GameID:   gameID,
 		Username: username,
 		PlayerID: playerID,
 		RegisteredClaims: jwt.RegisteredClaims{

@@ -1,22 +1,27 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/nautilusgames/demo/auth/tenant"
 	"go.uber.org/zap"
 )
 
+type Data struct {
+	Data VerifyPlayerResponse `json:"data"`
+}
 type VerifyPlayerResponse struct {
-	PlayerId    int64  `json:"player_id"`
-	Username    string `json:"username"`
-	DisplayName string `json:"display_name"`
+	Id       string `json:"id"`
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
 }
 
 func (s *httpServer) handleVerifyPlayer() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, playerID, _, err := tenant.GetTenantAuthorization(s.cfg, s.playerTenantToken)(w, r)
+		_, playerID, _, err := tenant.GetTenantAuthorization(s.logger, s.cfg, s.playerTenantToken)(w, r)
 		if err != nil {
+			s.logger.Error("failed to verify tenant token", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
@@ -28,10 +33,11 @@ func (s *httpServer) handleVerifyPlayer() http.HandlerFunc {
 			return
 		}
 
-		respond(s.logger, w, &VerifyPlayerResponse{
-			PlayerId:    player.ID,
-			Username:    player.Username,
-			DisplayName: player.DisplayName,
+		respond(s.logger, w, &Data{
+			Data: VerifyPlayerResponse{
+				Id:       fmt.Sprintf("%d", player.ID),
+				Nickname: player.DisplayName,
+			},
 		})
 	}
 }

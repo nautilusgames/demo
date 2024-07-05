@@ -11,6 +11,7 @@ import (
 
 	"github.com/nautilusgames/demo/auth/tenant"
 	"github.com/nautilusgames/demo/wallet/internal/ent"
+	entsession "github.com/nautilusgames/demo/wallet/internal/ent/session"
 	entwallet "github.com/nautilusgames/demo/wallet/internal/ent/wallet"
 	"github.com/nautilusgames/demo/wallet/internal/tx"
 	"github.com/nautilusgames/demo/wallet/model"
@@ -141,31 +142,34 @@ func getOrCreateSession(
 	ctx context.Context,
 	entSession *ent.SessionClient,
 	gameID string,
-	sessionID int64,
+	gameSessionID int64,
 ) (int64, error) {
-	if sessionID == 0 {
-		return create(ctx, entSession, gameID)
-	}
-
-	session, err := entSession.Get(ctx, sessionID)
-	if err != nil {
+	session, err := entSession.Query().
+		Where(
+			entsession.GameID(gameID),
+			entsession.GameSessionID(gameSessionID),
+		).
+		Only(ctx)
+	if err != nil && !ent.IsNotFound(err) {
 		return 0, errors.New("get session failed")
 	}
 
-	if session.GameID != gameID {
-		return 0, errors.New("session service id mismatch")
+	if session == nil {
+		return createSession(ctx, entSession, gameID, gameSessionID)
 	}
 
 	return session.ID, nil
 }
 
-func create(
+func createSession(
 	ctx context.Context,
 	entSession *ent.SessionClient,
-	GameID string,
+	gameID string,
+	gameSessionID int64,
 ) (int64, error) {
 	session, err := entSession.Create().
-		SetGameID(GameID).
+		SetGameID(gameID).
+		SetGameSessionID(gameSessionID).
 		Save(ctx)
 	if err != nil {
 		return 0, errors.New("create session failed")

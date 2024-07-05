@@ -67,7 +67,7 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
-	tenantAuth := tenant.GetTenantAuthorization(cfg, playerTenantToken)
+	tenantAuth := tenant.GetTenantAuthorization(logger, cfg, playerTenantToken)
 	mux := mux.New(logger, entClient, tenantAuth)
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
 	server := &http.Server{
