@@ -58,13 +58,17 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed creating schema resources", zap.Error(err))
 	}
 
-	tokenMaker, err := token.New()
+	webToken, err := token.New("web")
 	if err != nil {
-		logger.Fatal("failed to create token maker", zap.Error(err))
+		logger.Fatal("failed to create web token", zap.Error(err))
+	}
+	tenantToken, err := token.New("tenant")
+	if err != nil {
+		logger.Fatal("failed to create tenant maker", zap.Error(err))
 	}
 
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
-	handler := handler.New(logger, cfg, entClient, tokenMaker)
+	handler := handler.New(logger, cfg, entClient, webToken, tenantToken)
 	server := &http.Server{
 		Addr:    address,
 		Handler: handler,

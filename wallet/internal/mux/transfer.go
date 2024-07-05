@@ -60,11 +60,11 @@ func httpTransfer(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 			}
 
 			transaction = model.Transaction{
-				TxID:      now.UnixNano(),
-				CreatedAt: now.UnixNano(),
-				PlayerID:  p.ID,
-				GameID:    gameID,
-				Amount:    amount,
+				ID:         now.UnixNano(),
+				SessionID:  sessionID,
+				Amount:     amount,
+				NewBalance: p.Balance,
+				CreatedAt:  now.UnixNano(),
 			}
 
 			if amount == 0 {

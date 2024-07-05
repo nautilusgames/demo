@@ -14,13 +14,13 @@ type VerifyPlayerResponse struct {
 
 func (s *httpServer) handleVerifyPlayer() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		payload, err := s.authorize(w, r)
+		_, playerID, _, err := s.authorizeTenantToken(w, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 
-		player, err := s.entClient.Player.Get(r.Context(), payload.PlayerId)
+		player, err := s.entClient.Player.Get(r.Context(), playerID)
 		if err != nil {
 			s.logger.Error("failed to get player", zap.Error(err))
 			http.Error(w, "failed to get player", http.StatusInternalServerError)

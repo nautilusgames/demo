@@ -3,11 +3,12 @@ package handler
 import (
 	"net/http"
 
+	"go.uber.org/zap"
+
 	"github.com/nautilusgames/demo/auth/internal/checker"
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/ent/player"
-	"github.com/nautilusgames/demo/auth/internal/model"
-	"go.uber.org/zap"
+	"github.com/nautilusgames/demo/auth/model"
 )
 
 func (s *httpServer) handleSignIn() http.HandlerFunc {
@@ -50,7 +51,7 @@ func (s *httpServer) handleSignIn() http.HandlerFunc {
 			return
 		}
 
-		token, _, err := s.tokenMaker.CreateToken(player.ID, player.Username, _expireTokenDuration)
+		token, _, err := s.accessToken.CreateToken("", player.ID, player.Username, _expireTokenDuration)
 		if err != nil {
 			http.Error(w, "failed to create token", http.StatusInternalServerError)
 			return

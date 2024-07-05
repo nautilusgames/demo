@@ -15,25 +15,28 @@ import (
 var _expireTokenDuration = 24 * time.Hour
 
 type httpServer struct {
-	logger     *zap.Logger
-	cfg        *pb.Config
-	entClient  *ent.Client
-	tokenMaker token.Maker
+	logger      *zap.Logger
+	cfg         *pb.Config
+	entClient   *ent.Client
+	accessToken token.Maker
+	tenantToken token.Maker
 }
 
 func New(
 	logger *zap.Logger,
 	cfg *pb.Config,
 	entClient *ent.Client,
-	tokenMaker token.Maker,
+	accessToken token.Maker,
+	tenantToken token.Maker,
 ) http.Handler {
 	mux := http.NewServeMux()
 
 	s := &httpServer{
-		logger:     logger,
-		cfg:        cfg,
-		entClient:  entClient,
-		tokenMaker: tokenMaker,
+		logger:      logger,
+		cfg:         cfg,
+		entClient:   entClient,
+		accessToken: accessToken,
+		tenantToken: tenantToken,
 	}
 
 	handler := corsMiddleware(mux)
@@ -43,6 +46,7 @@ func New(
 	mux.HandleFunc("/api/v1/signup", s.handleSignUp())
 	mux.HandleFunc("/api/v1/player/verify", s.handleVerifyPlayer())
 	mux.HandleFunc("/api/v1/create-tenant-token", s.handleCreateTenantToken())
+	mux.HandleFunc("/api/v1/create-session", s.handleCreateSession())
 
 	return handler
 }

@@ -8,10 +8,10 @@ import (
 )
 
 func TestJwt(t *testing.T) {
-	maker, err := New()
+	maker, err := New("web")
 	assert.NoError(t, err)
 
-	token, _, err := maker.CreateToken(1, "username-test", 1*time.Hour)
+	token, _, err := maker.CreateToken("", 1, "username-test", 1*time.Hour)
 	assert.NoError(t, err)
 
 	payload, err := maker.VerifyToken(token)
@@ -20,10 +20,10 @@ func TestJwt(t *testing.T) {
 }
 
 func TestJwtExpire(t *testing.T) {
-	maker, err := New()
+	maker, err := New("web")
 	assert.NoError(t, err)
 
-	token, _, err := maker.CreateToken(1, "username-test", 1*time.Second)
+	token, _, err := maker.CreateToken("", 1, "username-test", 1*time.Second)
 	assert.NoError(t, err)
 
 	time.Sleep(2 * time.Second)

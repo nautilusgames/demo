@@ -45,7 +45,10 @@ func httpGetWallet(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 		}
 
 		respond(logger, w, model.GetWalletResponse{
-			Balance: player.Balance,
+			Data: &model.PlayerWallet{
+				Balance:  player.Balance,
+				LastTxID: player.UpdatedAt.Unix(),
+			},
 		})
 	}
 }
