@@ -99,6 +99,7 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 		})
 		if err != nil {
 			http.Error(w, "failed to sign up", http.StatusInternalServerError)
+			return
 		}
 
 		respond(s.logger, w, &model.SignUpResponse{
