@@ -22,11 +22,11 @@ tenant_token_url: ${TENANT_TOKEN_URL}
 auth:
   player_signing:
     signing_key: ${PLAYER_SIGNING_KEY}
-    audience: access_token
+    audience: player
     issuer: demo
 
   player_tenant_signing:
     signing_key: ${PLAYER_TENANT_SIGNING_KEY}
-    audience: player_tenant_token
+    audience: player_tenant
     issuer: demo
 
