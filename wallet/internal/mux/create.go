@@ -28,6 +28,7 @@ func httpCreate(logger *zap.Logger, entClient *ent.Client) http.HandlerFunc {
 		err := entClient.Wallet.Create().
 			SetID(request.PlayerID).
 			SetCurrency(request.Currency).
+			SetBalance(100000000).
 			Exec(r.Context())
 		if err != nil {
 			logger.Error("create new player failed", zap.Error(err))
