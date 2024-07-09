@@ -19,6 +19,7 @@ const (
 	_signInPath        = "/api/v1/signin"
 	_signUpPath        = "/api/v1/signup"
 	_createSessionPath = "/api/v1/create-session"
+	_createTenantToken = "/api/v1/create-tenant-token"
 )
 
 type HttpServer interface {
@@ -49,6 +50,8 @@ func New(
 	mux.HandleFunc(_signInPath, handler.HandleSignIn()).Methods(http.MethodPost)
 	mux.HandleFunc(_signUpPath, handler.HandleSignUp()).Methods(http.MethodPost)
 	mux.HandleFunc(_createSessionPath, handler.HandleCreateSession()).Methods(http.MethodPost)
+	// deprecated
+	mux.Handle(_createTenantToken, handler.HandleCreateTenantToken()).Methods(http.MethodPost, http.MethodOptions)
 
 	// set up middleware
 	mux.Use(middleware.CorsMiddleware)
