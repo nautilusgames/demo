@@ -27,25 +27,19 @@ type VerifyPlayerRequest struct {
 	Token string `json:"token"`
 }
 type VerifyPlayerResponse struct {
-	PlayerId    int64  `json:"player_id"`
-	Username    string `json:"username"`
-	DisplayName string `json:"display_name"`
+	Data *PlayerInfo `json:"data"`
 }
 
-type (
-	CreateTenantTokenRequest struct {}
-	CreateTenantTokenResponse struct {
-		TenantId int64  `json:"tenant_id"`
-		Token    string `json:"token"`
-	}
-)
+type PlayerInfo struct {
+	Id       string `json:"id"`
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+}
 
-type (
-	CreatePlayerTenantTokenRequest struct {
-		GameId string `json:"game_id"`
-	}
-	CreatePlayerTenantTokenResponse struct {
-		TenantId int64  `json:"tenant_id"`
-		Token    string `json:"token"`
-	}
-)
+type CreateSessionRequest struct {
+	GameId string `json:"game_id"`
+}
+type CreateSessionResponse struct {
+	TenantId int64  `json:"tenant_id"`
+	Token    string `json:"token"`
+}
