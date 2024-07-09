@@ -79,7 +79,7 @@ func RunWithConfig(cfg *pb.Config) {
 	serverCh := make(chan struct{})
 	go func() {
 		logger.Info("server is listening ", zap.String("address", address))
-		if err := httpServer.Serve(address); err != http.ErrServerClosed {
+		if err := httpServer.Serve(); err != http.ErrServerClosed {
 			logger.Fatal("server exited with", zap.Error(err))
 		}
 		close(serverCh)

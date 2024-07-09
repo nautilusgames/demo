@@ -22,7 +22,7 @@ const (
 )
 
 type HttpServer interface {
-	Serve(addr string) error
+	Serve() error
 	Shutdown(ctx context.Context) error
 }
 
@@ -62,7 +62,7 @@ func New(
 	}
 }
 
-func (h *httpServer) Serve(addr string) error {
+func (h *httpServer) Serve() error {
 	return h.Server.ListenAndServe()
 }
 
