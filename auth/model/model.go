@@ -23,19 +23,6 @@ type SignInResponse struct {
 	Currency    string `json:"currency"`
 }
 
-type VerifyPlayerRequest struct {
-	Token string `json:"token"`
-}
-type VerifyPlayerResponse struct {
-	Data *PlayerInfo `json:"data"`
-}
-
-type PlayerInfo struct {
-	Id       string `json:"id"`
-	Nickname string `json:"nickname"`
-	Avatar   string `json:"avatar"`
-}
-
 type CreateSessionRequest struct {
 	GameId string `json:"game_id"`
 }

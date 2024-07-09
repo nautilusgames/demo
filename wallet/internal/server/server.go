@@ -10,7 +10,6 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/nautilusgames/demo/auth/tenant"
 	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
@@ -67,8 +66,7 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
-	tenantAuth := tenant.GetTenantAuthorization(logger, cfg, playerTenantToken)
-	mux := mux.New(logger, entClient, tenantAuth)
+	mux := mux.New(logger, entClient, playerTenantToken)
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
 	server := &http.Server{
 		Addr:    address,

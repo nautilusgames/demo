@@ -18,7 +18,6 @@ const (
 	_statusPath        = "/status"
 	_signInPath        = "/api/v1/signin"
 	_signUpPath        = "/api/v1/signup"
-	_verifyPath        = "/api/v1/player/verify"
 	_createSessionPath = "/api/v1/create-session"
 )
 
@@ -29,9 +28,9 @@ type HttpServer interface {
 
 type httpServer struct {
 	http.Server
-	
+
 	logger *zap.Logger
-	mux *mux.Router
+	mux    *mux.Router
 }
 
 func New(
@@ -49,7 +48,6 @@ func New(
 	mux.HandleFunc(_statusPath, handler.HandleStatus()).Methods(http.MethodGet)
 	mux.HandleFunc(_signInPath, handler.HandleSignIn()).Methods(http.MethodPost)
 	mux.HandleFunc(_signUpPath, handler.HandleSignUp()).Methods(http.MethodPost)
-	mux.HandleFunc(_verifyPath, handler.HandleVerifyPlayer()).Methods(http.MethodGet)
 	mux.HandleFunc(_createSessionPath, handler.HandleCreateSession()).Methods(http.MethodPost)
 
 	// set up middleware
