@@ -29,8 +29,8 @@ type HttpServer interface {
 
 type httpServer struct {
 	http.Server
+	
 	logger *zap.Logger
-
 	mux *mux.Router
 }
 
