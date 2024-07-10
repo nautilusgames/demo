@@ -51,7 +51,7 @@ func New(
 	mux.HandleFunc(_signUpPath, handler.HandleSignUp()).Methods(http.MethodPost)
 	mux.HandleFunc(_createSessionPath, handler.HandleCreateSession()).Methods(http.MethodPost)
 	// deprecated
-	mux.Handle(_createTenantToken, handler.HandleCreateTenantToken()).Methods(http.MethodPost, http.MethodOptions)
+	mux.Handle(_createTenantToken, handler.HandleCreateTenantToken()).Methods(http.MethodPost)
 
 	// set up middleware
 	mux.Use(middleware.CorsMiddleware)
