@@ -64,17 +64,17 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
-	playerTenantSigning := cfg.GetAuth().GetPlayerTenantSigning()
-	playerTenantToken, err := token.New(
-		playerTenantSigning.GetSigningKey(),
-		playerTenantSigning.GetIssuer(),
-		playerTenantSigning.GetAudience())
+	tenantPlayerSigning := cfg.GetAuth().GetTenantPlayerSigning()
+	tenantPlayerToken, err := token.New(
+		tenantPlayerSigning.GetSigningKey(),
+		tenantPlayerSigning.GetIssuer(),
+		tenantPlayerSigning.GetAudience())
 	if err != nil {
 		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
-	httpServer := httpserver.New(logger, cfg, entClient, playerToken, playerTenantToken, address)
+	httpServer := httpserver.New(logger, cfg, entClient, playerToken, tenantPlayerToken, address)
 
 	serverCh := make(chan struct{})
 	go func() {

@@ -57,16 +57,16 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed creating schema resources", zap.Error(err))
 	}
 
-	playerTenantSigning := cfg.GetAuth().GetPlayerTenantSigning()
-	playerTenantToken, err := token.New(
-		playerTenantSigning.GetSigningKey(),
-		playerTenantSigning.GetIssuer(),
-		playerTenantSigning.GetAudience())
+	tenantPlayerSigning := cfg.GetAuth().GetTenantPlayerSigning()
+	tenantPlayerToken, err := token.New(
+		tenantPlayerSigning.GetSigningKey(),
+		tenantPlayerSigning.GetIssuer(),
+		tenantPlayerSigning.GetAudience())
 	if err != nil {
 		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
-	mux := mux.New(logger, entClient, playerTenantToken)
+	mux := mux.New(logger, entClient, tenantPlayerToken)
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
 	server := &http.Server{
 		Addr:    address,

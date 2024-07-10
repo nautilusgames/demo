@@ -15,7 +15,7 @@ type Handler struct {
 	entClient *ent.Client
 
 	accessToken       token.Maker
-	playerTenantToken token.Maker
+	tenantPlayerToken token.Maker
 }
 
 func New(
@@ -23,13 +23,13 @@ func New(
 	cfg *pb.Config,
 	entClient *ent.Client,
 	accessToken token.Maker,
-	playerTenantToken token.Maker,
+	tenantPlayerToken token.Maker,
 ) Handler {
 	return Handler{
 		logger:            logger,
 		cfg:               cfg,
 		entClient:         entClient,
 		accessToken:       accessToken,
-		playerTenantToken: playerTenantToken,
+		tenantPlayerToken: tenantPlayerToken,
 	}
 }
