@@ -21,7 +21,7 @@ func (h *Handler) HandleCreateSession() http.HandlerFunc {
 			return
 		}
 
-		token, _, err := h.playerTenantToken.CreateToken(
+		token, _, err := h.tenantPlayerToken.CreateToken(
 			request.GameId,
 			info.PlayerID,
 			info.Username,

@@ -66,7 +66,7 @@ message Database {
 
 message Auth {
   JwtSigning player_signing        = 1;
-  JwtSigning player_tenant_signing = 2;
+  JwtSigning tenant_player_signing = 2;
 }
 
 message JwtSigning {
