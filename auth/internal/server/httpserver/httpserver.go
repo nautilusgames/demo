@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	webhook "github.com/nautilusgames/sdk-go/webhook"
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/auth/internal/ent"
@@ -29,9 +30,7 @@ type HttpServer interface {
 
 type httpServer struct {
 	http.Server
-
 	logger *zap.Logger
-	mux    *mux.Router
 }
 
 func New(
@@ -39,11 +38,11 @@ func New(
 	cfg *pb.Config,
 	entClient *ent.Client,
 	accessToken token.Maker,
-	playerTenantToken token.Maker,
+	tenantPlayerToken token.Maker,
 	address string,
 ) HttpServer {
 	mux := mux.NewRouter()
-	handler := handler.New(logger, cfg, entClient, accessToken, playerTenantToken)
+	handler := handler.New(logger, cfg, entClient, accessToken, tenantPlayerToken)
 
 	// set up routes
 	mux.HandleFunc(_statusPath, handler.HandleStatus()).Methods(http.MethodGet)
@@ -52,6 +51,9 @@ func New(
 	mux.HandleFunc(_createSessionPath, handler.HandleCreateSession()).Methods(http.MethodPost)
 	// deprecated
 	mux.HandleFunc(_createTenantToken, handler.HandleCreateTenantToken()).Methods(http.MethodPost)
+
+	// set up webhook
+	webhook.HandleVerifyPlayer(mux, logger, handler.HandleVerifyPlayer)
 
 	// set up middleware
 	mux.Use(middleware.CorsMiddleware)
