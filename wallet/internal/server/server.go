@@ -10,11 +10,13 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/gorilla/mux"
 	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
 	"github.com/nautilusgames/demo/wallet/internal/ent"
-	"github.com/nautilusgames/demo/wallet/internal/mux"
+	"github.com/nautilusgames/demo/wallet/internal/handler"
+	"github.com/nautilusgames/sdk-go/webhook"
 )
 
 func Run(f *config.Flags) {
@@ -66,7 +68,12 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
-	mux := mux.New(logger, entClient, playerTenantToken)
+	handlerSrv := handler.New(logger, entClient, playerTenantToken)
+	mux := mux.NewRouter()
+	mux.HandleFunc("/wallet/create", handlerSrv.CreateWalletHandler)
+	webhook.HandleGetWallet(mux, logger, handlerSrv.HandleGetWallet)
+	webhook.HandleBet(mux, logger, handlerSrv.HandleBet)
+	webhook.HandlePayout(mux, logger, handlerSrv.HandlePayout)
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
 	server := &http.Server{
 		Addr:    address,
