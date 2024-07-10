@@ -1,7 +1,7 @@
 
 # Demo
 
-This project demonstrates how to integrate with Nautilusgames, providing a clear and concise example for developers. It is designed for software developers and technical teams who are looking to understand and implement integration with Nautilusgames in their own applications. The integration is based on the guidelines and documentation available at [Nautilusgames Documentation](https://docs.nautilusgames.com/).
+This project demonstrates how to integrate with Nautilusgames, providing a clear and concise example for developers. It is designed for software developers and technical teams who are looking to understand and implement integration with Nautilusgames in their own applications. The integration is based on the guidelines and documentation available at [Nautilus Games Documentation](https://docs.nautilusgames.com/).
 
 ## Run Locally
 
@@ -38,7 +38,7 @@ To run this project, you will need to add the following environment variables to
 #### Clone the project
 
 ```bash
-  https://github.com/nautilusgames/demo.git
+git clone https://github.com/nautilusgames/demo.git
 ```
 
 #### Install dependencies
@@ -60,3 +60,5 @@ To run this project, you will need to add the following environment variables to
 
 
 ## API Reference
+
+[Integration API](https://docs.nautilusgames.com/api)
