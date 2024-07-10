@@ -16,13 +16,6 @@ import (
 	"github.com/nautilusgames/demo/wallet/internal/tx"
 )
 
-const (
-	_apiKeyHeader      = "x-api-key"
-	_tenantIdHeader    = "x-tenant-id"
-	_gameIdHeader      = "x-game-id"
-	_tenantTokenHeader = "x-tenant-token"
-)
-
 var (
 	_initWallet int64 = 100000000
 
