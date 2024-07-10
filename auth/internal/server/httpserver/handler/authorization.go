@@ -13,7 +13,7 @@ const (
 	_authorizationBearer = "bearer"
 )
 
-func (s *httpServer) authorizeAccessToken(_ http.ResponseWriter, r *http.Request) (*token.Payload, error) {
+func (h *Handler) authorizeAccessToken(r *http.Request) (*token.Payload, error) {
 	value := r.Header.Get(_authorizationHeader)
 	if value == "" {
 		return nil, fmt.Errorf("missing authorization header")
@@ -30,7 +30,7 @@ func (s *httpServer) authorizeAccessToken(_ http.ResponseWriter, r *http.Request
 	}
 
 	accessToken := fields[1]
-	payload, err := s.accessToken.VerifyToken(accessToken)
+	payload, err := h.accessToken.VerifyToken(accessToken)
 	if err != nil {
 		return nil, fmt.Errorf("invalid access token: %s", err)
 	}

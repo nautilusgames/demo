@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/auth/internal/ent"
-	"github.com/nautilusgames/demo/auth/internal/handler"
+	"github.com/nautilusgames/demo/auth/internal/server/httpserver"
 	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
@@ -74,16 +74,12 @@ func RunWithConfig(cfg *pb.Config) {
 	}
 
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
-	handler := handler.New(logger, cfg, entClient, playerToken, playerTenantToken)
-	server := &http.Server{
-		Addr:    address,
-		Handler: handler,
-	}
+	httpServer := httpserver.New(logger, cfg, entClient, playerToken, playerTenantToken, address)
 
 	serverCh := make(chan struct{})
 	go func() {
 		logger.Info("server is listening ", zap.String("address", address))
-		if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		if err := httpServer.Serve(); err != http.ErrServerClosed {
 			logger.Fatal("server exited with", zap.Error(err))
 		}
 		close(serverCh)
@@ -98,7 +94,7 @@ func RunWithConfig(cfg *pb.Config) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := server.Shutdown(ctx); err != nil {
+	if err := httpServer.Shutdown(ctx); err != nil {
 		logger.Fatal("failed to shutdown server", zap.Error(err))
 	}
 

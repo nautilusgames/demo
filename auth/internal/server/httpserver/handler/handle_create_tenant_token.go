@@ -8,69 +8,73 @@ import (
 	"io"
 	"net/http"
 
+	sgbuilder "github.com/nautilusgames/sdk-go/builder"
 	"go.uber.org/zap"
-
-	"github.com/nautilusgames/demo/auth/model"
 )
 
-func (s *httpServer) handleCreateTenantToken() http.HandlerFunc {
+const (
+	_apiKeyHeader   = "x-api-key"
+	_tenantIdHeader = "x-tenant-id"
+)
+
+func (h *Handler) HandleCreateTenantToken() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, err := s.authorizeAccessToken(w, r)
+		_, err := h.authorizeAccessToken(r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 
-		tenantToken, err := s.createToken(r.Context())
+		tenantToken, err := h.createToken(r.Context())
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		respond(s.logger, w, &model.CreateTenantTokenResponse{
-			TenantId: s.cfg.GetTenantId(),
+		sgbuilder.SendResponse(w, &CreateTenantTokenResponse{
+			TenantId: h.cfg.GetTenantId(),
 			Token:    tenantToken,
 		})
 	}
 }
 
-func (s *httpServer) createToken(ctx context.Context) (string, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.cfg.GetTenantTokenUrl(), nil)
+func (h *Handler) createToken(ctx context.Context) (string, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, h.cfg.GetTenantTokenUrl(), nil)
 	if err != nil {
-		s.logger.Error("create request failed", zap.Error(err))
+		h.logger.Error("create request failed", zap.Error(err))
 		return "", err
 	}
-	req.Header.Set("x-tenant-id", fmt.Sprintf("%d", s.cfg.GetTenantId()))
-	req.Header.Set("x-api-key", s.cfg.GetTenantApiKey())
+	req.Header.Set(_tenantIdHeader, fmt.Sprintf("%d", h.cfg.GetTenantId()))
+	req.Header.Set(_apiKeyHeader, h.cfg.GetTenantApiKey())
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		s.logger.Error("request failed", zap.Error(err))
+		h.logger.Error("request failed", zap.Error(err))
 		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		s.logger.Error("request failed", zap.Int("status_code", resp.StatusCode))
+		h.logger.Error("request failed", zap.Int("status_code", resp.StatusCode))
 		return "", errors.New(resp.Status)
 	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		s.logger.Error("read response failed", zap.Error(err))
+		h.logger.Error("read response failed", zap.Error(err))
 		return "", err
 	}
 
 	response := map[string]string{}
 	if err = json.Unmarshal(data, &response); err != nil {
-		s.logger.Error("unmarshal response failed",
+		h.logger.Error("unmarshal response failed",
 			zap.Any("response", string(data)),
 			zap.Error(err))
 		return "", err
 	}
 
 	if len(response["token"]) == 0 {
-		s.logger.Error("no token in response",
+		h.logger.Error("no token in response",
 			zap.Any("response", string(data)))
 		return "", errors.New("empty token")
 	}

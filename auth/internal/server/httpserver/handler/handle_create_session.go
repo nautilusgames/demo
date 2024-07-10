@@ -3,25 +3,25 @@ package handler
 import (
 	"net/http"
 
-	"github.com/nautilusgames/demo/auth/model"
+	sgbuilder "github.com/nautilusgames/sdk-go/builder"
 )
 
-func (s *httpServer) handleCreateSession() http.HandlerFunc {
+func (h *Handler) HandleCreateSession() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		info, err := s.authorizeAccessToken(w, r)
+		info, err := h.authorizeAccessToken(r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 
-		var request *model.CreatePlayerTenantTokenRequest
-		err = readRequest(s.logger, r, &request)
+		var request *CreateSessionRequest
+		err = sgbuilder.ToRequest(r.Body, &request)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		token, _, err := s.playerTenantToken.CreateToken(
+		token, _, err := h.playerTenantToken.CreateToken(
 			request.GameId,
 			info.PlayerID,
 			info.Username,
@@ -31,8 +31,9 @@ func (s *httpServer) handleCreateSession() http.HandlerFunc {
 			http.Error(w, "failed to create token", http.StatusInternalServerError)
 			return
 		}
-		respond(s.logger, w, &model.CreatePlayerTenantTokenResponse{
-			TenantId: s.cfg.GetTenantId(),
+
+		sgbuilder.SendResponse(w, &CreateSessionResponse{
+			TenantId: h.cfg.GetTenantId(),
 			Token:    token,
 		})
 	}

@@ -6,19 +6,22 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/nautilusgames/demo/auth/tenant"
+	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/wallet/internal/ent"
 	"github.com/nautilusgames/demo/wallet/model"
 )
 
-func httpBet(logger *zap.Logger, entClient *ent.Client, tenantAuth tenant.TenantAuthorization) http.HandlerFunc {
+func httpBet(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Maker) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger.Info("bet")
-		_, playerID, gameID, err := tenantAuth(w, r)
+
+		payload, err := authorizePlayerTenantToken(r, tokenMaker)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
+		gameID := payload.GameID
+		playerID := payload.PlayerID
 
 		var request model.BetRequest
 		if err := readRequest(logger, r, &request); err != nil {

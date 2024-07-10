@@ -9,7 +9,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/nautilusgames/demo/auth/tenant"
+	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/wallet/internal/ent"
 	entsession "github.com/nautilusgames/demo/wallet/internal/ent/session"
 	entwallet "github.com/nautilusgames/demo/wallet/internal/ent/wallet"
@@ -22,16 +22,16 @@ var (
 	_insufficientBalanceError = errors.New("insufficient balance")
 )
 
-func New(logger *zap.Logger, entClient *ent.Client, tenantAuth tenant.TenantAuthorization) *http.ServeMux {
+func New(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Maker) *http.ServeMux {
 	// Flag gets printed as a page
 	mux := http.NewServeMux()
 	// Health endpoint
 	mux.HandleFunc("/status", httpHealth())
 	mux.HandleFunc(model.CreatePath, httpCreate(logger, entClient))
-	mux.HandleFunc(model.BetPath, httpBet(logger, entClient, tenantAuth))
-	mux.HandleFunc(model.PayoutPath, httpPayout(logger, entClient, tenantAuth))
-	mux.HandleFunc(model.RefundPath, httpRefund(logger, entClient, tenantAuth))
-	mux.HandleFunc(model.GetPath, httpGet(logger, entClient, tenantAuth))
+	mux.HandleFunc(model.BetPath, httpBet(logger, entClient, tokenMaker))
+	mux.HandleFunc(model.PayoutPath, httpPayout(logger, entClient, tokenMaker))
+	mux.HandleFunc(model.RefundPath, httpRefund(logger, entClient, tokenMaker))
+	mux.HandleFunc(model.GetPath, httpGet(logger, entClient, tokenMaker))
 
 	return mux
 }

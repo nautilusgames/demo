@@ -1,4 +1,4 @@
-package model
+package handler
 
 type SignUpRequest struct {
 	Username    string `json:"username"`
@@ -23,28 +23,17 @@ type SignInResponse struct {
 	Currency    string `json:"currency"`
 }
 
-type VerifyPlayerRequest struct {
-	Token string `json:"token"`
+type CreateSessionRequest struct {
+	GameId string `json:"game_id"`
 }
-type VerifyPlayerResponse struct {
-	PlayerId    int64  `json:"player_id"`
-	Username    string `json:"username"`
-	DisplayName string `json:"display_name"`
+type CreateSessionResponse struct {
+	TenantId int64  `json:"tenant_id"`
+	Token    string `json:"token"`
 }
 
 type (
-	CreateTenantTokenRequest struct {}
+	CreateTenantTokenRequest  struct{}
 	CreateTenantTokenResponse struct {
-		TenantId int64  `json:"tenant_id"`
-		Token    string `json:"token"`
-	}
-)
-
-type (
-	CreatePlayerTenantTokenRequest struct {
-		GameId string `json:"game_id"`
-	}
-	CreatePlayerTenantTokenResponse struct {
 		TenantId int64  `json:"tenant_id"`
 		Token    string `json:"token"`
 	}

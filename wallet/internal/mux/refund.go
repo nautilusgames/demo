@@ -5,19 +5,22 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/nautilusgames/demo/auth/tenant"
+	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/wallet/internal/ent"
 	"github.com/nautilusgames/demo/wallet/model"
 )
 
-func httpRefund(logger *zap.Logger, entClient *ent.Client, tenantAuth tenant.TenantAuthorization) http.HandlerFunc {
+func httpRefund(logger *zap.Logger, entClient *ent.Client, tokenMaker token.Maker) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger.Info("refund")
-		_, playerID, gameID, err := tenantAuth(w, r)
+
+		payload, err := authorizePlayerTenantToken(r, tokenMaker)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
+		playerID := payload.PlayerID
+		gameID := payload.GameID
 
 		var request model.RefundRequest
 		if err := readRequest(logger, r, &request); err != nil {
@@ -74,6 +77,5 @@ func httpRefund(logger *zap.Logger, entClient *ent.Client, tenantAuth tenant.Ten
 			Data:  tx,
 			Error: nil,
 		})
-
 	}
 }

@@ -7,26 +7,21 @@ import (
 	"fmt"
 	"net/http"
 
+	sgbuilder "github.com/nautilusgames/sdk-go/builder"
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/auth/internal/checker"
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/tx"
-	"github.com/nautilusgames/demo/auth/model"
 	walletmodel "github.com/nautilusgames/demo/wallet/model"
 )
 
 const _defaultCurrency = "vnd"
 
-func (s *httpServer) handleSignUp() http.HandlerFunc {
+func (h *Handler) HandleSignUp() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-			return
-		}
-
-		var request *model.SignUpRequest
-		err := readRequest(s.logger, r, &request)
+		var request *SignUpRequest
+		err := sgbuilder.ToRequest(r.Body, &request)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -56,7 +51,7 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 		}
 
 		var player *ent.Player
-		err = tx.WithTx(r.Context(), s.entClient, func(tx *ent.Tx) error {
+		err = tx.WithTx(r.Context(), h.entClient, func(tx *ent.Tx) error {
 			player, err = tx.Player.
 				Create().
 				SetUsername(username).
@@ -65,13 +60,13 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 				SetCurrency(currency).
 				Save(r.Context())
 			if err != nil {
-				s.logger.Error("failed to create player", zap.Error(err))
+				h.logger.Error("failed to create player", zap.Error(err))
 				return err
 			}
 
-			token, _, err = s.accessToken.CreateToken("", player.ID, player.Username, _expireTokenDuration)
+			token, _, err = h.accessToken.CreateToken("", player.ID, player.Username, _expireTokenDuration)
 			if err != nil {
-				s.logger.Error("failed to create token", zap.Error(err))
+				h.logger.Error("failed to create token", zap.Error(err))
 				return err
 			}
 
@@ -81,18 +76,20 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 				Currency: currency,
 			})
 			if err != nil {
-				s.logger.Error("failed to encode body", zap.Error(err))
+				h.logger.Error("failed to encode body", zap.Error(err))
 				return err
 			}
+
 			url := fmt.Sprintf("%s%s", walletmodel.InternalAddress, walletmodel.CreatePath)
 			resp, err := http.Post(url, "application/json", &body)
 			if err != nil {
-				s.logger.Error("failed to post http request", zap.Error(err))
+				h.logger.Error("failed to post http request", zap.Error(err))
 				return err
 			}
+
 			defer resp.Body.Close()
 			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-				s.logger.Error("failed to create wallet", zap.Any("status", resp.StatusCode))
+				h.logger.Error("failed to create wallet", zap.Any("status", resp.StatusCode))
 				return errors.New("failed to create wallet")
 			}
 			return nil
@@ -102,7 +99,7 @@ func (s *httpServer) handleSignUp() http.HandlerFunc {
 			return
 		}
 
-		respond(s.logger, w, &model.SignUpResponse{
+		sgbuilder.SendResponse(w, &SignUpResponse{
 			DisplayName: player.DisplayName,
 			Username:    player.Username,
 			Token:       token,
