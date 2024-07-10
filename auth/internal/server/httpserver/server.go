@@ -42,21 +42,20 @@ func New(
 	address string,
 ) HttpServer {
 	mux := mux.NewRouter()
+	// set up middleware
+	mux.Use(middleware.CorsMiddleware)
 	handler := handler.New(logger, cfg, entClient, accessToken, tenantPlayerToken)
 
 	// set up routes
-	mux.HandleFunc(_statusPath, handler.HandleStatus()).Methods(http.MethodGet)
-	mux.HandleFunc(_signInPath, handler.HandleSignIn()).Methods(http.MethodPost)
-	mux.HandleFunc(_signUpPath, handler.HandleSignUp()).Methods(http.MethodPost)
-	mux.HandleFunc(_createSessionPath, handler.HandleCreateSession()).Methods(http.MethodPost)
+	mux.HandleFunc(_statusPath, handler.HandleStatus()).Methods(http.MethodGet, http.MethodOptions)
+	mux.HandleFunc(_signInPath, handler.HandleSignIn()).Methods(http.MethodPost, http.MethodOptions)
+	mux.HandleFunc(_signUpPath, handler.HandleSignUp()).Methods(http.MethodPost, http.MethodOptions)
+	mux.HandleFunc(_createSessionPath, handler.HandleCreateSession()).Methods(http.MethodPost, http.MethodOptions)
 	// deprecated
-	mux.HandleFunc(_createTenantToken, handler.HandleCreateTenantToken()).Methods(http.MethodPost)
+	mux.HandleFunc(_createTenantToken, handler.HandleCreateTenantToken()).Methods(http.MethodPost, http.MethodOptions)
 
 	// set up webhook
 	webhook.HandleVerifyPlayer(mux, logger, handler.HandleVerifyPlayer)
-
-	// set up middleware
-	mux.Use(middleware.CorsMiddleware)
 
 	return &httpServer{
 		logger: logger,

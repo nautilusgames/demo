@@ -189,7 +189,8 @@
 
         async function playGame(url, gameID) {
             await createSession(gameID)
-            var newUrl = `${url}/?tenant_id=${tenantID}&tenant_player_token=${tenantPlayerToken}&tenant_token=${tenantToken}&l=${language}&currency=${currency}`
+            var newUrl = `${url}/?tenant_id=${tenantID}&tenant_player_token=${tenantPlayerToken}&language=${language}&currency=${currency}`
+            console.log(newUrl)
             var iframe = document.getElementById('iframe-game')
             iframe.style.display = 'block'
             iframe.src = newUrl
@@ -315,7 +316,6 @@
 
                 const response = await fetch(url, {
                     method: "GET",
-                    // credentials: "include",
                     headers: {
                         "authorization": `Bearer ${tenantToken}` ,
                     }
