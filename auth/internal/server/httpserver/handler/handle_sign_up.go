@@ -1,10 +1,6 @@
 package handler
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
-	"fmt"
 	"net/http"
 
 	sgbuilder "github.com/nautilusgames/sdk-go/builder"
@@ -13,7 +9,7 @@ import (
 	"github.com/nautilusgames/demo/auth/internal/checker"
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/tx"
-	walletmodel "github.com/nautilusgames/demo/wallet/model"
+	walletcli "github.com/nautilusgames/demo/wallet/client"
 )
 
 const _defaultCurrency = "vnd"
@@ -70,28 +66,16 @@ func (h *Handler) HandleSignUp() http.HandlerFunc {
 				return err
 			}
 
-			var body bytes.Buffer
-			err = json.NewEncoder(&body).Encode(walletmodel.CreateWalletRequest{
+			createWalletReq := &walletcli.CreateWalletRequest{
 				PlayerID: player.ID,
 				Currency: currency,
-			})
+			}
+			_, err := walletcli.CreateWallet(h.logger, createWalletReq)
 			if err != nil {
-				h.logger.Error("failed to encode body", zap.Error(err))
+				h.logger.Error("failed to create wallet", zap.Error(err))
 				return err
 			}
 
-			url := fmt.Sprintf("%s%s", walletmodel.InternalAddress, walletmodel.CreatePath)
-			resp, err := http.Post(url, "application/json", &body)
-			if err != nil {
-				h.logger.Error("failed to post http request", zap.Error(err))
-				return err
-			}
-
-			defer resp.Body.Close()
-			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-				h.logger.Error("failed to create wallet", zap.Any("status", resp.StatusCode))
-				return errors.New("failed to create wallet")
-			}
 			return nil
 		})
 		if err != nil {
