@@ -10,7 +10,7 @@ require (
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.1
-	github.com/nautilusgames/sdk-go v0.0.4-0.20240710050824-e4c14ad62dc4
+	github.com/nautilusgames/sdk-go v0.0.4
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.0.0-20220517005047-85d78b3ac167

@@ -14,6 +14,7 @@ import (
 	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
+	"github.com/nautilusgames/demo/wallet/client"
 	"github.com/nautilusgames/demo/wallet/internal/ent"
 	"github.com/nautilusgames/demo/wallet/internal/handler"
 	"github.com/nautilusgames/sdk-go/webhook"
@@ -59,21 +60,24 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed creating schema resources", zap.Error(err))
 	}
 
-	playerTenantSigning := cfg.GetAuth().GetPlayerTenantSigning()
-	playerTenantToken, err := token.New(
-		playerTenantSigning.GetSigningKey(),
-		playerTenantSigning.GetIssuer(),
-		playerTenantSigning.GetAudience())
+	tenantPlayerSigning := cfg.GetAuth().GetTenantPlayerSigning()
+	tenantPlayerToken, err := token.New(
+		tenantPlayerSigning.GetSigningKey(),
+		tenantPlayerSigning.GetIssuer(),
+		tenantPlayerSigning.GetAudience())
 	if err != nil {
 		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
-	handlerSrv := handler.New(logger, entClient, playerTenantToken)
+	handlerSrv := handler.New(logger, entClient, tenantPlayerToken)
 	mux := mux.NewRouter()
-	mux.HandleFunc("/wallet/create", handlerSrv.CreateWalletHandler)
+	// internal routes
+	mux.HandleFunc(client.CreateWalletPath, handlerSrv.CreateWalletHandler)
+	// external routes
 	webhook.HandleGetWallet(mux, logger, handlerSrv.HandleGetWallet)
 	webhook.HandleBet(mux, logger, handlerSrv.HandleBet)
 	webhook.HandlePayout(mux, logger, handlerSrv.HandlePayout)
+
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
 	server := &http.Server{
 		Addr:    address,

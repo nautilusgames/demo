@@ -55,12 +55,12 @@ func (h *Handler) authorizePlayerTenantToken(header *webhook.HookRequestHeader) 
 	if header.XGameId == "" {
 		return nil, fmt.Errorf("missing game id header")
 	}
-	if header.XTenantToken == "" {
+	if header.XTenantPlayerToken == "" {
 		return nil, fmt.Errorf("missing tenant token header")
 	}
 
 	// validate tenant token
-	payload, err := h.tokenMaker.VerifyToken(header.XTenantToken)
+	payload, err := h.tokenMaker.VerifyToken(header.XTenantPlayerToken)
 	if err != nil {
 		return nil, fmt.Errorf("invalid tenant token: %s", err)
 	}
