@@ -10,8 +10,6 @@ import (
 
 	sgbuilder "github.com/nautilusgames/sdk-go/builder"
 	"go.uber.org/zap"
-
-	"github.com/nautilusgames/demo/auth/model"
 )
 
 const (
@@ -33,7 +31,7 @@ func (h *Handler) HandleCreateTenantToken() http.HandlerFunc {
 			return
 		}
 
-		sgbuilder.SendResponse(w, &model.CreateTenantTokenResponse{
+		sgbuilder.SendResponse(w, &CreateTenantTokenResponse{
 			TenantId: h.cfg.GetTenantId(),
 			Token:    tenantToken,
 		})

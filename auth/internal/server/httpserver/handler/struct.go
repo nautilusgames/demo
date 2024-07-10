@@ -1,4 +1,4 @@
-package model
+package handler
 
 type SignUpRequest struct {
 	Username    string `json:"username"`

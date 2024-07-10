@@ -4,20 +4,19 @@ import (
 	"net/http"
 	"time"
 
-	"go.uber.org/zap"
 	sgbuilder "github.com/nautilusgames/sdk-go/builder"
+	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/auth/internal/checker"
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/ent/player"
-	"github.com/nautilusgames/demo/auth/model"
 )
 
 const _expireTokenDuration = 24 * time.Hour
 
 func (h *Handler) HandleSignIn() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var request *model.SignInRequest
+		var request *SignInRequest
 		err := sgbuilder.ToRequest(r.Body, &request)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -57,7 +56,7 @@ func (h *Handler) HandleSignIn() http.HandlerFunc {
 			return
 		}
 
-		sgbuilder.SendResponse(w, &model.SignInResponse{
+		sgbuilder.SendResponse(w, &SignInResponse{
 			DisplayName: player.DisplayName,
 			Username:    player.Username,
 			Currency:    player.Currency,

@@ -13,7 +13,6 @@ import (
 	"github.com/nautilusgames/demo/auth/internal/checker"
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/tx"
-	"github.com/nautilusgames/demo/auth/model"
 	walletmodel "github.com/nautilusgames/demo/wallet/model"
 )
 
@@ -21,7 +20,7 @@ const _defaultCurrency = "vnd"
 
 func (h *Handler) HandleSignUp() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var request *model.SignUpRequest
+		var request *SignUpRequest
 		err := sgbuilder.ToRequest(r.Body, &request)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -100,7 +99,7 @@ func (h *Handler) HandleSignUp() http.HandlerFunc {
 			return
 		}
 
-		sgbuilder.SendResponse(w, &model.SignUpResponse{
+		sgbuilder.SendResponse(w, &SignUpResponse{
 			DisplayName: player.DisplayName,
 			Username:    player.Username,
 			Token:       token,

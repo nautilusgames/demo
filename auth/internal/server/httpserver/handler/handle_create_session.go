@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	sgbuilder "github.com/nautilusgames/sdk-go/builder"
-
-	"github.com/nautilusgames/demo/auth/model"
 )
 
 func (h *Handler) HandleCreateSession() http.HandlerFunc {
@@ -16,7 +14,7 @@ func (h *Handler) HandleCreateSession() http.HandlerFunc {
 			return
 		}
 
-		var request *model.CreateSessionRequest
+		var request *CreateSessionRequest
 		err = sgbuilder.ToRequest(r.Body, &request)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -34,7 +32,7 @@ func (h *Handler) HandleCreateSession() http.HandlerFunc {
 			return
 		}
 
-		sgbuilder.SendResponse(w, &model.CreateSessionResponse{
+		sgbuilder.SendResponse(w, &CreateSessionResponse{
 			TenantId: h.cfg.GetTenantId(),
 			Token:    token,
 		})
