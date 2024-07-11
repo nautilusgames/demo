@@ -25,7 +25,7 @@ auth:
     audience: player
     issuer: demo
 
-  player_tenant_signing:
-    signing_key: ${PLAYER_TENANT_SIGNING_KEY}
-    audience: player_tenant
+  tenant_player_signing:
+    signing_key: ${TENANT_PLAYER_SIGNING_KEY}
+    audience: tenant_player
     issuer: demo

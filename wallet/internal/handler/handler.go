@@ -39,9 +39,6 @@ type Handler struct {
 
 func (h *Handler) authorizePlayerTenantToken(header *webhook.HookRequestHeader) (*token.Payload, error) {
 	// validate headers
-	if header.XApiKey == "" {
-		return nil, fmt.Errorf("missing api key header")
-	}
 	if header.XTenantId == "" {
 		return nil, fmt.Errorf("missing tenant id header")
 	}

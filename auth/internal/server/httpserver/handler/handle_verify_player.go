@@ -10,21 +10,15 @@ import (
 
 func (h *Handler) HandleVerifyPlayer(ctx context.Context, request *webhook.VerifyPlayerRequest) (*webhook.VerifyPlayerResponse, error) {
 	var (
-		apiKey            = request.Header.XApiKey
 		tenantPlayerToken = request.Header.XTenantPlayerToken
 		gameID            = request.Header.XGameId
 	)
-
-	if apiKey == "" {
-		return nil, fmt.Errorf("missing api key header")
-	}
 	if tenantPlayerToken == "" {
 		return nil, fmt.Errorf("missing tenant player token header")
 	}
 	if gameID == "" {
 		return nil, fmt.Errorf("missing game id header")
 	}
-	
 
 	// validate tenant player token
 	payload, err := h.tenantPlayerToken.VerifyToken(tenantPlayerToken)

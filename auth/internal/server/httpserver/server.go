@@ -6,11 +6,11 @@ import (
 
 	"github.com/gorilla/mux"
 	webhook "github.com/nautilusgames/sdk-go/webhook"
+	"github.com/rs/cors"
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/auth/internal/ent"
 	"github.com/nautilusgames/demo/auth/internal/server/httpserver/handler"
-	"github.com/nautilusgames/demo/auth/internal/server/httpserver/middleware"
 	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/config/pb"
 )
@@ -42,6 +42,8 @@ func New(
 	address string,
 ) HttpServer {
 	mux := mux.NewRouter()
+
+	// handler
 	handler := handler.New(logger, cfg, entClient, accessToken, tenantPlayerToken)
 
 	// set up routes
@@ -55,14 +57,14 @@ func New(
 	// set up webhook
 	webhook.HandleVerifyPlayer(mux, logger, handler.HandleVerifyPlayer)
 
-	// set up middleware
-	mux.Use(middleware.CorsMiddleware)
+	// set up cors
+	c := cors.AllowAll()
 
 	return &httpServer{
 		logger: logger,
 		Server: http.Server{
 			Addr:    address,
-			Handler: mux,
+			Handler: c.Handler(mux),
 		},
 	}
 }
