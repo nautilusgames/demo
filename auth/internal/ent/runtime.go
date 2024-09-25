@@ -16,11 +16,11 @@ func init() {
 	playerFields := schema.Player{}.Fields()
 	_ = playerFields
 	// playerDescHashedPassword is the schema descriptor for hashed_password field.
-	playerDescHashedPassword := playerFields[2].Descriptor()
+	playerDescHashedPassword := playerFields[3].Descriptor()
 	// player.HashedPasswordValidator is a validator for the "hashed_password" field. It is called by the builders before save.
 	player.HashedPasswordValidator = playerDescHashedPassword.Validators[0].(func(string) error)
 	// playerDescCreatedAt is the schema descriptor for created_at field.
-	playerDescCreatedAt := playerFields[5].Descriptor()
+	playerDescCreatedAt := playerFields[6].Descriptor()
 	// player.DefaultCreatedAt holds the default value on creation for the created_at field.
 	player.DefaultCreatedAt = playerDescCreatedAt.Default.(func() time.Time)
 }

@@ -27,14 +27,5 @@ type CreateSessionRequest struct {
 	GameId string `json:"game_id"`
 }
 type CreateSessionResponse struct {
-	TenantId int64  `json:"tenant_id"`
-	Token    string `json:"token"`
+	Token string `json:"token"`
 }
-
-type (
-	CreateTenantTokenRequest  struct{}
-	CreateTenantTokenResponse struct {
-		TenantId int64  `json:"tenant_id"`
-		Token    string `json:"token"`
-	}
-)

@@ -8,13 +8,8 @@ import (
 	"github.com/nautilusgames/demo/auth/token"
 )
 
-const (
-	_authorizationHeader = "authorization"
-	_authorizationBearer = "bearer"
-)
-
-func (h *Handler) authorizeAccessToken(r *http.Request) (*token.Payload, error) {
-	value := r.Header.Get(_authorizationHeader)
+func (h *Handler) authorize(r *http.Request) (*token.Payload, error) {
+	value := r.Header.Get("authorization")
 	if value == "" {
 		return nil, fmt.Errorf("missing authorization header")
 	}
@@ -25,7 +20,7 @@ func (h *Handler) authorizeAccessToken(r *http.Request) (*token.Payload, error) 
 	}
 
 	authType := strings.ToLower(fields[0])
-	if authType != _authorizationBearer {
+	if authType != "bearer" {
 		return nil, fmt.Errorf("unsupported authorization type: %s", authType)
 	}
 

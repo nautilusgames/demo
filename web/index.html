@@ -177,8 +177,7 @@
     </div>
 
     <script type="text/javascript">
-        var domain = "http://54.254.199.241:8081"
-        var listGameDomain = "https://p.n11s.io/api/gnome/v1/games?pageSize=9999"
+        var domain = "http://ec2-13-228-25-209.ap-southeast-1.compute.amazonaws.com:8081"
         var resourceDomain = "https://s.n11s.io/"
         var tenantID = ""
         var tenantPlayerToken = ""
@@ -186,6 +185,9 @@
         var currency = "vnd"
         var language = "en"
         var accessToken = ""
+        
+        const params = new URLSearchParams(window.location.search)
+        tenantID = params.get('tenant_id')
 
         async function playGame(url, gameID) {
             await createSession(gameID)
@@ -207,7 +209,6 @@
                     $('#form-container').hide();
                     $('#list-game').show();
                     $('#language-select-container').show();
-                    await createTenantToken()
                     listGame()
                 } else {
                     alert('Invalid username or password');
@@ -224,7 +225,6 @@
                     $('#form-container').hide();
                     $('#list-game').show();
                     $('#language-select-container').show();
-                    await createTenantToken()
                     listGame()
                 } else {
                     alert('Invalid username or password or currency');
@@ -253,6 +253,9 @@
 
                 const response = await fetch(url, {
                     method: "POST",
+                    headers: {
+                        "x-tenant-id": tenantID,
+                    },
                     body: JSON.stringify(request),
                 });
                 const data = await response.json();
@@ -287,6 +290,9 @@
 
                 const response = await fetch(url, {
                     method: "POST",
+                     headers: {
+                        "x-tenant-id": tenantID,
+                    },
                     body: JSON.stringify(request),
                 });
                 const data = await response.json();
@@ -308,8 +314,8 @@
 
         async function listGame() {
             try {
-                let url = `${listGameDomain}`;
-                if (tenantToken == "") {
+                let url = `${domain}/api/v1/list-game`;
+                if (accessToken == "") {
                     alert("tenant token is invalid");
                     return false;
                 }
@@ -317,13 +323,13 @@
                 const response = await fetch(url, {
                     method: "GET",
                     headers: {
-                        "authorization": `Bearer ${tenantToken}` ,
+                        "authorization": `Bearer ${accessToken}` ,
                     }
                 });
                 const data = await response.json();
                 if (response.status === 200) {
                     $("#simple-game-body").empty();
-                    const rows = generateRecordRows(data.games);
+                    const rows = generateRecordRows(data.records);
                     for (let i = 0; i < rows.length; i++) {
                         $("#simple-game-body").append(rows[i]);
                     }
@@ -339,13 +345,13 @@
         function generateRecordRow(record) {
             var assets = record.assets;
             console.log(assets)
-            var icon = resourceDomain + assets.values[0].thumbnail.files[0].path
+            var icon = resourceDomain + assets[0].image_264x264
             return `<tr>
                         <td><img src="${icon}" width="auto" height="200"></td>
-                        <td>${record.gameId}</td>
-                        <td>${assets.values[0].name}</td>
+                        <td>${record.game_id}</td>
+                        <td>${assets[0].name}</td>
                         <td>${record.status}</td>
-                        <td><Button class="play-button" onclick="playGame('${record.url}', '${record.gameId}')">Play</Button></td>
+                        <td><Button class="play-button" onclick="playGame('${record.url}', '${record.game_id}')">Play</Button></td>
                         </tr>`;
         }
 
@@ -356,34 +362,6 @@
                 rows.push(generateRecordRow(record));
             }
             return rows;
-        }
-
-        async function createTenantToken() {
-            try {
-                let url = `${domain}/api/v1/create-tenant-token`;
-
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "authorization": `Bearer ${accessToken}`,
-                    }
-                });
-                const data = await response.json();
-                if (response.status === 200) {
-                    // get token
-                    tenantToken = data.token
-                    tenantID = data.tenant_id
-                    return true
-                } else {
-                    console.log(response)
-                    alert("fail to create tenant token");
-                    return false;
-                }
-            } catch (error) {
-                console.error("Error create tenant token:", error);
-                alert("fail to create tenant token");
-                return false;
-            }
         }
 
         async function createSession(gameID) {
@@ -405,7 +383,6 @@
                 if (response.status === 200) {
                     // get token
                     tenantPlayerToken = data.token
-                    // tenantID = data.tenant_id
                     return true
                 } else {
                     console.log(response)

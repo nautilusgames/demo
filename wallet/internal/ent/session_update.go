@@ -50,23 +50,16 @@ func (su *SessionUpdate) SetNillableGameID(s *string) *SessionUpdate {
 }
 
 // SetGameSessionID sets the "game_session_id" field.
-func (su *SessionUpdate) SetGameSessionID(i int64) *SessionUpdate {
-	su.mutation.ResetGameSessionID()
-	su.mutation.SetGameSessionID(i)
+func (su *SessionUpdate) SetGameSessionID(s string) *SessionUpdate {
+	su.mutation.SetGameSessionID(s)
 	return su
 }
 
 // SetNillableGameSessionID sets the "game_session_id" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableGameSessionID(i *int64) *SessionUpdate {
-	if i != nil {
-		su.SetGameSessionID(*i)
+func (su *SessionUpdate) SetNillableGameSessionID(s *string) *SessionUpdate {
+	if s != nil {
+		su.SetGameSessionID(*s)
 	}
-	return su
-}
-
-// AddGameSessionID adds i to the "game_session_id" field.
-func (su *SessionUpdate) AddGameSessionID(i int64) *SessionUpdate {
-	su.mutation.AddGameSessionID(i)
 	return su
 }
 
@@ -133,10 +126,7 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(session.FieldGameID, field.TypeString, value)
 	}
 	if value, ok := su.mutation.GameSessionID(); ok {
-		_spec.SetField(session.FieldGameSessionID, field.TypeInt64, value)
-	}
-	if value, ok := su.mutation.AddedGameSessionID(); ok {
-		_spec.AddField(session.FieldGameSessionID, field.TypeInt64, value)
+		_spec.SetField(session.FieldGameSessionID, field.TypeString, value)
 	}
 	_spec.AddModifiers(su.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
@@ -181,23 +171,16 @@ func (suo *SessionUpdateOne) SetNillableGameID(s *string) *SessionUpdateOne {
 }
 
 // SetGameSessionID sets the "game_session_id" field.
-func (suo *SessionUpdateOne) SetGameSessionID(i int64) *SessionUpdateOne {
-	suo.mutation.ResetGameSessionID()
-	suo.mutation.SetGameSessionID(i)
+func (suo *SessionUpdateOne) SetGameSessionID(s string) *SessionUpdateOne {
+	suo.mutation.SetGameSessionID(s)
 	return suo
 }
 
 // SetNillableGameSessionID sets the "game_session_id" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableGameSessionID(i *int64) *SessionUpdateOne {
-	if i != nil {
-		suo.SetGameSessionID(*i)
+func (suo *SessionUpdateOne) SetNillableGameSessionID(s *string) *SessionUpdateOne {
+	if s != nil {
+		suo.SetGameSessionID(*s)
 	}
-	return suo
-}
-
-// AddGameSessionID adds i to the "game_session_id" field.
-func (suo *SessionUpdateOne) AddGameSessionID(i int64) *SessionUpdateOne {
-	suo.mutation.AddGameSessionID(i)
 	return suo
 }
 
@@ -294,10 +277,7 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 		_spec.SetField(session.FieldGameID, field.TypeString, value)
 	}
 	if value, ok := suo.mutation.GameSessionID(); ok {
-		_spec.SetField(session.FieldGameSessionID, field.TypeInt64, value)
-	}
-	if value, ok := suo.mutation.AddedGameSessionID(); ok {
-		_spec.AddField(session.FieldGameSessionID, field.TypeInt64, value)
+		_spec.SetField(session.FieldGameSessionID, field.TypeString, value)
 	}
 	_spec.AddModifiers(suo.modifiers...)
 	_node = &Session{config: suo.config}

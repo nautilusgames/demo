@@ -3,35 +3,35 @@ package handler
 import (
 	"context"
 	"errors"
-	"net/http"
 
+	"github.com/nautilusgames/demo/auth/verifier"
 	"github.com/nautilusgames/sdk-go/webhook"
 )
 
-func (h *Handler) HandleBet(ctx context.Context, request *webhook.BetRequest) (*webhook.WalletResponse, error) {
-	response := &webhook.WalletResponse{}
-	payload, err := h.authorizePlayerTenantToken(request.Header)
-	if err != nil {
-		response.Error = Error(http.StatusUnauthorized, err.Error())
-		return response, nil
+func (h *Handler) HandleBet(ctx context.Context, request *webhook.BetRequest) (*webhook.TransactionReply, error) {
+	reply := &webhook.TransactionReply{}
+	payload, webhookErr := verifier.Verify(h.cfg, h.token, request.Header)
+	if webhookErr != nil {
+		reply.Error = webhookErr
+		return reply, nil
 	}
 
-	if request.SessionId <= 0 {
-		response.Error = Error(http.StatusBadRequest, "invalid session_id")
-		return response, nil
+	if request.SessionId == "" {
+		reply.Error = Error(webhook.ErrInvalidRequest, "invalid session_id")
+		return reply, nil
 	}
 
-	tx, err := h.transfer(ctx, request.SessionId, payload.GameID, payload.PlayerID, -request.Amount)
+	tx, err := h.transfer(ctx, request.SessionId, payload.Object, payload.PlayerID, -request.Amount)
 	if err != nil {
-		if errors.Is(err, _insufficientBalanceError) {
-			response.Error = Error(_insufficientBalanceCode, err.Error())
-			return response, nil
+		if errors.Is(err, errInsufficient) {
+			reply.Error = Error(webhook.ErrInsufficient, err.Error())
+			return reply, nil
 		}
 
-		response.Error = Error(http.StatusInternalServerError, err.Error())
-		return response, nil
+		reply.Error = Error(webhook.ErrInternalServerError, err.Error())
+		return reply, nil
 	}
 
-	response.Data = tx
-	return response, nil
+	reply.Data = tx
+	return reply, nil
 }

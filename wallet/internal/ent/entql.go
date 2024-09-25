@@ -29,7 +29,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldCreatedAt:     {Type: field.TypeTime, Column: session.FieldCreatedAt},
 			session.FieldUpdatedAt:     {Type: field.TypeTime, Column: session.FieldUpdatedAt},
 			session.FieldGameID:        {Type: field.TypeString, Column: session.FieldGameID},
-			session.FieldGameSessionID: {Type: field.TypeInt64, Column: session.FieldGameSessionID},
+			session.FieldGameSessionID: {Type: field.TypeString, Column: session.FieldGameSessionID},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -113,8 +113,8 @@ func (f *SessionFilter) WhereGameID(p entql.StringP) {
 	f.Where(p.Field(session.FieldGameID))
 }
 
-// WhereGameSessionID applies the entql int64 predicate on the game_session_id field.
-func (f *SessionFilter) WhereGameSessionID(p entql.Int64P) {
+// WhereGameSessionID applies the entql string predicate on the game_session_id field.
+func (f *SessionFilter) WhereGameSessionID(p entql.StringP) {
 	f.Where(p.Field(session.FieldGameSessionID))
 }
 

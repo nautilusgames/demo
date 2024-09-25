@@ -57,8 +57,8 @@ func (sc *SessionCreate) SetGameID(s string) *SessionCreate {
 }
 
 // SetGameSessionID sets the "game_session_id" field.
-func (sc *SessionCreate) SetGameSessionID(i int64) *SessionCreate {
-	sc.mutation.SetGameSessionID(i)
+func (sc *SessionCreate) SetGameSessionID(s string) *SessionCreate {
+	sc.mutation.SetGameSessionID(s)
 	return sc
 }
 
@@ -173,7 +173,7 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		_node.GameID = value
 	}
 	if value, ok := sc.mutation.GameSessionID(); ok {
-		_spec.SetField(session.FieldGameSessionID, field.TypeInt64, value)
+		_spec.SetField(session.FieldGameSessionID, field.TypeString, value)
 		_node.GameSessionID = value
 	}
 	return _node, _spec
@@ -253,7 +253,7 @@ func (u *SessionUpsert) UpdateGameID() *SessionUpsert {
 }
 
 // SetGameSessionID sets the "game_session_id" field.
-func (u *SessionUpsert) SetGameSessionID(v int64) *SessionUpsert {
+func (u *SessionUpsert) SetGameSessionID(v string) *SessionUpsert {
 	u.Set(session.FieldGameSessionID, v)
 	return u
 }
@@ -261,12 +261,6 @@ func (u *SessionUpsert) SetGameSessionID(v int64) *SessionUpsert {
 // UpdateGameSessionID sets the "game_session_id" field to the value that was provided on create.
 func (u *SessionUpsert) UpdateGameSessionID() *SessionUpsert {
 	u.SetExcluded(session.FieldGameSessionID)
-	return u
-}
-
-// AddGameSessionID adds v to the "game_session_id" field.
-func (u *SessionUpsert) AddGameSessionID(v int64) *SessionUpsert {
-	u.Add(session.FieldGameSessionID, v)
 	return u
 }
 
@@ -350,16 +344,9 @@ func (u *SessionUpsertOne) UpdateGameID() *SessionUpsertOne {
 }
 
 // SetGameSessionID sets the "game_session_id" field.
-func (u *SessionUpsertOne) SetGameSessionID(v int64) *SessionUpsertOne {
+func (u *SessionUpsertOne) SetGameSessionID(v string) *SessionUpsertOne {
 	return u.Update(func(s *SessionUpsert) {
 		s.SetGameSessionID(v)
-	})
-}
-
-// AddGameSessionID adds v to the "game_session_id" field.
-func (u *SessionUpsertOne) AddGameSessionID(v int64) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddGameSessionID(v)
 	})
 }
 
@@ -616,16 +603,9 @@ func (u *SessionUpsertBulk) UpdateGameID() *SessionUpsertBulk {
 }
 
 // SetGameSessionID sets the "game_session_id" field.
-func (u *SessionUpsertBulk) SetGameSessionID(v int64) *SessionUpsertBulk {
+func (u *SessionUpsertBulk) SetGameSessionID(v string) *SessionUpsertBulk {
 	return u.Update(func(s *SessionUpsert) {
 		s.SetGameSessionID(v)
-	})
-}
-
-// AddGameSessionID adds v to the "game_session_id" field.
-func (u *SessionUpsertBulk) AddGameSessionID(v int64) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.AddGameSessionID(v)
 	})
 }
 

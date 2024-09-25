@@ -21,14 +21,14 @@ func New(signingKey, issuer, audience string) (Maker, error) {
 	}, nil
 }
 
-func (j *jwtImpl) CreateToken(gameID string, playerID int64, username string, duration time.Duration) (string, *Payload, error) {
-	payload, err := newPayload(gameID, playerID, username, duration)
+func (j *jwtImpl) CreateToken(object string, playerID int64, username string, duration time.Duration) (string, *Payload, error) {
+	payload, err := newPayload(object, playerID, username, duration)
 	if err != nil {
 		return "", payload, err
 	}
 
 	claims := &MyClaim{
-		GameID:   gameID,
+		Object:   object,
 		Username: username,
 		PlayerID: playerID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -65,7 +65,7 @@ func (j *jwtImpl) VerifyToken(token string) (*Payload, error) {
 
 	return &Payload{
 		ID:        uuid.MustParse(claims.ID),
-		GameID:    claims.GameID,
+		Object:    claims.Object,
 		PlayerID:  claims.PlayerID,
 		Username:  claims.Username,
 		IssuedAt:  claims.IssuedAt.Time,

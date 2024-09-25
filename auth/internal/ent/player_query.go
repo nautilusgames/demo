@@ -263,12 +263,12 @@ func (pq *PlayerQuery) Clone() *PlayerQuery {
 // Example:
 //
 //	var v []struct {
-//		Username string `json:"username,omitempty"`
+//		TenantID string `json:"tenant_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Player.Query().
-//		GroupBy(player.FieldUsername).
+//		GroupBy(player.FieldTenantID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (pq *PlayerQuery) GroupBy(field string, fields ...string) *PlayerGroupBy {
@@ -286,11 +286,11 @@ func (pq *PlayerQuery) GroupBy(field string, fields ...string) *PlayerGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Username string `json:"username,omitempty"`
+//		TenantID string `json:"tenant_id,omitempty"`
 //	}
 //
 //	client.Player.Query().
-//		Select(player.FieldUsername).
+//		Select(player.FieldTenantID).
 //		Scan(ctx, &v)
 func (pq *PlayerQuery) Select(fields ...string) *PlayerSelect {
 	pq.ctx.Fields = append(pq.ctx.Fields, fields...)

@@ -11,13 +11,17 @@ message Config {
   Logger logger     = 2;
   Database database = 3;
 
-  // tenant
-  int64 tenant_id         = 4;
-  string tenant_api_key   = 5;
-  string tenant_token_url = 6;
+  // tenants
+  repeated TenantInfo tenants = 4;
 
   // auth
   Auth auth = 7;
+}
+
+message TenantInfo {
+  string tenant_id      = 1;
+  string tenant_api_key = 2;
+  string list_game_url  = 3;
 }
 
 message Logger {

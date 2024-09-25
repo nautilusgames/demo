@@ -23,6 +23,7 @@ func (h *Handler) HandleSignUp() http.HandlerFunc {
 			return
 		}
 
+		tenantID := r.Header.Get("x-tenant-id")
 		username := request.Username
 		password := request.Password
 		displayName := request.DisplayName
@@ -50,6 +51,7 @@ func (h *Handler) HandleSignUp() http.HandlerFunc {
 		err = tx.WithTx(r.Context(), h.entClient, func(tx *ent.Tx) error {
 			player, err = tx.Player.
 				Create().
+				SetTenantID(tenantID).
 				SetUsername(username).
 				SetHashedPassword(hashedPassword).
 				SetDisplayName(displayName).
@@ -60,7 +62,7 @@ func (h *Handler) HandleSignUp() http.HandlerFunc {
 				return err
 			}
 
-			token, _, err = h.accessToken.CreateToken("", player.ID, player.Username, _expireTokenDuration)
+			token, _, err = h.accessToken.CreateToken(tenantID, player.ID, player.Username, _expireTokenDuration)
 			if err != nil {
 				h.logger.Error("failed to create token", zap.Error(err))
 				return err
@@ -83,7 +85,7 @@ func (h *Handler) HandleSignUp() http.HandlerFunc {
 			return
 		}
 
-		sgbuilder.SendResponse(w, &SignUpResponse{
+		sgbuilder.SendReply(w, &SignUpResponse{
 			DisplayName: player.DisplayName,
 			Username:    player.Username,
 			Token:       token,

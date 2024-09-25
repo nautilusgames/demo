@@ -5,7 +5,6 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
-	"entgo.io/ent/schema/index"
 )
 
 type Player struct {
@@ -16,6 +15,7 @@ func (Player) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("id"),
 
+		field.String("tenant_id"),
 		field.String("username").Unique(),
 		field.String("hashed_password").NotEmpty(),
 
@@ -24,15 +24,5 @@ func (Player) Fields() []ent.Field {
 		field.String("display_name"),
 
 		field.Time("created_at").Default(time.Now),
-	}
-}
-
-func (Player) Edges() []ent.Edge {
-	return nil
-}
-
-func (Player) Indexes() []ent.Index {
-	return []ent.Index{
-		index.Fields("username"),
 	}
 }

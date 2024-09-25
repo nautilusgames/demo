@@ -12,7 +12,7 @@ type Session struct {
 func (Session) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("game_id"),
-		field.Int64("game_session_id"),
+		field.String("game_session_id"),
 	}
 }
 

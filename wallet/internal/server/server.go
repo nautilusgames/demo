@@ -8,16 +8,17 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/gorilla/mux"
+	"github.com/nautilusgames/sdk-go/webhook"
+	"github.com/rs/cors"
 	"go.uber.org/zap"
 
-	"github.com/gorilla/mux"
 	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
 	"github.com/nautilusgames/demo/wallet/client"
 	"github.com/nautilusgames/demo/wallet/internal/ent"
 	"github.com/nautilusgames/demo/wallet/internal/handler"
-	"github.com/nautilusgames/sdk-go/webhook"
 )
 
 func Run(f *config.Flags) {
@@ -69,19 +70,21 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
-	handlerSrv := handler.New(logger, entClient, tenantPlayerToken)
+	handlerSrv := handler.New(logger, cfg, entClient, tenantPlayerToken)
 	mux := mux.NewRouter()
 	// internal routes
 	mux.HandleFunc(client.CreateWalletPath, handlerSrv.CreateWalletHandler)
 	// external routes
-	webhook.HandleGetWallet(mux, logger, handlerSrv.HandleGetWallet)
-	webhook.HandleBet(mux, logger, handlerSrv.HandleBet)
-	webhook.HandlePayout(mux, logger, handlerSrv.HandlePayout)
+	webhook.HandleGetWallet(mux, handlerSrv.HandleGetWallet)
+	webhook.HandleBet(mux, handlerSrv.HandleBet)
+	webhook.HandlePayout(mux, handlerSrv.HandlePayout)
 
+	// set up cors
+	c := cors.AllowAll()
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
 	server := &http.Server{
 		Addr:    address,
-		Handler: mux,
+		Handler: c.Handler(mux),
 	}
 
 	serverCh := make(chan struct{})

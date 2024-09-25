@@ -8,7 +8,7 @@ import (
 
 func (h *Handler) HandleCreateSession() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		info, err := h.authorizeAccessToken(r)
+		info, err := h.authorize(r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
@@ -32,9 +32,8 @@ func (h *Handler) HandleCreateSession() http.HandlerFunc {
 			return
 		}
 
-		sgbuilder.SendResponse(w, &CreateSessionResponse{
-			TenantId: h.cfg.GetTenantId(),
-			Token:    token,
+		sgbuilder.SendReply(w, &CreateSessionResponse{
+			Token: token,
 		})
 	}
 }
