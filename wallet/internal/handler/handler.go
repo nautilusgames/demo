@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/google/uuid"
@@ -83,7 +84,7 @@ func (h *Handler) transfer(
 		transaction = &webhook.TransactionData{
 			TenantTxId:      uuid.NewString(),
 			TenantSessionId: fmt.Sprint(walletSessionID),
-			Amount:          amount,
+			Amount:          math.Abs(amount),
 			NewBalance:      toExternalAmount(p.Balance),
 			CreatedAt:       now.UnixNano(),
 		}
