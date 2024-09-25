@@ -21,7 +21,7 @@ func (h *Handler) CreateWalletHandler(w http.ResponseWriter, r *http.Request) {
 	err := h.entClient.Wallet.Create().
 		SetID(request.PlayerID).
 		SetCurrency(request.Currency).
-		SetBalance(_initWallet).
+		SetBalance(initWallet).
 		Exec(r.Context())
 	if err != nil {
 		h.logger.Error("create new player failed", zap.Error(err))

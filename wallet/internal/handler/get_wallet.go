@@ -2,31 +2,31 @@ package handler
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/nautilusgames/sdk-go/webhook"
 	"go.uber.org/zap"
 
+	"github.com/nautilusgames/demo/auth/verifier"
 	entwallet "github.com/nautilusgames/demo/wallet/internal/ent/wallet"
 )
 
-func (h *Handler) HandleGetWallet(ctx context.Context, request *webhook.GetWalletRequest) (*webhook.GetWalletResponse, error) {
-	response := &webhook.GetWalletResponse{}
-	payload, err := h.authorizePlayerTenantToken(request.Header)
-	if err != nil {
-		response.Error = Error(http.StatusUnauthorized, err.Error())
-		return response, nil
+func (h *Handler) HandleGetWallet(ctx context.Context, request *webhook.GetWalletRequest) (*webhook.GetWalletReply, error) {
+	reply := &webhook.GetWalletReply{}
+	payload, webhookErr := verifier.Verify(h.cfg, h.token, request.Header)
+	if webhookErr != nil {
+		reply.Error = webhookErr
+		return reply, nil
 	}
 
 	playerWallet, err := h.getWallet(ctx, payload.PlayerID)
 	if err != nil {
 		h.logger.Error("get wallet failed", zap.Error(err))
-		response.Error = Error(http.StatusInternalServerError, err.Error())
-		return response, nil
+		reply.Error = Error(webhook.ErrInternalServerError, err.Error())
+		return reply, nil
 	}
 
-	response.Data = playerWallet
-	return response, nil
+	reply.Data = playerWallet
+	return reply, nil
 }
 
 func (h *Handler) getWallet(ctx context.Context, playerID int64) (*webhook.PlayerWallet, error) {
@@ -38,7 +38,8 @@ func (h *Handler) getWallet(ctx context.Context, playerID int64) (*webhook.Playe
 	}
 
 	return &webhook.PlayerWallet{
-		Balance:  player.Balance,
-		LastTxId: player.UpdatedAt.Unix(),
+		Currency:  player.Currency,
+		Balance:   toExternalAmount(player.Balance),
+		UpdatedAt: player.UpdatedAt.Unix(),
 	}, nil
 }

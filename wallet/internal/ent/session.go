@@ -24,7 +24,7 @@ type Session struct {
 	// GameID holds the value of the "game_id" field.
 	GameID string `json:"game_id,omitempty"`
 	// GameSessionID holds the value of the "game_session_id" field.
-	GameSessionID int64 `json:"game_session_id,omitempty"`
+	GameSessionID string `json:"game_session_id,omitempty"`
 	selectValues  sql.SelectValues
 }
 
@@ -33,9 +33,9 @@ func (*Session) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case session.FieldID, session.FieldGameSessionID:
+		case session.FieldID:
 			values[i] = new(sql.NullInt64)
-		case session.FieldGameID:
+		case session.FieldGameID, session.FieldGameSessionID:
 			values[i] = new(sql.NullString)
 		case session.FieldCreatedAt, session.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -79,10 +79,10 @@ func (s *Session) assignValues(columns []string, values []any) error {
 				s.GameID = value.String
 			}
 		case session.FieldGameSessionID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field game_session_id", values[i])
 			} else if value.Valid {
-				s.GameSessionID = value.Int64
+				s.GameSessionID = value.String
 			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
@@ -130,7 +130,7 @@ func (s *Session) String() string {
 	builder.WriteString(s.GameID)
 	builder.WriteString(", ")
 	builder.WriteString("game_session_id=")
-	builder.WriteString(fmt.Sprintf("%v", s.GameSessionID))
+	builder.WriteString(s.GameSessionID)
 	builder.WriteByte(')')
 	return builder.String()
 }

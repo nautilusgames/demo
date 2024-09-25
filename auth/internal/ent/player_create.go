@@ -22,6 +22,12 @@ type PlayerCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (pc *PlayerCreate) SetTenantID(s string) *PlayerCreate {
+	pc.mutation.SetTenantID(s)
+	return pc
+}
+
 // SetUsername sets the "username" field.
 func (pc *PlayerCreate) SetUsername(s string) *PlayerCreate {
 	pc.mutation.SetUsername(s)
@@ -109,6 +115,9 @@ func (pc *PlayerCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (pc *PlayerCreate) check() error {
+	if _, ok := pc.mutation.TenantID(); !ok {
+		return &ValidationError{Name: "tenant_id", err: errors.New(`ent: missing required field "Player.tenant_id"`)}
+	}
 	if _, ok := pc.mutation.Username(); !ok {
 		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "Player.username"`)}
 	}
@@ -162,6 +171,10 @@ func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := pc.mutation.TenantID(); ok {
+		_spec.SetField(player.FieldTenantID, field.TypeString, value)
+		_node.TenantID = value
+	}
 	if value, ok := pc.mutation.Username(); ok {
 		_spec.SetField(player.FieldUsername, field.TypeString, value)
 		_node.Username = value
@@ -189,7 +202,7 @@ func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Player.Create().
-//		SetUsername(v).
+//		SetTenantID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -198,7 +211,7 @@ func (pc *PlayerCreate) createSpec() (*Player, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.PlayerUpsert) {
-//			SetUsername(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (pc *PlayerCreate) OnConflict(opts ...sql.ConflictOption) *PlayerUpsertOne {
@@ -233,6 +246,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetTenantID sets the "tenant_id" field.
+func (u *PlayerUpsert) SetTenantID(v string) *PlayerUpsert {
+	u.Set(player.FieldTenantID, v)
+	return u
+}
+
+// UpdateTenantID sets the "tenant_id" field to the value that was provided on create.
+func (u *PlayerUpsert) UpdateTenantID() *PlayerUpsert {
+	u.SetExcluded(player.FieldTenantID)
+	return u
+}
 
 // SetUsername sets the "username" field.
 func (u *PlayerUpsert) SetUsername(v string) *PlayerUpsert {
@@ -340,6 +365,20 @@ func (u *PlayerUpsertOne) Update(set func(*PlayerUpsert)) *PlayerUpsertOne {
 		set(&PlayerUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (u *PlayerUpsertOne) SetTenantID(v string) *PlayerUpsertOne {
+	return u.Update(func(s *PlayerUpsert) {
+		s.SetTenantID(v)
+	})
+}
+
+// UpdateTenantID sets the "tenant_id" field to the value that was provided on create.
+func (u *PlayerUpsertOne) UpdateTenantID() *PlayerUpsertOne {
+	return u.Update(func(s *PlayerUpsert) {
+		s.UpdateTenantID()
+	})
 }
 
 // SetUsername sets the "username" field.
@@ -547,7 +586,7 @@ func (pcb *PlayerCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.PlayerUpsert) {
-//			SetUsername(v+v).
+//			SetTenantID(v+v).
 //		}).
 //		Exec(ctx)
 func (pcb *PlayerCreateBulk) OnConflict(opts ...sql.ConflictOption) *PlayerUpsertBulk {
@@ -624,6 +663,20 @@ func (u *PlayerUpsertBulk) Update(set func(*PlayerUpsert)) *PlayerUpsertBulk {
 		set(&PlayerUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (u *PlayerUpsertBulk) SetTenantID(v string) *PlayerUpsertBulk {
+	return u.Update(func(s *PlayerUpsert) {
+		s.SetTenantID(v)
+	})
+}
+
+// UpdateTenantID sets the "tenant_id" field to the value that was provided on create.
+func (u *PlayerUpsertBulk) UpdateTenantID() *PlayerUpsertBulk {
+	return u.Update(func(s *PlayerUpsert) {
+		s.UpdateTenantID()
+	})
 }
 
 // SetUsername sets the "username" field.

@@ -23,6 +23,7 @@ func (h *Handler) HandleSignIn() http.HandlerFunc {
 			return
 		}
 
+		tenantID := r.Header.Get("x-tenant-id")
 		username := request.Username
 		password := request.Password
 		if username == "" || password == "" {
@@ -44,19 +45,23 @@ func (h *Handler) HandleSignIn() http.HandlerFunc {
 			http.Error(w, "", http.StatusInternalServerError)
 			return
 		}
+		if player.TenantID != tenantID {
+			http.Error(w, "tenant and player mismatch", http.StatusUnauthorized)
+			return
+		}
 
 		if err := checker.CheckPassword(password, player.HashedPassword); err != nil {
 			http.Error(w, "invalid username or password", http.StatusUnauthorized)
 			return
 		}
 
-		token, _, err := h.accessToken.CreateToken("", player.ID, player.Username, _expireTokenDuration)
+		token, _, err := h.accessToken.CreateToken(tenantID, player.ID, player.Username, _expireTokenDuration)
 		if err != nil {
 			http.Error(w, "failed to create token", http.StatusInternalServerError)
 			return
 		}
 
-		sgbuilder.SendResponse(w, &SignInResponse{
+		sgbuilder.SendReply(w, &SignInResponse{
 			DisplayName: player.DisplayName,
 			Username:    player.Username,
 			Currency:    player.Currency,

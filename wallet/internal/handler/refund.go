@@ -2,55 +2,58 @@ package handler
 
 import (
 	"context"
-	"net/http"
 
-	"github.com/nautilusgames/sdk-go/webhook"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
+
+	"github.com/nautilusgames/demo/auth/verifier"
+	"github.com/nautilusgames/sdk-go/webhook"
 )
 
-func (h *Handler) HandleRefund(ctx context.Context, request *webhook.PayoutRequest) (*webhook.WalletResponse, error) {
-	response := &webhook.WalletResponse{}
-	payload, err := h.authorizePlayerTenantToken(request.Header)
-	if err != nil {
-		response.Error = Error(http.StatusUnauthorized, err.Error())
-		return response, nil
+func (h *Handler) HandleRefund(ctx context.Context, request *webhook.PayoutRequest) (*webhook.TransactionReply, error) {
+	reply := &webhook.TransactionReply{}
+	payload, webhookErr := verifier.Verify(h.cfg, h.token, request.Header)
+	if webhookErr != nil {
+		reply.Error = webhookErr
+		return reply, nil
 	}
 
-	if request.SessionId <= 0 {
-		response.Error = Error(http.StatusBadRequest, "invalid session_id")
-		return response, nil
+	if request.SessionId == "" {
+		reply.Error = Error(webhook.ErrInvalidRequest, "invalid session_id")
+		return reply, nil
 	}
 
 	if request.Amount < 0 {
-		response.Error = Error(http.StatusBadRequest, "invalid amount")
-		return response, nil
+		reply.Error = Error(webhook.ErrInvalidRequest, "invalid amount")
+		return reply, nil
 	}
 
 	if request.Amount == 0 {
 		playerWallet, err := h.getWallet(ctx, payload.PlayerID)
 		if err != nil {
 			h.logger.Error("get wallet failed", zap.Error(err))
-			response.Error = Error(http.StatusInternalServerError, err.Error())
-			return response, nil
+			reply.Error = Error(webhook.ErrInternalServerError, err.Error())
+			return reply, nil
 		}
 
-		tx := &webhook.WalletTransaction{
-			Id:         playerWallet.LastTxId,
-			NewBalance: playerWallet.Balance,
-			SessionId:  request.SessionId,
-			Amount:     request.Amount,
+		reply.Data = &webhook.TransactionData{
+			TenantTxId:      uuid.NewString(),
+			TenantSessionId: request.SessionId,
+			Currency:        playerWallet.Currency,
+			Amount:          request.Amount,
+			NewBalance:      playerWallet.Balance,
+			CreatedAt:       playerWallet.UpdatedAt,
 		}
 
-		response.Data = tx
-		return response, nil
+		return reply, nil
 	}
 
-	tx, err := h.transfer(ctx, request.SessionId, payload.GameID, payload.PlayerID, request.Amount)
+	tx, err := h.transfer(ctx, request.SessionId, payload.Object, payload.PlayerID, request.Amount)
 	if err != nil {
-		response.Error = Error(http.StatusInternalServerError, err.Error())
-		return response, nil
+		reply.Error = Error(webhook.ErrInternalServerError, err.Error())
+		return reply, nil
 	}
 
-	response.Data = tx
-	return response, nil
+	reply.Data = tx
+	return reply, nil
 }

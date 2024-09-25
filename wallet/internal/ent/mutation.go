@@ -32,18 +32,17 @@ const (
 // SessionMutation represents an operation that mutates the Session nodes in the graph.
 type SessionMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *int64
-	created_at         *time.Time
-	updated_at         *time.Time
-	game_id            *string
-	game_session_id    *int64
-	addgame_session_id *int64
-	clearedFields      map[string]struct{}
-	done               bool
-	oldValue           func(context.Context) (*Session, error)
-	predicates         []predicate.Session
+	op              Op
+	typ             string
+	id              *int64
+	created_at      *time.Time
+	updated_at      *time.Time
+	game_id         *string
+	game_session_id *string
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*Session, error)
+	predicates      []predicate.Session
 }
 
 var _ ent.Mutation = (*SessionMutation)(nil)
@@ -259,13 +258,12 @@ func (m *SessionMutation) ResetGameID() {
 }
 
 // SetGameSessionID sets the "game_session_id" field.
-func (m *SessionMutation) SetGameSessionID(i int64) {
-	m.game_session_id = &i
-	m.addgame_session_id = nil
+func (m *SessionMutation) SetGameSessionID(s string) {
+	m.game_session_id = &s
 }
 
 // GameSessionID returns the value of the "game_session_id" field in the mutation.
-func (m *SessionMutation) GameSessionID() (r int64, exists bool) {
+func (m *SessionMutation) GameSessionID() (r string, exists bool) {
 	v := m.game_session_id
 	if v == nil {
 		return
@@ -276,7 +274,7 @@ func (m *SessionMutation) GameSessionID() (r int64, exists bool) {
 // OldGameSessionID returns the old "game_session_id" field's value of the Session entity.
 // If the Session object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldGameSessionID(ctx context.Context) (v int64, err error) {
+func (m *SessionMutation) OldGameSessionID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldGameSessionID is only allowed on UpdateOne operations")
 	}
@@ -290,28 +288,9 @@ func (m *SessionMutation) OldGameSessionID(ctx context.Context) (v int64, err er
 	return oldValue.GameSessionID, nil
 }
 
-// AddGameSessionID adds i to the "game_session_id" field.
-func (m *SessionMutation) AddGameSessionID(i int64) {
-	if m.addgame_session_id != nil {
-		*m.addgame_session_id += i
-	} else {
-		m.addgame_session_id = &i
-	}
-}
-
-// AddedGameSessionID returns the value that was added to the "game_session_id" field in this mutation.
-func (m *SessionMutation) AddedGameSessionID() (r int64, exists bool) {
-	v := m.addgame_session_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetGameSessionID resets all changes to the "game_session_id" field.
 func (m *SessionMutation) ResetGameSessionID() {
 	m.game_session_id = nil
-	m.addgame_session_id = nil
 }
 
 // Where appends a list predicates to the SessionMutation builder.
@@ -425,7 +404,7 @@ func (m *SessionMutation) SetField(name string, value ent.Value) error {
 		m.SetGameID(v)
 		return nil
 	case session.FieldGameSessionID:
-		v, ok := value.(int64)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -438,21 +417,13 @@ func (m *SessionMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *SessionMutation) AddedFields() []string {
-	var fields []string
-	if m.addgame_session_id != nil {
-		fields = append(fields, session.FieldGameSessionID)
-	}
-	return fields
+	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *SessionMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case session.FieldGameSessionID:
-		return m.AddedGameSessionID()
-	}
 	return nil, false
 }
 
@@ -461,13 +432,6 @@ func (m *SessionMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *SessionMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case session.FieldGameSessionID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddGameSessionID(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Session numeric field %s", name)
 }

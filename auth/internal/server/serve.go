@@ -10,13 +10,24 @@ import (
 
 	"entgo.io/ent/dialect/sql/schema"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"go.uber.org/zap"
 
 	"github.com/nautilusgames/demo/auth/internal/ent"
-	"github.com/nautilusgames/demo/auth/internal/server/httpserver"
+	"github.com/nautilusgames/demo/auth/internal/server/handler"
 	"github.com/nautilusgames/demo/auth/token"
 	"github.com/nautilusgames/demo/config"
 	pb "github.com/nautilusgames/demo/config/pb"
+	"github.com/nautilusgames/sdk-go/webhook"
+)
+
+const (
+	_statusPath        = "/status"
+	_signInPath        = "/api/v1/signin"
+	_signUpPath        = "/api/v1/signup"
+	_listGamePath      = "/api/v1/list-game"
+	_createSessionPath = "/api/v1/create-session"
 )
 
 func Run(f *config.Flags) {
@@ -73,13 +84,30 @@ func RunWithConfig(cfg *pb.Config) {
 		logger.Fatal("failed to create player token", zap.Error(err))
 	}
 
+	mux := mux.NewRouter()
+	handler := handler.New(logger, cfg, entClient, playerToken, tenantPlayerToken)
+	// internal routes
+	mux.HandleFunc(_statusPath, handler.HandleStatus()).Methods(http.MethodGet)
+	mux.HandleFunc(_signInPath, handler.HandleSignIn()).Methods(http.MethodPost)
+	mux.HandleFunc(_signUpPath, handler.HandleSignUp()).Methods(http.MethodPost)
+	mux.HandleFunc(_listGamePath, handler.HandleListGame()).Methods(http.MethodGet)
+	mux.HandleFunc(_createSessionPath, handler.HandleCreateSession()).Methods(http.MethodPost)
+
+	// external routes
+	webhook.HandleVerifyPlayer(mux, handler.HandleVerifyPlayer)
+
+	// set up cors
+	c := cors.AllowAll()
 	address := fmt.Sprintf("%s:%d", cfg.Listener.GetTcp().Address, cfg.Listener.GetTcp().Port)
-	httpServer := httpserver.New(logger, cfg, entClient, playerToken, tenantPlayerToken, address)
+	server := &http.Server{
+		Addr:    address,
+		Handler: c.Handler(mux),
+	}
 
 	serverCh := make(chan struct{})
 	go func() {
 		logger.Info("server is listening ", zap.String("address", address))
-		if err := httpServer.Serve(); err != http.ErrServerClosed {
+		if err := server.ListenAndServe(); err != http.ErrServerClosed {
 			logger.Fatal("server exited with", zap.Error(err))
 		}
 		close(serverCh)
@@ -94,7 +122,7 @@ func RunWithConfig(cfg *pb.Config) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := httpServer.Shutdown(ctx); err != nil {
+	if err := server.Shutdown(ctx); err != nil {
 		logger.Fatal("failed to shutdown server", zap.Error(err))
 	}
 

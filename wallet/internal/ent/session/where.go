@@ -70,7 +70,7 @@ func GameID(v string) predicate.Session {
 }
 
 // GameSessionID applies equality check predicate on the "game_session_id" field. It's identical to GameSessionIDEQ.
-func GameSessionID(v int64) predicate.Session {
+func GameSessionID(v string) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldGameSessionID, v))
 }
 
@@ -220,43 +220,68 @@ func GameIDContainsFold(v string) predicate.Session {
 }
 
 // GameSessionIDEQ applies the EQ predicate on the "game_session_id" field.
-func GameSessionIDEQ(v int64) predicate.Session {
+func GameSessionIDEQ(v string) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldGameSessionID, v))
 }
 
 // GameSessionIDNEQ applies the NEQ predicate on the "game_session_id" field.
-func GameSessionIDNEQ(v int64) predicate.Session {
+func GameSessionIDNEQ(v string) predicate.Session {
 	return predicate.Session(sql.FieldNEQ(FieldGameSessionID, v))
 }
 
 // GameSessionIDIn applies the In predicate on the "game_session_id" field.
-func GameSessionIDIn(vs ...int64) predicate.Session {
+func GameSessionIDIn(vs ...string) predicate.Session {
 	return predicate.Session(sql.FieldIn(FieldGameSessionID, vs...))
 }
 
 // GameSessionIDNotIn applies the NotIn predicate on the "game_session_id" field.
-func GameSessionIDNotIn(vs ...int64) predicate.Session {
+func GameSessionIDNotIn(vs ...string) predicate.Session {
 	return predicate.Session(sql.FieldNotIn(FieldGameSessionID, vs...))
 }
 
 // GameSessionIDGT applies the GT predicate on the "game_session_id" field.
-func GameSessionIDGT(v int64) predicate.Session {
+func GameSessionIDGT(v string) predicate.Session {
 	return predicate.Session(sql.FieldGT(FieldGameSessionID, v))
 }
 
 // GameSessionIDGTE applies the GTE predicate on the "game_session_id" field.
-func GameSessionIDGTE(v int64) predicate.Session {
+func GameSessionIDGTE(v string) predicate.Session {
 	return predicate.Session(sql.FieldGTE(FieldGameSessionID, v))
 }
 
 // GameSessionIDLT applies the LT predicate on the "game_session_id" field.
-func GameSessionIDLT(v int64) predicate.Session {
+func GameSessionIDLT(v string) predicate.Session {
 	return predicate.Session(sql.FieldLT(FieldGameSessionID, v))
 }
 
 // GameSessionIDLTE applies the LTE predicate on the "game_session_id" field.
-func GameSessionIDLTE(v int64) predicate.Session {
+func GameSessionIDLTE(v string) predicate.Session {
 	return predicate.Session(sql.FieldLTE(FieldGameSessionID, v))
+}
+
+// GameSessionIDContains applies the Contains predicate on the "game_session_id" field.
+func GameSessionIDContains(v string) predicate.Session {
+	return predicate.Session(sql.FieldContains(FieldGameSessionID, v))
+}
+
+// GameSessionIDHasPrefix applies the HasPrefix predicate on the "game_session_id" field.
+func GameSessionIDHasPrefix(v string) predicate.Session {
+	return predicate.Session(sql.FieldHasPrefix(FieldGameSessionID, v))
+}
+
+// GameSessionIDHasSuffix applies the HasSuffix predicate on the "game_session_id" field.
+func GameSessionIDHasSuffix(v string) predicate.Session {
+	return predicate.Session(sql.FieldHasSuffix(FieldGameSessionID, v))
+}
+
+// GameSessionIDEqualFold applies the EqualFold predicate on the "game_session_id" field.
+func GameSessionIDEqualFold(v string) predicate.Session {
+	return predicate.Session(sql.FieldEqualFold(FieldGameSessionID, v))
+}
+
+// GameSessionIDContainsFold applies the ContainsFold predicate on the "game_session_id" field.
+func GameSessionIDContainsFold(v string) predicate.Session {
+	return predicate.Session(sql.FieldContainsFold(FieldGameSessionID, v))
 }
 
 // And groups predicates with the AND operator between them.

@@ -29,6 +29,20 @@ func (pu *PlayerUpdate) Where(ps ...predicate.Player) *PlayerUpdate {
 	return pu
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (pu *PlayerUpdate) SetTenantID(s string) *PlayerUpdate {
+	pu.mutation.SetTenantID(s)
+	return pu
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (pu *PlayerUpdate) SetNillableTenantID(s *string) *PlayerUpdate {
+	if s != nil {
+		pu.SetTenantID(*s)
+	}
+	return pu
+}
+
 // SetUsername sets the "username" field.
 func (pu *PlayerUpdate) SetUsername(s string) *PlayerUpdate {
 	pu.mutation.SetUsername(s)
@@ -159,6 +173,9 @@ func (pu *PlayerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := pu.mutation.TenantID(); ok {
+		_spec.SetField(player.FieldTenantID, field.TypeString, value)
+	}
 	if value, ok := pu.mutation.Username(); ok {
 		_spec.SetField(player.FieldUsername, field.TypeString, value)
 	}
@@ -194,6 +211,20 @@ type PlayerUpdateOne struct {
 	hooks     []Hook
 	mutation  *PlayerMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (puo *PlayerUpdateOne) SetTenantID(s string) *PlayerUpdateOne {
+	puo.mutation.SetTenantID(s)
+	return puo
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (puo *PlayerUpdateOne) SetNillableTenantID(s *string) *PlayerUpdateOne {
+	if s != nil {
+		puo.SetTenantID(*s)
+	}
+	return puo
 }
 
 // SetUsername sets the "username" field.
@@ -355,6 +386,9 @@ func (puo *PlayerUpdateOne) sqlSave(ctx context.Context) (_node *Player, err err
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := puo.mutation.TenantID(); ok {
+		_spec.SetField(player.FieldTenantID, field.TypeString, value)
 	}
 	if value, ok := puo.mutation.Username(); ok {
 		_spec.SetField(player.FieldUsername, field.TypeString, value)

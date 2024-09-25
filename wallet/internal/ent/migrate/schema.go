@@ -14,7 +14,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "game_id", Type: field.TypeString},
-		{Name: "game_session_id", Type: field.TypeInt64},
+		{Name: "game_session_id", Type: field.TypeString},
 	}
 	// SessionsTable holds the schema information for the "sessions" table.
 	SessionsTable = &schema.Table{

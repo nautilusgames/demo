@@ -11,6 +11,7 @@ var (
 	// PlayersColumns holds the columns for the "players" table.
 	PlayersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "tenant_id", Type: field.TypeString},
 		{Name: "username", Type: field.TypeString, Unique: true},
 		{Name: "hashed_password", Type: field.TypeString},
 		{Name: "currency", Type: field.TypeString},
@@ -22,13 +23,6 @@ var (
 		Name:       "players",
 		Columns:    PlayersColumns,
 		PrimaryKey: []*schema.Column{PlayersColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "player_username",
-				Unique:  false,
-				Columns: []*schema.Column{PlayersColumns[1]},
-			},
-		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
