@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://nautilusgames.com/favicon.ico?v=2"
+    />
+    <title>TRIGGER EVENT DEMO - NAUTILUS GAME</title>
+
+    <style>
+      * {
+        margin: 0;
+        box-sizing: content-box;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100dvh;
+      }
+
+      .game-box {
+        width: 1000px;
+        height: 650px;
+        position: relative;
+      }
+
+      .game-box iframe {
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+      }
+
+      #deposit {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgb(0 0 0 / 62%);
+        display: none;
+      }
+
+      #deposit .deposit-box {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 4px;
+        background-color: #fff;
+      }
+
+      #deposit .deposit-box button {
+        background-color: #194783;
+        padding: 12px;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="game-box">
+      <iframe
+        id="game_iframe"
+        src="<<FISH_GAME_URL_HERE>>"
+        frameborder="0"
+      ></iframe>
+
+      <div id="deposit">
+        <div class="deposit-box">
+          <div>Insufficient Balance</div>
+          <button onclick="deposit100k()">Deposit 100k Now</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function listenEvent() {
+        window.addEventListener(
+          'message',
+          function (event) {
+            console.log('event', event);
+
+            if (!event?.data?.command) return;
+            switch (event.data.command) {
+              case 'N11S_INSUFFICIENT_BALANCE':
+                const elt = document.getElementById('deposit');
+                if (!elt) return;
+                elt.style.display = 'flex';
+                break;
+            }
+          },
+          false,
+        );
+      }
+
+      listenEvent();
+
+      function deposit100k() {
+        const elt = document.getElementById('game_iframe');
+        if (!elt) return;
+        console.log('elt.contentWindow', elt.contentWindow);
+        elt.contentWindow.postMessage(
+          { command: 'N11S_DEPOSIT_COMPLETED' },
+          '*',
+        );
+
+        const elt1 = document.getElementById('deposit');
+        if (!elt1) return;
+        elt1.style.display = 'none';
+      }
+    </script>
+  </body>
+</html>
