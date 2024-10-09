@@ -24,3 +24,4 @@ go.sum
 __debug_bin
 tmp
 tmp/
+.env

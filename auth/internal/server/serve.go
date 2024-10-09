@@ -28,6 +28,7 @@ const (
 	_signUpPath        = "/api/v1/signup"
 	_listGamePath      = "/api/v1/list-game"
 	_createSessionPath = "/api/v1/create-session"
+	_upload            = "/api/v1/upload"
 )
 
 func Run(f *config.Flags) {
@@ -92,6 +93,7 @@ func RunWithConfig(cfg *pb.Config) {
 	mux.HandleFunc(_signUpPath, handler.HandleSignUp()).Methods(http.MethodPost)
 	mux.HandleFunc(_listGamePath, handler.HandleListGame()).Methods(http.MethodGet)
 	mux.HandleFunc(_createSessionPath, handler.HandleCreateSession()).Methods(http.MethodPost)
+	mux.HandleFunc(_upload, handler.HandleUpload()).Methods(http.MethodPost)
 
 	// external routes
 	webhook.HandleVerifyPlayer(mux, handler.HandleVerifyPlayer)
