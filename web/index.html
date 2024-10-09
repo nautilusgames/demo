@@ -188,7 +188,6 @@
         const params = new URLSearchParams(window.location.search)
         tenantID = params.get('tenant_id')
 
-
         async function playGame(url, gameID) {
             await createSession(gameID)
             var newUrl = `${url}/?tenant_id=${tenantID}&tenant_player_token=${tenantPlayerToken}&language=${language}&currency=${currency}`

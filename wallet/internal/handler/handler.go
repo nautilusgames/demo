@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	initWallet      int64 = 10000000000
+	initWallet      int64 = 100000000
 	errInsufficient error = errors.New("insufficient balance")
 )
 
