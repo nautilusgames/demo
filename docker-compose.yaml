@@ -1,4 +1,31 @@
+version: '3.1'
 services:
+  demo-gateway:
+    build:
+      context: affiliate/
+      dockerfile: envoy.dockerfile
+      args:
+        - service=gateway
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    restart: "no"
+    container_name: demo-gateway
+    ports:
+      - "18080:18080"
+      - "80:8080"
+    command:
+        - /app/scripts/docker-entrypoint.sh
+    environment:
+      - DOGSTATSD_HOST_IP=0.0.0.0
+      - ENVOY_UID=0
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+    networks:
+      - demo-network
+
   demo-db:
     image: mysql:latest
     container_name: demo-db
@@ -44,9 +71,9 @@ services:
   demo-web:
     build:
       context: ./web
-      dockerfile: ./build/Dockerfile
+      dockerfile: build/Dockerfile
     ports:
-      - 8083:80
+      - 8083:8080
     restart: on-failure
     networks:
       - demo-network

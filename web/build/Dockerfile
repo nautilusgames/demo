@@ -4,8 +4,8 @@ FROM nginx:alpine
 # Copy the static website files to the Nginx web directory
 COPY . /usr/share/nginx/html
 
-# Expose port 80 to the outside world
-EXPOSE 80
+# Expose port 8080
+EXPOSE 8080
 
 # Start Nginx when the container starts
 CMD ["nginx", "-g", "daemon off;"]
